@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Mode Timer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background-color: #0A0A0A;
+            --primary-color: #FFFFFF;
+            --secondary-color: #888888;
+            
+            --break-color: #22C55E; /* Green */
+            --warning-color: #EF4444; /* Red for break warning */
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: var(--background-color);
+            color: var(--secondary-color);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: auto; /* Allow scrolling for settings */
+            padding: 20px;
+        }
+
+        .site-logo {
+            position: fixed; /* Position relative to the whole window */
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: auto;
+            z-index: 100; /* Ensure it's on top of everything */
+        }
+
+        .module-container {
+            background-color: transparent;
+            border: 2px solid var(--secondary-color);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            max-width: 500px;
+        }
+
+        .timer-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .timer-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotate(135deg); 
+            transition: transform 0.5s ease-in-out;
+        }
+        
+        .timer-svg.counter-clockwise {
+            transform: rotate(135deg) scaleX(-1);
+        }
+
+        .timer-circle {
+            fill: none;
+            stroke-width: 4; 
+        }
+        
+        #timer-track { stroke: var(--secondary-color); opacity: 0.1; }
+
+        #timer-progress {
+            stroke: var(--primary-color);
+            stroke-linecap: round;
+            transition: stroke 0.5s ease-in-out, stroke-dashoffset 0.2s linear;
+        }
+        
+        #progress-dot {
+            fill: var(--primary-color);
+            transition: fill 0.5s ease-in-out;
+            animation: pulsate 1.5s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulsate {
+            from { fill: transparent; }
+            to { fill: var(--primary-color); }
+        }
+        
+        #time-left {
+            z-index: 1; 
+            font-size: 4rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            color: var(--primary-color);
+        }
+        
+        #mode-display {
+            z-index: 2;
+            font-size: 1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--secondary-color);
+            transition: color 0.5s ease-in-out;
+        }
+        
+        /* Styles for Mode Switching and Settings */
+        .mode-switcher {
+            display: flex;
+            border: 2px solid var(--secondary-color);
+            margin-bottom: 20px;
+        }
+        .mode-btn {
+            background-color: transparent;
+            border: none;
+            color: var(--secondary-color);
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: all 0.2s ease-in-out;
+        }
+        .mode-btn.active {
+            background-color: var(--secondary-color);
+            color: var(--background-color);
+        }
+        .mode-btn:not(:last-child) {
+            border-right: 2px solid var(--secondary-color);
+        }
+
+        .settings-panel {
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            align-items: center;
+        }
+        .settings-panel.active {
+            display: flex;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .settings-panel label {
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+        .settings-panel input {
+            background-color: transparent;
+            border: 2px solid var(--secondary-color);
+            color: var(--primary-color);
+            padding: 5px;
+            width: 80px;
+            text-align: center;
+        }
+        
+        .controls {
+            z-index: 2;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .control-btn {
+            background-color: transparent;
+            border: 2px solid var(--secondary-color);
+            color: var(--secondary-color);
+            padding: 10px 20px;
+            border-radius: 0;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .control-btn:hover {
+            background-color: var(--secondary-color);
+            color: var(--background-color);
+        }
+
+    </style>
+</head>
+<body>
+    
+    <img src="https://www.dropbox.com/scl/fi/n2ez50rho6xydpma93sq2/500.jpeg?rlkey=8omntfna9sqvagk8p6cs7gjwh&raw=1" alt="Logo" class="site-logo">
+
+    <div class="module-container">
+        <!-- Timer Display (Visible in all modes) -->
+        <div class="timer-container">
+            <svg class="timer-svg" viewBox="0 0 100 100">
+                <circle class="timer-circle" id="timer-track" cx="50" cy="50" r="45"></circle>
+                <circle class="timer-circle" id="timer-progress" cx="50" cy="50" r="45"></circle>
+                <circle id="progress-dot" cx="95" cy="50" r="2"></circle>
+            </svg>
+            <div id="time-left">25:00</div>
+        </div>
+        <div id="mode-display">Work</div>
+
+        <!-- Mode Switcher -->
+        <div class="mode-switcher">
+            <button class="mode-btn active" data-mode="pomodoro">Pomodoro</button>
+            <button class="mode-btn" data-mode="sports">Sports</button>
+        </div>
+
+        <!-- Settings Panels -->
+        <div id="pomodoro-settings" class="settings-panel active">
+            <div class="input-group">
+                <label for="work-time">Work</label>
+                <input type="number" id="work-time" value="25" min="1">
+                <span>min</span>
+            </div>
+            <div class="input-group">
+                <label for="break-time">Break</label>
+                <input type="number" id="break-time" value="5" min="1">
+                <span>min</span>
+            </div>
+        </div>
+
+        <div id="sports-settings" class="settings-panel">
+            <div class="input-group">
+                <label for="workout-time">Workout</label>
+                <input type="number" id="workout-time" value="45" min="0">
+                <span>sec</span>
+            </div>
+            <div class="input-group">
+                <label for="rest-time">Rest</label>
+                <input type="number" id="rest-time" value="15" min="0">
+                <span>sec</span>
+            </div>
+            <div class="input-group">
+                <label for="rounds">Rounds</label>
+                <input type="number" id="rounds" value="8" min="1">
+            </div>
+        </div>
+        
+        <!-- Main Controls -->
+        <div class="controls">
+            <button class="control-btn" id="start-pause-btn">Start</button>
+            <button class="control-btn" id="reset-btn">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        // --- DOM Elements ---
+        const timeLeftDisplay = document.getElementById('time-left');
+        const startPauseBtn = document.getElementById('start-pause-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const progressCircle = document.getElementById('timer-progress');
+        const modeDisplay = document.getElementById('mode-display');
+        const timerSvg = document.querySelector('.timer-svg'); 
+        const progressDot = document.getElementById('progress-dot');
+        const modeBtns = document.querySelectorAll('.mode-btn');
+        const settingsPanels = document.querySelectorAll('.settings-panel');
+
+        // --- Global State ---
+        let mainTimerId = null;
+        let isPaused = true;
+        let currentMode = 'pomodoro'; // pomodoro, sports
+
+        // --- SVG Circle Calculations ---
+        const radius = progressCircle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+        progressCircle.style.strokeDasharray = circumference;
+
+        // --- Generic Timer Logic ---
+        function updateDisplay(timeLeft, totalDuration) {
+            if (totalDuration === 0) totalDuration = 1; // Prevent division by zero
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timeLeftDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            let progress = (totalDuration - timeLeft) / totalDuration;
+            
+            if (currentMode === 'pomodoro' && pomodoroState.mode === 'break') {
+                 progress = timeLeft / totalDuration;
+            }
+
+            const offset = circumference * (1 - progress);
+            progressCircle.style.strokeDashoffset = offset;
+        }
+
+        function resetAllTimers() {
+            clearInterval(mainTimerId);
+            isPaused = true;
+            startPauseBtn.textContent = 'Start';
+            progressDot.style.display = 'block';
+            if (currentMode === 'pomodoro') pomodoroReset();
+            if (currentMode === 'sports') sportsReset();
+        }
+
+        // --- Mode Switching ---
+        modeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const mode = btn.dataset.mode;
+                if (mode === currentMode) return;
+
+                currentMode = mode;
+                
+                modeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                settingsPanels.forEach(p => p.classList.remove('active'));
+                document.getElementById(`${mode}-settings`).classList.add('active');
+                
+                resetAllTimers();
+            });
+        });
+
+        // --- Pomodoro Mode ---
+        let pomodoroState = {};
+
+        function pomodoroReset() {
+            const workMinutes = document.getElementById('work-time').value;
+            const breakMinutes = document.getElementById('break-time').value;
+
+            pomodoroState = {
+                workSec: parseInt(workMinutes, 10) * 60,
+                breakSec: parseInt(breakMinutes, 10) * 60,
+                timeLeft: parseInt(workMinutes, 10) * 60,
+                totalDuration: parseInt(workMinutes, 10) * 60,
+                mode: 'work'
+            };
+
+            modeDisplay.textContent = 'Work'; // Changed from 'Pomodoro' to 'Work'
+            progressCircle.style.stroke = 'var(--primary-color)';
+            updateDisplay(pomodoroState.timeLeft, pomodoroState.totalDuration);
+        }
+
+        function pomodoroSwitch() {
+            if (pomodoroState.mode === 'work') {
+                pomodoroState.mode = 'break';
+                pomodoroState.timeLeft = pomodoroState.breakSec;
+                pomodoroState.totalDuration = pomodoroState.breakSec;
+                modeDisplay.textContent = 'Break';
+                progressCircle.style.stroke = 'var(--break-color)';
+            } else {
+                pomodoroState.mode = 'work';
+                pomodoroState.timeLeft = pomodoroState.workSec;
+                pomodoroState.totalDuration = pomodoroState.workSec;
+                modeDisplay.textContent = 'Work';
+                progressCircle.style.stroke = 'var(--primary-color)';
+            }
+            updateDisplay(pomodoroState.timeLeft, pomodoroState.totalDuration);
+            isPaused = true;
+            startPauseBtn.textContent = 'Start';
+        }
+
+        function pomodoroTick() {
+            if (pomodoroState.timeLeft > 0) {
+                pomodoroState.timeLeft--;
+                updateDisplay(pomodoroState.timeLeft, pomodoroState.totalDuration);
+            } else {
+                pomodoroSwitch();
+            }
+        }
+        
+        // --- Sports Mode ---
+        let sportsState = {};
+        function sportsReset() {
+            const workoutTime = document.getElementById('workout-time').value;
+            const restTime = document.getElementById('rest-time').value;
+            const rounds = document.getElementById('rounds').value;
+
+            sportsState = {
+                workoutSec: parseInt(workoutTime, 10),
+                restSec: parseInt(restTime, 10),
+                totalRounds: parseInt(rounds, 10),
+                currentRound: 1,
+                isWorkout: true,
+                timeLeft: parseInt(workoutTime, 10),
+                totalDuration: parseInt(workoutTime, 10)
+            };
+            modeDisplay.textContent = `Round ${sportsState.currentRound}`;
+            progressCircle.style.stroke = 'var(--primary-color)';
+            updateDisplay(sportsState.timeLeft, sportsState.totalDuration);
+        }
+
+        function sportsSwitch() {
+             if (sportsState.isWorkout) { // Switch to rest
+                sportsState.isWorkout = false;
+                sportsState.timeLeft = sportsState.restSec;
+                sportsState.totalDuration = sportsState.restSec;
+                modeDisplay.textContent = 'Rest';
+                progressCircle.style.stroke = 'var(--break-color)';
+             } else { // Switch to next round's workout
+                sportsState.currentRound++;
+                if (sportsState.currentRound > sportsState.totalRounds) {
+                    resetAllTimers(); // End of all rounds, reset everything
+                    return;
+                }
+                sportsState.isWorkout = true;
+                sportsState.timeLeft = sportsState.workoutSec;
+                sportsState.totalDuration = sportsState.workoutSec;
+                modeDisplay.textContent = `Round ${sportsState.currentRound}`;
+                progressCircle.style.stroke = 'var(--primary-color)';
+             }
+             updateDisplay(sportsState.timeLeft, sportsState.totalDuration);
+             isPaused = true;
+             startPauseBtn.textContent = 'Start';
+        }
+
+        function sportsTick() {
+             if (sportsState.timeLeft > 0) {
+                sportsState.timeLeft--;
+                updateDisplay(sportsState.timeLeft, sportsState.totalDuration);
+            } else {
+                sportsSwitch();
+            }
+        }
+        
+        // --- Main Event Listeners ---
+        startPauseBtn.addEventListener('click', () => {
+            if (isPaused) {
+                isPaused = false;
+                startPauseBtn.textContent = 'Pause';
+                progressDot.style.display = 'none';
+                
+                if (currentMode === 'pomodoro') {
+                    // Refresh settings before starting
+                    pomodoroReset();
+                    mainTimerId = setInterval(pomodoroTick, 1000);
+                }
+                if (currentMode === 'sports') {
+                    // Refresh settings before starting
+                    sportsReset();
+                    mainTimerId = setInterval(sportsTick, 1000);
+                }
+
+            } else {
+                isPaused = true;
+                startPauseBtn.textContent = 'Start';
+                progressDot.style.display = 'none';
+                clearInterval(mainTimerId);
+            }
+        });
+
+        resetBtn.addEventListener('click', resetAllTimers);
+        
+        // --- Initial Setup ---
+        window.onload = () => {
+            resetAllTimers();
+        };
+
+    </script>
+</body>
+</html>
