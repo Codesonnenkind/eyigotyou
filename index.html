@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multi-Mode Timer</title>
+    <title>EYIGOTYOU</title>
+    <link rel="icon" type="image/jpeg" href="https://www.dropbox.com/scl/fi/n2ez50rho6xydpma93sq2/500.jpeg?rlkey=8omntfna9sqvagk8p6cs7gjwh&raw=1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --background-color: #0A0A0A;
@@ -28,6 +29,7 @@
             align-items: center;
             overflow: auto; /* Allow scrolling for settings */
             padding: 20px;
+            box-sizing: border-box;
         }
 
         .site-logo {
@@ -41,20 +43,23 @@
 
         .module-container {
             background-color: transparent;
-            border: 2px solid var(--secondary-color);
-            padding: 40px;
+            border: none;
+            padding: 5vw;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 20px;
             position: relative;
-            max-width: 500px;
+            width: 90vw;
+            max-width: 400px;
         }
 
         .timer-container {
             position: relative;
-            width: 300px;
-            height: 300px;
+            width: 70vw;
+            height: 70vw;
+            max-width: 300px;
+            max-height: 300px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -100,8 +105,8 @@
         
         #time-left {
             z-index: 1; 
-            font-size: 4rem;
-            font-weight: 600;
+            font-size: 12vw;
+            font-weight: 700;
             letter-spacing: 0.1em;
             color: var(--primary-color);
         }
@@ -114,87 +119,108 @@
             letter-spacing: 0.2em;
             color: var(--secondary-color);
             transition: color 0.5s ease-in-out;
+            text-align: center;
         }
         
-        /* Styles for Mode Switching and Settings */
-        .mode-switcher {
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .control-group {
             display: flex;
             border: 2px solid var(--secondary-color);
-            margin-bottom: 20px;
         }
-        .mode-btn {
+        
+        .mode-btn, .control-btn, .setting-item {
             background-color: transparent;
             border: none;
             color: var(--secondary-color);
-            padding: 10px 20px;
-            cursor: pointer;
+            padding: 12px;
             font-family: 'Inter', sans-serif;
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 600;
             text-transform: uppercase;
             transition: all 0.2s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center; 
+            gap: 10px;
         }
+        
+        .mode-btn, .control-btn {
+            cursor: pointer;
+        }
+        
+        /* Asymmetrical Sizing and Alignment */
+        .mode-btn, .control-btn, .setting-item { flex-basis: 33.33%; }
+        .mode-btn[data-mode="pomodoro"], #start-pause-btn, .setting-item.label { 
+            flex-basis: 66.67%;
+            justify-content: flex-start; /* Left-align the text in the larger box */
+            padding-left: 20px; /* Add padding to the left */
+        }
+
+        .mode-btn:not(:last-child), .control-btn:not(:last-child), .setting-item:not(:last-child) {
+             border-right: 2px solid var(--secondary-color);
+        }
+
         .mode-btn.active {
             background-color: var(--secondary-color);
             color: var(--background-color);
         }
-        .mode-btn:not(:last-child) {
-            border-right: 2px solid var(--secondary-color);
+        
+        .control-btn:hover, .mode-btn:not(:active):hover {
+            color: var(--primary-color);
         }
 
         .settings-panel {
             display: none; /* Hidden by default */
+            width: 100%;
             flex-direction: column;
             gap: 15px;
-            width: 100%;
-            align-items: center;
         }
         .settings-panel.active {
             display: flex;
         }
-        .input-group {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        .settings-panel label {
-            text-transform: uppercase;
-            font-size: 0.9rem;
-        }
-        .settings-panel input {
-            background-color: transparent;
-            border: 2px solid var(--secondary-color);
-            color: var(--primary-color);
-            padding: 5px;
-            width: 80px;
-            text-align: center;
+        
+        .setting-item.label span {
+            font-size: 0.7rem; /* Smaller unit label */
+            font-weight: 400;
+            opacity: 0.7;
+            margin-left: 5px;
         }
         
-        .controls {
-            z-index: 2;
-            display: flex;
-            gap: 1rem;
-        }
-
-        .control-btn {
+        .settings-panel input {
             background-color: transparent;
-            border: 2px solid var(--secondary-color);
-            color: var(--secondary-color);
-            padding: 10px 20px;
-            border-radius: 0;
-            cursor: pointer;
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            transition: all 0.2s ease-in-out;
+            border: none; /* Removed border */
+            color: var(--primary-color);
+            padding: 0;
+            width: 40px;
+            text-align: center;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
         }
-
-        .control-btn:hover {
-            background-color: var(--secondary-color);
-            color: var(--background-color);
+        /* Hide number input arrows */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none;
+            margin: 0; 
         }
-
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+        
+        /* Media Queries for Responsiveness */
+        @media (min-width: 600px) {
+             #time-left {
+                font-size: 3.2rem; /* Cap font size on larger screens */
+            }
+        }
+        
     </style>
 </head>
 <body>
@@ -212,49 +238,45 @@
             <div id="time-left">25:00</div>
         </div>
         <div id="mode-display">Work</div>
+        
+        <div class="control-panel">
+            <div class="control-group">
+                <button class="mode-btn active" data-mode="pomodoro">Pomodoro</button>
+                <button class="mode-btn" data-mode="sports">Sports</button>
+            </div>
+            
+            <div id="pomodoro-settings" class="settings-panel active">
+                <div class="control-group">
+                    <div class="setting-item label">WORK <span>(MIN)</span></div>
+                    <div class="setting-item"><input type="number" id="work-time" value="25" min="1"></div>
+                </div>
+                 <div class="control-group">
+                    <div class="setting-item label">BREAK <span>(MIN)</span></div>
+                    <div class="setting-item"><input type="number" id="break-time" value="5" min="1"></div>
+                </div>
+            </div>
 
-        <!-- Mode Switcher -->
-        <div class="mode-switcher">
-            <button class="mode-btn active" data-mode="pomodoro">Pomodoro</button>
-            <button class="mode-btn" data-mode="sports">Sports</button>
-        </div>
-
-        <!-- Settings Panels -->
-        <div id="pomodoro-settings" class="settings-panel active">
-            <div class="input-group">
-                <label for="work-time">Work</label>
-                <input type="number" id="work-time" value="25" min="1">
-                <span>min</span>
+            <div id="sports-settings" class="settings-panel">
+                 <div class="control-group">
+                    <div class="setting-item label">Workout <span>(SEC)</span></div>
+                    <div class="setting-item"><input type="number" id="workout-time" value="45" min="0"></div>
+                </div>
+                <div class="control-group">
+                    <div class="setting-item label">Rest <span>(SEC)</span></div>
+                    <div class="setting-item"><input type="number" id="rest-time" value="15" min="0"></div>
+                </div>
+                <div class="control-group">
+                    <div class="setting-item label">Rounds</div>
+                    <div class="setting-item"><input type="number" id="rounds" value="8" min="1"></div>
+                </div>
             </div>
-            <div class="input-group">
-                <label for="break-time">Break</label>
-                <input type="number" id="break-time" value="5" min="1">
-                <span>min</span>
-            </div>
-        </div>
-
-        <div id="sports-settings" class="settings-panel">
-            <div class="input-group">
-                <label for="workout-time">Workout</label>
-                <input type="number" id="workout-time" value="45" min="0">
-                <span>sec</span>
-            </div>
-            <div class="input-group">
-                <label for="rest-time">Rest</label>
-                <input type="number" id="rest-time" value="15" min="0">
-                <span>sec</span>
-            </div>
-            <div class="input-group">
-                <label for="rounds">Rounds</label>
-                <input type="number" id="rounds" value="8" min="1">
+            
+            <div class="control-group">
+                <button class="control-btn" id="start-pause-btn">Start</button>
+                <button class="control-btn" id="reset-btn">Reset</button>
             </div>
         </div>
         
-        <!-- Main Controls -->
-        <div class="controls">
-            <button class="control-btn" id="start-pause-btn">Start</button>
-            <button class="control-btn" id="reset-btn">Reset</button>
-        </div>
     </div>
 
     <script>
@@ -272,8 +294,9 @@
         // --- Global State ---
         let mainTimerId = null;
         let isPaused = true;
+        let hasStarted = false; 
         let currentMode = 'pomodoro';
-        let targetTime = null; // NEW: The timestamp when the timer should end
+        let targetTime = null;
 
         // --- SVG Circle Calculations ---
         const radius = progressCircle.r.baseVal.value;
@@ -288,20 +311,37 @@
             timeLeftDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             
             let progress = (totalDuration - timeLeft) / totalDuration;
-            
+
             if (currentMode === 'pomodoro' && pomodoroState.mode === 'break') {
-                 progress = timeLeft / totalDuration;
+                const breakProgress = (pomodoroState.breakSec - timeLeft) / pomodoroState.breakSec;
+                if (breakProgress >= 0.9 && timeLeft > 0) {
+                    progressCircle.style.stroke = 'var(--warning-color)';
+                } else {
+                    progressCircle.style.stroke = 'var(--break-color)';
+                }
+                progress = timeLeft / totalDuration; 
+            } else if (currentMode === 'sports' && !sportsState.isWorkout) {
+                const restProgress = (sportsState.restSec - timeLeft) / sportsState.restSec;
+                if (restProgress >= 0.7 && timeLeft > 0) {
+                    progressCircle.style.stroke = 'var(--warning-color)';
+                } else {
+                    progressCircle.style.stroke = 'var(--break-color)';
+                }
+            } else {
+                progressCircle.style.stroke = 'var(--primary-color)';
             }
 
             const offset = circumference * (1 - progress);
             progressCircle.style.strokeDashoffset = offset;
         }
 
+
         function resetAllTimers() {
             clearInterval(mainTimerId);
             mainTimerId = null;
             targetTime = null;
             isPaused = true;
+            hasStarted = false;
             startPauseBtn.textContent = 'Start';
             progressDot.style.display = 'block';
             if (currentMode === 'pomodoro') pomodoroReset();
@@ -337,7 +377,6 @@
             pomodoroState.timeLeft = pomodoroState.workSec;
             pomodoroState.totalDuration = pomodoroState.workSec;
             modeDisplay.textContent = 'Work';
-            progressCircle.style.stroke = 'var(--primary-color)';
             updateDisplay(pomodoroState.timeLeft, pomodoroState.totalDuration);
         }
 
@@ -347,19 +386,13 @@
                 pomodoroState.timeLeft = pomodoroState.breakSec;
                 pomodoroState.totalDuration = pomodoroState.breakSec;
                 modeDisplay.textContent = 'Break';
-                progressCircle.style.stroke = 'var(--break-color)';
             } else {
                 pomodoroState.mode = 'work';
                 pomodoroState.timeLeft = pomodoroState.workSec;
                 pomodoroState.totalDuration = pomodoroState.workSec;
                 modeDisplay.textContent = 'Work';
-                progressCircle.style.stroke = 'var(--primary-color)';
             }
-            isPaused = true;
-            startPauseBtn.textContent = 'Start';
-            clearInterval(mainTimerId);
-            mainTimerId = null;
-            targetTime = null;
+            targetTime = Date.now() + pomodoroState.timeLeft * 1000;
             updateDisplay(pomodoroState.timeLeft, pomodoroState.totalDuration);
         }
 
@@ -368,9 +401,10 @@
             if (timeLeft <= 0) {
                 timeLeft = 0;
                 pomodoroSwitch();
+            } else { 
+                pomodoroState.timeLeft = timeLeft;
+                updateDisplay(timeLeft, pomodoroState.totalDuration);
             }
-            pomodoroState.timeLeft = timeLeft;
-            updateDisplay(timeLeft, pomodoroState.totalDuration);
         }
         
         // --- Sports Mode ---
@@ -386,7 +420,6 @@
             sportsState.timeLeft = sportsState.workoutSec;
             sportsState.totalDuration = sportsState.workoutSec;
             modeDisplay.textContent = `Round ${sportsState.currentRound}`;
-            progressCircle.style.stroke = 'var(--primary-color)';
             updateDisplay(sportsState.timeLeft, sportsState.totalDuration);
         }
 
@@ -396,7 +429,6 @@
                 sportsState.timeLeft = sportsState.restSec;
                 sportsState.totalDuration = sportsState.restSec;
                 modeDisplay.textContent = 'Rest';
-                progressCircle.style.stroke = 'var(--break-color)';
              } else {
                 sportsState.currentRound++;
                 if (sportsState.currentRound > sportsState.totalRounds) {
@@ -407,13 +439,9 @@
                 sportsState.timeLeft = sportsState.workoutSec;
                 sportsState.totalDuration = sportsState.workoutSec;
                 modeDisplay.textContent = `Round ${sportsState.currentRound}`;
-                progressCircle.style.stroke = 'var(--primary-color)';
              }
-             isPaused = true;
-             startPauseBtn.textContent = 'Start';
-             clearInterval(mainTimerId);
-             mainTimerId = null;
-             targetTime = null;
+             
+             targetTime = Date.now() + sportsState.timeLeft * 1000;
              updateDisplay(sportsState.timeLeft, sportsState.totalDuration);
         }
 
@@ -422,35 +450,36 @@
              if (timeLeft <= 0) {
                 timeLeft = 0;
                 sportsSwitch();
+             } else {
+                sportsState.timeLeft = timeLeft;
+                updateDisplay(timeLeft, sportsState.totalDuration);
              }
-             sportsState.timeLeft = timeLeft;
-             updateDisplay(timeLeft, sportsState.totalDuration);
         }
         
         // --- Main Event Listeners ---
         function startTimer() {
             isPaused = false;
+            hasStarted = true;
             startPauseBtn.textContent = 'Pause';
             progressDot.style.display = 'none';
             
-            if (currentMode === 'pomodoro') {
-                targetTime = Date.now() + pomodoroState.timeLeft * 1000;
-                mainTimerId = setInterval(pomodoroTick, 1000);
-            }
-            if (currentMode === 'sports') {
-                targetTime = Date.now() + sportsState.timeLeft * 1000;
-                mainTimerId = setInterval(sportsTick, 1000);
-            }
+            let currentLeft;
+            if (currentMode === 'pomodoro') currentLeft = pomodoroState.timeLeft;
+            if (currentMode === 'sports') currentLeft = sportsState.timeLeft;
+            
+            targetTime = Date.now() + currentLeft * 1000;
+
+            if (currentMode === 'pomodoro') mainTimerId = setInterval(pomodoroTick, 1000);
+            if (currentMode === 'sports') mainTimerId = setInterval(sportsTick, 1000);
         }
 
         function pauseTimer() {
              isPaused = true;
-             startPauseBtn.textContent = 'Start';
+             startPauseBtn.textContent = 'Continue';
              progressDot.style.display = 'none';
              clearInterval(mainTimerId);
              mainTimerId = null;
              
-             // Update timeLeft to the accurate remaining time
              if(targetTime) {
                 const timeLeftOnPause = Math.round((targetTime - Date.now()) / 1000);
                 if (currentMode === 'pomodoro') pomodoroState.timeLeft = timeLeftOnPause > 0 ? timeLeftOnPause : 0;
@@ -461,6 +490,10 @@
 
         startPauseBtn.addEventListener('click', () => {
             if (isPaused) {
+                if (!hasStarted) { 
+                     if (currentMode === 'pomodoro') pomodoroReset();
+                     if (currentMode === 'sports') sportsReset();
+                }
                 startTimer();
             } else {
                 pauseTimer();
@@ -468,7 +501,7 @@
         });
 
         resetBtn.addEventListener('click', resetAllTimers);
-        
+
         // --- Initial Setup ---
         window.onload = () => {
             resetAllTimers();
