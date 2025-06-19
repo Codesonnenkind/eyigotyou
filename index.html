@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EYIGOTYOU</title>
-    <link rel="icon" type="image/jpeg" href="https://www.dropbox.com/scl/fi/n2ez50rho6xydpma93sq2/500.jpeg?rlkey=8omntfna9sqvagk8p6cs7gjwh&raw=1">
+    <link rel="icon" type="image/jpeg" href="https://www.dropbox.com/scl/fi/n2ez50rho6xydpma93sq2/500.jpeg?rlkey=8omntfna9sqvagk8p6cs7gjwh&raw=1" onerror="this.onerror=null; this.src='https://placehold.co/32x32/0A0A0A/ffffff?text=E'">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -27,42 +27,79 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: auto; /* Allow scrolling for settings */
+            overflow: hidden; /* Prevent scrolling of the whole page */
             padding: 20px;
             box-sizing: border-box;
         }
-
+        
+        /* --- Corner Icons --- */
         .site-logo {
-            position: fixed; /* Position relative to the whole window */
-            top: 20px;
-            right: 20px;
-            width: 50px;
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            width: 45px;
             height: auto;
-            z-index: 100; /* Ensure it's on top of everything */
+            z-index: 100;
+        }
+        
+        .site-icon-left {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            width: 32px;
+            height: auto;
+            z-index: 100;
+            filter: invert(100%);
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+        
+        .site-icon-left:hover {
+            transform: scale(1.1);
+        }
+
+        #bell-icon {
+            top: 65px; /* Position below the first icon */
+        }
+
+        /* --- Main Module Containers --- */
+        .module {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+        }
+        
+        .hidden {
+            display: none;
         }
 
         .module-container {
             background-color: transparent;
             border: none;
-            padding: 5vw;
+            padding: 3vw;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 12px;
             position: relative;
             width: 90vw;
             max-width: 400px;
         }
-
+        
+        /* --- Timer Specific --- */
         .timer-container {
             position: relative;
             width: 70vw;
             height: 70vw;
-            max-width: 300px;
-            max-height: 300px;
+            max-width: 250px;
+            max-height: 250px;
             display: flex;
             justify-content: center;
             align-items: center;
+            cursor: default;
         }
 
         .timer-svg {
@@ -71,12 +108,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            transform: rotate(135deg); 
-            transition: transform 0.5s ease-in-out;
         }
-        
-        .timer-svg.counter-clockwise {
-            transform: rotate(135deg) scaleX(-1);
+
+        #timer-module .timer-svg {
+             transform: rotate(135deg); 
         }
 
         .timer-circle {
@@ -105,7 +140,7 @@
         
         #time-left {
             z-index: 1; 
-            font-size: 12vw;
+            font-size: clamp(2.2rem, 10vw, 3.2rem);
             font-weight: 700;
             letter-spacing: 0.1em;
             color: var(--primary-color);
@@ -113,19 +148,53 @@
         
         #mode-display {
             z-index: 2;
-            font-size: 1rem;
+            font-size: 0.8rem;
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.2em;
             color: var(--secondary-color);
             transition: color 0.5s ease-in-out;
             text-align: center;
+            height: 1em; /* Reserve space */
         }
         
+        /* --- Metronome Specific --- */
+        .metronome-display {
+            width: 70vw;
+            height: 70vw;
+            max-width: 250px;
+            max-height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            border: 12px solid rgba(136, 136, 136, 0.1);
+            border-radius: 50%;
+            transition: border-color 0.1s ease, background-color 0.1s ease, transform 0.1s ease-out;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            box-sizing: border-box; /* Ensures border is included in width/height */
+        }
+
+        #bpm-display {
+            font-size: clamp(2.8rem, 11vw, 3.8rem);
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        #bpm-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--secondary-color);
+        }
+        
+        /* --- Generic Controls --- */
         .control-panel {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 10px;
             width: 100%;
             max-width: 300px;
         }
@@ -133,37 +202,28 @@
         .control-group {
             display: flex;
             border: 2px solid var(--secondary-color);
+            overflow: hidden;
         }
         
-        .mode-btn, .control-btn, .setting-item {
+        .control-btn, .mode-btn, .setting-item {
             background-color: transparent;
             border: none;
             color: var(--secondary-color);
-            padding: 12px;
+            padding: 8px;
             font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             font-weight: 600;
             text-transform: uppercase;
             transition: all 0.2s ease-in-out;
             display: flex;
             align-items: center;
             justify-content: center; 
-            gap: 10px;
-        }
-        
-        .mode-btn, .control-btn {
+            gap: 8px;
             cursor: pointer;
+            flex: 1; /* Default flex behavior */
         }
         
-        /* Asymmetrical Sizing and Alignment */
-        .mode-btn, .control-btn, .setting-item { flex-basis: 33.33%; }
-        .mode-btn[data-mode="pomodoro"], #start-pause-btn, .setting-item.label { 
-            flex-basis: 66.67%;
-            justify-content: flex-start; /* Left-align the text in the larger box */
-            padding-left: 20px; /* Add padding to the left */
-        }
-
-        .mode-btn:not(:last-child), .control-btn:not(:last-child), .setting-item:not(:last-child) {
+        .control-group > *:not(:last-child) {
              border-right: 2px solid var(--secondary-color);
         }
 
@@ -172,169 +232,282 @@
             color: var(--background-color);
         }
         
-        .control-btn:hover, .mode-btn:not(:active):hover {
+        .control-btn:hover, .mode-btn:not(.active):hover, .back-button:hover, #reset-metronome:hover {
             color: var(--primary-color);
         }
 
-        .settings-panel {
-            display: none; /* Hidden by default */
-            width: 100%;
-            flex-direction: column;
-            gap: 15px;
+        /* --- Asymmetrical Sizing & Layout --- */
+        .mode-btn[data-mode="pomodoro"], #start-pause-btn, .setting-item.label { 
+            flex-grow: 2;
+            justify-content: flex-start;
+            padding-left: 15px;
         }
-        .settings-panel.active {
-            display: flex;
+
+        #play-stop-metronome, .back-button {
+            flex-basis: 100%;
+            justify-content: center;
+        }
+
+        #reset-metronome {
+            flex-grow: 1;
+            flex-basis: 0;
+        }
+        #bpm-slider-container {
+            flex-grow: 2;
+            flex-basis: 0;
         }
         
+        /* --- Sliders and Inputs --- */
+        #settings-container {
+             position: relative;
+             height: 125px; /* Fixed height for 3 rows of compact controls */
+        }
+
+        .settings-panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+        }
+        .settings-panel.active { 
+            opacity: 1;
+            visibility: visible;
+         }
+        
         .setting-item.label span {
-            font-size: 0.7rem; /* Smaller unit label */
+            font-size: 0.7rem;
             font-weight: 400;
             opacity: 0.7;
             margin-left: 5px;
         }
         
-        .settings-panel input {
+        .settings-panel input[type="number"] {
             background-color: transparent;
-            border: none; /* Removed border */
+            border: none;
             color: var(--primary-color);
             padding: 0;
             width: 40px;
             text-align: center;
             font-family: inherit;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             font-weight: 500;
+            outline: none;
         }
-        /* Hide number input arrows */
+        input[type=number] { -moz-appearance: textfield; }
         input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        
+        #bpm-slider {
             -webkit-appearance: none;
-            margin: 0; 
+            appearance: none;
+            width: 100%;
+            height: 4px;
+            background: var(--secondary-color);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+            border-radius: 2px;
         }
-        input[type=number] {
-            -moz-appearance: textfield;
+        #bpm-slider:hover { opacity: 1; }
+        #bpm-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 18px; height: 18px;
+            background: var(--primary-color);
+            cursor: pointer;
+            border-radius: 50%;
         }
-        
-        /* Media Queries for Responsiveness */
-        @media (min-width: 600px) {
-             #time-left {
-                font-size: 3.2rem; /* Cap font size on larger screens */
-            }
+        #bpm-slider::-moz-range-thumb {
+            width: 18px; height: 18px;
+            background: var(--primary-color);
+            cursor: pointer;
+            border-radius: 50%;
+            border: none;
         }
-        
     </style>
 </head>
 <body>
     
-    <img src="https://www.dropbox.com/scl/fi/n2ez50rho6xydpma93sq2/500.jpeg?rlkey=8omntfna9sqvagk8p6cs7gjwh&raw=1" alt="Logo" class="site-logo">
+    <img src="https://www.dropbox.com/scl/fi/5b4motyxla5bkgbk1c3d0/metronome-svgrepo-com.svg?rlkey=w161g2mtryo635255gqooha7z&raw=1" alt="Metronome Icon" class="site-icon-left" id="metronome-icon" onerror="this.style.display='none'">
+    <img src="https://www.dropbox.com/scl/fi/1m4jb4opjgtxoy6yz2yf0/bell-svgrepo-com.svg?rlkey=8po6w24uqopz056gd5vwk42o2&raw=1" alt="Bell Icon" class="site-icon-left" id="bell-icon" onerror="this.style.display='none'">
+    <img src="https://www.dropbox.com/scl/fi/y2i8ul09le7i5v03lehma/500.png?rlkey=rbh2kx5rbcgmgowl49ceb9tpv&raw=1" alt="Logo" class="site-logo" id="main-logo" onerror="this.style.display='none'">
 
-    <div class="module-container">
-        <!-- Timer Display (Visible in all modes) -->
-        <div class="timer-container">
-            <svg class="timer-svg" viewBox="0 0 100 100">
-                <circle class="timer-circle" id="timer-track" cx="50" cy="50" r="45"></circle>
-                <circle class="timer-circle" id="timer-progress" cx="50" cy="50" r="45"></circle>
-                <circle id="progress-dot" cx="95" cy="50" r="2"></circle>
-            </svg>
-            <div id="time-left">25:00</div>
-        </div>
-        <div id="mode-display">Work</div>
-        
-        <div class="control-panel">
-            <div class="control-group">
-                <button class="mode-btn active" data-mode="pomodoro">Pomodoro</button>
-                <button class="mode-btn" data-mode="sports">Sports</button>
+    <!-- Timer Module -->
+    <div id="timer-module" class="module">
+        <div class="module-container">
+            <div class="timer-container">
+                <svg class="timer-svg" viewBox="0 0 100 100">
+                    <circle class="timer-circle" id="timer-track" cx="50" cy="50" r="45"></circle>
+                    <circle class="timer-circle" id="timer-progress" cx="50" cy="50" r="45"></circle>
+                    <circle id="progress-dot" cx="95" cy="50" r="2"></circle>
+                </svg>
+                <div id="time-left">25:00</div>
             </div>
-            
-            <div id="pomodoro-settings" class="settings-panel active">
-                <div class="control-group">
-                    <div class="setting-item label">WORK <span>(MIN)</span></div>
-                    <div class="setting-item"><input type="number" id="work-time" value="25" min="1"></div>
+            <div id="mode-display">Work</div>
+            <div class="control-panel">
+                <div class="control-group"><button class="mode-btn active" data-mode="pomodoro">Pomodoro</button><button class="mode-btn" data-mode="sports">Sports</button></div>
+                <div id="settings-container">
+                    <div id="pomodoro-settings" class="settings-panel active">
+                        <div class="control-group"><div class="setting-item label">WORK <span>(MIN)</span></div><div class="setting-item"><input type="number" id="work-time" value="25" min="1"></div></div>
+                        <div class="control-group"><div class="setting-item label">BREAK <span>(MIN)</span></div><div class="setting-item"><input type="number" id="break-time" value="5" min="1"></div></div>
+                    </div>
+                    <div id="sports-settings" class="settings-panel">
+                        <div class="control-group"><div class="setting-item label">Workout <span>(SEC)</span></div><div class="setting-item"><input type="number" id="workout-time" value="45" min="0"></div></div>
+                        <div class="control-group"><div class="setting-item label">Rest <span>(SEC)</span></div><div class="setting-item"><input type="number" id="rest-time" value="15" min="0"></div></div>
+                        <div class="control-group"><div class="setting-item label">Rounds</div><div class="setting-item"><input type="number" id="rounds" value="8" min="1"></div></div>
+                    </div>
                 </div>
-                 <div class="control-group">
-                    <div class="setting-item label">BREAK <span>(MIN)</span></div>
-                    <div class="setting-item"><input type="number" id="break-time" value="5" min="1"></div>
-                </div>
-            </div>
-
-            <div id="sports-settings" class="settings-panel">
-                 <div class="control-group">
-                    <div class="setting-item label">Workout <span>(SEC)</span></div>
-                    <div class="setting-item"><input type="number" id="workout-time" value="45" min="0"></div>
-                </div>
-                <div class="control-group">
-                    <div class="setting-item label">Rest <span>(SEC)</span></div>
-                    <div class="setting-item"><input type="number" id="rest-time" value="15" min="0"></div>
-                </div>
-                <div class="control-group">
-                    <div class="setting-item label">Rounds</div>
-                    <div class="setting-item"><input type="number" id="rounds" value="8" min="1"></div>
-                </div>
-            </div>
-            
-            <div class="control-group">
-                <button class="control-btn" id="start-pause-btn">Start</button>
-                <button class="control-btn" id="reset-btn">Reset</button>
+                <div class="control-group"><button class="control-btn" id="start-pause-btn">Start</button><button class="control-btn" id="reset-btn">Reset</button></div>
             </div>
         </div>
-        
+    </div>
+
+    <!-- Metronome Module -->
+    <div id="metronome-module" class="module hidden">
+        <div class="module-container">
+            <div id="metronome-tap-area" class="metronome-display">
+                <div id="bpm-display">120</div>
+                <div id="bpm-label">BPM</div>
+            </div>
+            <div id="metronome-mode-display" class="mode-display">Metronome</div>
+             <div class="control-panel">
+                 <div class="control-group">
+                    <button class="control-btn" id="play-stop-metronome">Play</button>
+                </div>
+                <div class="control-group">
+                    <button class="control-btn" id="reset-metronome">Reset</button>
+                    <div class="setting-item" id="bpm-slider-container">
+                        <input type="range" min="40" max="220" value="120" id="bpm-slider">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <button class="control-btn back-button" id="back-to-timer-from-metro">Back to Timer</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        // --- DOM Elements ---
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // --- Module Switching Elements ---
+        const timerModule = document.getElementById('timer-module');
+        const metronomeModule = document.getElementById('metronome-module');
+        const metronomeIcon = document.getElementById('metronome-icon');
+        const bellIcon = document.getElementById('bell-icon');
+        const mainLogo = document.getElementById('main-logo');
+        const backToTimerFromMetroBtn = document.getElementById('back-to-timer-from-metro');
+        
+        // --- Timer Elements ---
         const timeLeftDisplay = document.getElementById('time-left');
         const startPauseBtn = document.getElementById('start-pause-btn');
         const resetBtn = document.getElementById('reset-btn');
         const progressCircle = document.getElementById('timer-progress');
         const modeDisplay = document.getElementById('mode-display');
-        const timerSvg = document.querySelector('.timer-svg'); 
         const progressDot = document.getElementById('progress-dot');
         const modeBtns = document.querySelectorAll('.mode-btn');
-        const settingsPanels = document.querySelectorAll('.settings-panel');
+        const allTimerInputs = document.querySelectorAll('#timer-module .settings-panel input');
+        const pomodoroSettings = document.getElementById('pomodoro-settings');
+        const sportsSettings = document.getElementById('sports-settings');
 
-        // --- Global State ---
+        // --- Metronome Elements ---
+        const bpmDisplay = document.getElementById('bpm-display');
+        const bpmSlider = document.getElementById('bpm-slider');
+        const playStopMetronomeBtn = document.getElementById('play-stop-metronome');
+        const visualBeatIndicator = document.getElementById('metronome-tap-area');
+        const resetMetronomeBtn = document.getElementById('reset-metronome');
+
+        // --- Timer State ---
         let mainTimerId = null;
         let isPaused = true;
         let hasStarted = false; 
         let currentMode = 'pomodoro';
         let targetTime = null;
+        let pomodoroState = {};
+        let sportsState = {};
 
-        // --- SVG Circle Calculations ---
+        // --- Metronome State ---
+        let audioContext;
+        let bpm = 120;
+        let isMetronomePlaying = false;
+        let schedulerTimerID;
+        let beatNumber = 1; 
+        const beatsPerMeasure = 4;
+        let tapTimestamps = [];
+        let tapTimeoutId = null;
+        
+        // --- Notification State ---
+        let isSoundEnabled = true;
+        const bellEnabledSrc = "https://www.dropbox.com/scl/fi/1m4jb4opjgtxoy6yz2yf0/bell-svgrepo-com.svg?rlkey=8po6w24uqopz056gd5vwk42o2&raw=1";
+        const bellDisabledSrc = "https://www.dropbox.com/scl/fi/syg6jjwvngtxl1mwk0hdv/bell-disabled-svgrepo-com.svg?rlkey=lrawxg597knm9h8jifkw21ngj&raw=1";
+
+
+        // --- 1. Module Switching Logic ---
+        function showModule(moduleToShow) {
+            [timerModule, metronomeModule].forEach(module => {
+                module.classList.add('hidden');
+            });
+            moduleToShow.classList.remove('hidden');
+
+            const isTimerModule = moduleToShow === timerModule;
+            mainLogo.classList.toggle('hidden', !isTimerModule);
+            metronomeIcon.classList.toggle('hidden', !isTimerModule);
+            bellIcon.classList.toggle('hidden', !isTimerModule);
+        }
+
+        metronomeIcon.addEventListener('click', () => showModule(metronomeModule));
+        backToTimerFromMetroBtn.addEventListener('click', () => {
+             if (isMetronomePlaying) stopMetronome();
+            showModule(timerModule);
+        });
+        
+        bellIcon.addEventListener('click', () => {
+            isSoundEnabled = !isSoundEnabled;
+            bellIcon.src = isSoundEnabled ? bellEnabledSrc : bellDisabledSrc;
+        });
+
+
+        // --- 2. Timer Logic ---
         const radius = progressCircle.r.baseVal.value;
         const circumference = 2 * Math.PI * radius;
         progressCircle.style.strokeDasharray = circumference;
+        
+        function playSound(frequency) {
+            if (!isSoundEnabled) return;
+            initAudioContext();
+            if(!audioContext) return; // Exit if context couldn't be created
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.frequency.value = frequency;
+            osc.type = 'sine';
+            gain.gain.setValueAtTime(0.5, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.5);
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            osc.start(audioContext.currentTime);
+            osc.stop(audioContext.currentTime + 0.5);
+        }
 
-        // --- Generic Timer Logic ---
         function updateDisplay(timeLeft, totalDuration) {
             if (totalDuration <= 0) totalDuration = 1;
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
             timeLeftDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            
             let progress = (totalDuration - timeLeft) / totalDuration;
-
-            if (currentMode === 'pomodoro' && pomodoroState.mode === 'break') {
-                const breakProgress = (pomodoroState.breakSec - timeLeft) / pomodoroState.breakSec;
-                if (breakProgress >= 0.9 && timeLeft > 0) {
-                    progressCircle.style.stroke = 'var(--warning-color)';
-                } else {
-                    progressCircle.style.stroke = 'var(--break-color)';
-                }
-                progress = timeLeft / totalDuration; 
-            } else if (currentMode === 'sports' && !sportsState.isWorkout) {
-                const restProgress = (sportsState.restSec - timeLeft) / sportsState.restSec;
-                if (restProgress >= 0.7 && timeLeft > 0) {
-                    progressCircle.style.stroke = 'var(--warning-color)';
-                } else {
-                    progressCircle.style.stroke = 'var(--break-color)';
-                }
+            if ((currentMode === 'pomodoro' && pomodoroState.mode === 'break') || (currentMode === 'sports' && !sportsState.isWorkout)) {
+                progress = timeLeft / totalDuration;
+                progressCircle.style.stroke = 'var(--break-color)';
             } else {
                 progressCircle.style.stroke = 'var(--primary-color)';
             }
-
             const offset = circumference * (1 - progress);
             progressCircle.style.strokeDashoffset = offset;
         }
-
 
         function resetAllTimers() {
             clearInterval(mainTimerId);
@@ -344,36 +517,33 @@
             hasStarted = false;
             startPauseBtn.textContent = 'Start';
             progressDot.style.display = 'block';
+            progressCircle.style.strokeDashoffset = circumference;
             if (currentMode === 'pomodoro') pomodoroReset();
             if (currentMode === 'sports') sportsReset();
         }
 
-        // --- Mode Switching ---
+        allTimerInputs.forEach(input => input.addEventListener('change', () => { if(!hasStarted) resetAllTimers(); }));
         modeBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const mode = btn.dataset.mode;
                 if (mode === currentMode) return;
                 currentMode = mode;
-                
                 modeBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-
-                settingsPanels.forEach(p => p.classList.remove('active'));
-                document.getElementById(`${mode}-settings`).classList.add('active');
                 
+                if (mode === 'pomodoro') {
+                    pomodoroSettings.classList.add('active');
+                    sportsSettings.classList.remove('active');
+                } else {
+                    pomodoroSettings.classList.remove('active');
+                    sportsSettings.classList.add('active');
+                }
                 resetAllTimers();
             });
         });
 
-        // --- Pomodoro Mode ---
-        let pomodoroState = {};
-
         function pomodoroReset() {
-            pomodoroState = {
-                workSec: parseInt(document.getElementById('work-time').value, 10) * 60,
-                breakSec: parseInt(document.getElementById('break-time').value, 10) * 60,
-                mode: 'work'
-            };
+            pomodoroState = { workSec: parseInt(document.getElementById('work-time').value, 10) * 60, breakSec: parseInt(document.getElementById('break-time').value, 10) * 60, mode: 'work' };
             pomodoroState.timeLeft = pomodoroState.workSec;
             pomodoroState.totalDuration = pomodoroState.workSec;
             modeDisplay.textContent = 'Work';
@@ -381,42 +551,28 @@
         }
 
         function pomodoroSwitch() {
-            if (pomodoroState.mode === 'work') {
-                pomodoroState.mode = 'break';
-                pomodoroState.timeLeft = pomodoroState.breakSec;
-                pomodoroState.totalDuration = pomodoroState.breakSec;
-                modeDisplay.textContent = 'Break';
-            } else {
-                pomodoroState.mode = 'work';
-                pomodoroState.timeLeft = pomodoroState.workSec;
-                pomodoroState.totalDuration = pomodoroState.workSec;
-                modeDisplay.textContent = 'Work';
+            // Play sound based on the upcoming mode
+            if (pomodoroState.mode === 'work') { // Ending work, starting break
+                playSound(523.25); // Lower pitch (C5)
+            } else { // Ending break, starting work
+                playSound(783.99); // Higher pitch (G5)
             }
+            pomodoroState.mode = pomodoroState.mode === 'work' ? 'break' : 'work';
+            pomodoroState.timeLeft = pomodoroState.mode === 'work' ? pomodoroState.workSec : pomodoroState.breakSec;
+            pomodoroState.totalDuration = pomodoroState.timeLeft;
+            modeDisplay.textContent = pomodoroState.mode === 'work' ? 'Work' : 'Break';
             targetTime = Date.now() + pomodoroState.timeLeft * 1000;
             updateDisplay(pomodoroState.timeLeft, pomodoroState.totalDuration);
         }
 
         function pomodoroTick() {
             let timeLeft = Math.round((targetTime - Date.now()) / 1000);
-            if (timeLeft <= 0) {
-                timeLeft = 0;
-                pomodoroSwitch();
-            } else { 
-                pomodoroState.timeLeft = timeLeft;
-                updateDisplay(timeLeft, pomodoroState.totalDuration);
-            }
+            if (timeLeft <= 0) { timeLeft = 0; pomodoroSwitch(); }
+            else { pomodoroState.timeLeft = timeLeft; updateDisplay(timeLeft, pomodoroState.totalDuration); }
         }
-        
-        // --- Sports Mode ---
-        let sportsState = {};
+
         function sportsReset() {
-            sportsState = {
-                workoutSec: parseInt(document.getElementById('workout-time').value, 10),
-                restSec: parseInt(document.getElementById('rest-time').value, 10),
-                totalRounds: parseInt(document.getElementById('rounds').value, 10),
-                currentRound: 1,
-                isWorkout: true,
-            };
+            sportsState = { workoutSec: parseInt(document.getElementById('workout-time').value, 10), restSec: parseInt(document.getElementById('rest-time').value, 10), totalRounds: parseInt(document.getElementById('rounds').value, 10), currentRound: 1, isWorkout: true, };
             sportsState.timeLeft = sportsState.workoutSec;
             sportsState.totalDuration = sportsState.workoutSec;
             modeDisplay.textContent = `Round ${sportsState.currentRound}`;
@@ -424,89 +580,209 @@
         }
 
         function sportsSwitch() {
-             if (sportsState.isWorkout) {
+             if (sportsState.isWorkout) { // Ending workout, starting rest
+                playSound(523.25); // Lower pitch
                 sportsState.isWorkout = false;
                 sportsState.timeLeft = sportsState.restSec;
-                sportsState.totalDuration = sportsState.restSec;
                 modeDisplay.textContent = 'Rest';
-             } else {
+             } else { // Ending rest, starting workout
+                playSound(783.99); // Higher pitch
                 sportsState.currentRound++;
-                if (sportsState.currentRound > sportsState.totalRounds) {
-                    resetAllTimers();
-                    return;
-                }
+                if (sportsState.currentRound > sportsState.totalRounds) { modeDisplay.textContent = 'Complete!'; resetAllTimers(); return; }
                 sportsState.isWorkout = true;
                 sportsState.timeLeft = sportsState.workoutSec;
-                sportsState.totalDuration = sportsState.workoutSec;
                 modeDisplay.textContent = `Round ${sportsState.currentRound}`;
              }
-             
+             sportsState.totalDuration = sportsState.timeLeft;
              targetTime = Date.now() + sportsState.timeLeft * 1000;
              updateDisplay(sportsState.timeLeft, sportsState.totalDuration);
         }
 
         function sportsTick() {
-             let timeLeft = Math.round((targetTime - Date.now()) / 1000);
-             if (timeLeft <= 0) {
-                timeLeft = 0;
-                sportsSwitch();
-             } else {
-                sportsState.timeLeft = timeLeft;
-                updateDisplay(timeLeft, sportsState.totalDuration);
-             }
+            let timeLeft = Math.round((targetTime - Date.now()) / 1000);
+            if (timeLeft <= 0) { timeLeft = 0; sportsSwitch(); }
+            else { sportsState.timeLeft = timeLeft; updateDisplay(timeLeft, sportsState.totalDuration); }
         }
         
-        // --- Main Event Listeners ---
         function startTimer() {
             isPaused = false;
             hasStarted = true;
             startPauseBtn.textContent = 'Pause';
             progressDot.style.display = 'none';
-            
-            let currentLeft;
-            if (currentMode === 'pomodoro') currentLeft = pomodoroState.timeLeft;
-            if (currentMode === 'sports') currentLeft = sportsState.timeLeft;
-            
+            let currentLeft = currentMode === 'pomodoro' ? pomodoroState.timeLeft : sportsState.timeLeft;
             targetTime = Date.now() + currentLeft * 1000;
-
-            if (currentMode === 'pomodoro') mainTimerId = setInterval(pomodoroTick, 1000);
-            if (currentMode === 'sports') mainTimerId = setInterval(sportsTick, 1000);
+            mainTimerId = setInterval(currentMode === 'pomodoro' ? pomodoroTick : sportsTick, 1000);
         }
 
         function pauseTimer() {
              isPaused = true;
              startPauseBtn.textContent = 'Continue';
-             progressDot.style.display = 'none';
+             progressDot.style.display = 'block';
              clearInterval(mainTimerId);
              mainTimerId = null;
-             
              if(targetTime) {
                 const timeLeftOnPause = Math.round((targetTime - Date.now()) / 1000);
-                if (currentMode === 'pomodoro') pomodoroState.timeLeft = timeLeftOnPause > 0 ? timeLeftOnPause : 0;
-                if (currentMode === 'sports') sportsState.timeLeft = timeLeftOnPause > 0 ? timeLeftOnPause : 0;
+                const timeToSave = timeLeftOnPause > 0 ? timeLeftOnPause : 0;
+                if (currentMode === 'pomodoro') pomodoroState.timeLeft = timeToSave;
+                if (currentMode === 'sports') sportsState.timeLeft = timeToSave;
              }
              targetTime = null;
         }
 
         startPauseBtn.addEventListener('click', () => {
             if (isPaused) {
-                if (!hasStarted) { 
-                     if (currentMode === 'pomodoro') pomodoroReset();
-                     if (currentMode === 'sports') sportsReset();
-                }
+                if (!hasStarted) { if (currentMode === 'pomodoro') pomodoroReset(); if (currentMode === 'sports') sportsReset(); }
                 startTimer();
             } else {
                 pauseTimer();
             }
         });
-
         resetBtn.addEventListener('click', resetAllTimers);
+
+
+        // --- 3. Metronome Logic ---
+        function initAudioContext() {
+            if (!audioContext) {
+                try {
+                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                } catch(e) {
+                    console.error("Web Audio API is not supported in this browser");
+                }
+            }
+        }
+
+        function scheduleTick(time, currentBeat) {
+            if(!audioContext) return;
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            
+            osc.frequency.value = (currentBeat === 1) ? 1760 : 880; 
+
+            gain.gain.setValueAtTime(1, time);
+            gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            osc.start(time);
+            osc.stop(time + 0.05);
+
+            setTimeout(() => {
+                if (currentBeat === 1) {
+                    visualBeatIndicator.style.borderColor = 'var(--break-color)';
+                    visualBeatIndicator.style.transform = 'scale(1.05)';
+                } else {
+                    visualBeatIndicator.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                }
+                
+                setTimeout(() => {
+                    visualBeatIndicator.style.borderColor = ''; 
+                    visualBeatIndicator.style.backgroundColor = ''; 
+                    visualBeatIndicator.style.transform = ''; 
+                }, 80);
+
+            }, (time - audioContext.currentTime) * 1000);
+        }
+
+        function scheduler() {
+            let nextNoteTime = audioContext.currentTime;
+            const scheduleAheadTime = 0.1;
+
+            function scheduleLoop() {
+                while (nextNoteTime < audioContext.currentTime + scheduleAheadTime) {
+                    scheduleTick(nextNoteTime, beatNumber);
+                    nextNoteTime += 60.0 / bpm;
+                    beatNumber++;
+                    if (beatNumber > beatsPerMeasure) {
+                        beatNumber = 1;
+                    }
+                }
+            }
+            schedulerTimerID = setInterval(scheduleLoop, 25);
+        }
+
+        function playMetronome() {
+            initAudioContext();
+            if(!audioContext) return;
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            isMetronomePlaying = true;
+            playStopMetronomeBtn.textContent = 'Stop';
+            beatNumber = 1; 
+            scheduler();
+        }
+
+        function stopMetronome() {
+            isMetronomePlaying = false;
+            playStopMetronomeBtn.textContent = 'Play';
+            clearInterval(schedulerTimerID);
+        }
+
+        function handleBpmTap() {
+            const now = Date.now();
+            clearTimeout(tapTimeoutId);
+            tapTimestamps.push(now);
+            
+            if (tapTimestamps.length > 5) {
+                tapTimestamps.shift();
+            }
+
+            if (tapTimestamps.length > 1) {
+                const intervals = [];
+                for (let i = 1; i < tapTimestamps.length; i++) {
+                    intervals.push(tapTimestamps[i] - tapTimestamps[i-1]);
+                }
+                const averageInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+                if (averageInterval > 0) {
+                    let newBpm = Math.round(60000 / averageInterval);
+                    const minBpm = parseInt(bpmSlider.min, 10);
+                    const maxBpm = parseInt(bpmSlider.max, 10);
+                    newBpm = Math.max(minBpm, Math.min(maxBpm, newBpm));
+
+                    bpm = newBpm;
+                    bpmDisplay.textContent = bpm;
+                    bpmSlider.value = bpm;
+                }
+            }
+            
+            tapTimeoutId = setTimeout(() => {
+                tapTimestamps = [];
+            }, 2000); 
+        }
+
+        function resetMetronome() {
+             if (isMetronomePlaying) {
+                stopMetronome();
+            }
+            bpm = 120;
+            bpmDisplay.textContent = bpm;
+            bpmSlider.value = bpm;
+            tapTimestamps = [];
+            clearTimeout(tapTimeoutId);
+        }
+
+        playStopMetronomeBtn.addEventListener('click', () => {
+            if (isMetronomePlaying) {
+                stopMetronome();
+            } else {
+                playMetronome();
+            }
+        });
+
+        bpmSlider.addEventListener('input', (e) => {
+            bpm = e.target.value;
+            bpmDisplay.textContent = bpm;
+        });
+
+        visualBeatIndicator.addEventListener('click', handleBpmTap);
+        
+        resetMetronomeBtn.addEventListener('click', resetMetronome);
 
         // --- Initial Setup ---
         window.onload = () => {
             resetAllTimers();
         };
 
+    });
     </script>
 </body>
 </html>
