@@ -86,16 +86,16 @@
             gap: 12px;
             position: relative;
             width: 90vw;
-            max-width: 400px;
+            max-width: 320px; /* Reduced max-width for more compact layout */
         }
         
         /* --- Timer Specific --- */
         .timer-container {
             position: relative;
-            width: 70vw;
-            height: 70vw;
-            max-width: 250px;
-            max-height: 250px;
+            width: 65vw; /* Reduced size */
+            height: 65vw;
+            max-width: 240px; /* Reduced max size */
+            max-height: 240px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -140,7 +140,7 @@
         
         #time-left {
             z-index: 1; 
-            font-size: clamp(2.2rem, 10vw, 3.2rem);
+            font-size: clamp(2rem, 10vw, 3rem); /* Slightly smaller font */
             font-weight: 700;
             letter-spacing: 0.1em;
             color: var(--primary-color);
@@ -160,10 +160,10 @@
         
         /* --- Metronome Specific --- */
         .metronome-display {
-            width: 70vw;
-            height: 70vw;
-            max-width: 250px;
-            max-height: 250px;
+            width: 65vw; /* Reduced size to match timer */
+            height: 65vw;
+            max-width: 240px;
+            max-height: 240px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -178,7 +178,7 @@
         }
 
         #bpm-display {
-            font-size: clamp(2.8rem, 11vw, 3.8rem);
+            font-size: clamp(2.5rem, 11vw, 3.5rem); /* Slightly smaller font */
             font-weight: 700;
             color: var(--primary-color);
         }
