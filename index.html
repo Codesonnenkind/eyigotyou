@@ -8,7 +8,7 @@
     <link rel="icon" type="image/jpeg" href="https://www.dropbox.com/scl/fi/n2ez50rho6xydpma93sq2/500.jpeg?rlkey=8omntfna9sqvagk8p6cs7gjwh&raw=1" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>E</text></svg>'">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --background-color: #0A0A0A;
@@ -16,12 +16,12 @@
             --secondary-color: #888888;
             --accent-color: #1E8449; /* Green for breaks and positive actions */
             --warning-color: #EF4444; /* Red for alerts */
-            /* UPDATED: Colors for Camelot Wheel sequence */
             --camelot-highlight-strong: #1E8449;
-            --camelot-highlight-soft: rgba(30, 132, 73, 0.7); /* For standard key mode */
-            --camelot-sequence-step1: rgba(30, 132, 73, 0.7); /* '4' key */
-            --camelot-sequence-step2: rgba(30, 132, 73, 0.4); /* '9' key */
-            --camelot-switch-key-color: #6A0000; /* Darker Red for '2' key */
+            --camelot-highlight-soft: rgba(30, 132, 73, 0.7);
+            --camelot-sequence-step1: rgba(30, 132, 73, 0.7);
+            --camelot-sequence-step2: rgba(30, 132, 73, 0.4);
+            /* MODIFIED: Changed switch key color to a subtle gray */
+            --camelot-switch-key-color: #454545;
         }
 
         html, body {
@@ -51,7 +51,7 @@
             overflow-y: auto;
         }
         
-        /* --- Corner Icons (RESTORED to original) --- */
+        /* --- Corner Icons --- */
         .site-logo {
             position: fixed;
             top: 15px;
@@ -78,10 +78,15 @@
         }
 
         #bell-icon {
-            top: 65px; /* Position below the first icon */
+            top: 65px; 
         }
 
-        /* --- UPDATED: New Layout Structure for Sticky Header --- */
+        #color-checker-icon {
+            top: 115px;
+        }
+
+
+        /* --- Layout Structure --- */
         .sticky-wrapper {
             position: -webkit-sticky;
             position: sticky;
@@ -109,7 +114,7 @@
             display: none;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             width: 100%;
         }
 
@@ -119,6 +124,10 @@
 
         .sticky-display {
             display: none;
+            height: 100%;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
         }
         .sticky-display.active {
             display: flex;
@@ -179,7 +188,7 @@
             color: var(--primary-color);
         }
         
-        #mode-display, #calc-view-title, #camelot-view-title {
+        #mode-display, #calc-view-title, #camelot-view-title, #color-checker-title, #metronome-view-title {
             z-index: 2;
             font-size: 0.7rem;
             font-weight: 700;
@@ -192,6 +201,10 @@
             margin-bottom: 15px; /* Increased margin */
         }
         
+        #timer-controls #mode-display {
+            cursor: pointer;
+        }
+
         /* --- Metronome Specific --- */
         .metronome-display {
             width: 65vw; 
@@ -270,34 +283,33 @@
             color: var(--primary-color);
         }
 
-        .mode-btn[data-mode="pomodoro"], #start-pause-btn, .setting-item.label { 
+        .mode-btn[data-mode="pomodoro"], #start-pause-btn, .setting-item.label, #play-stop-metronome { 
             flex-grow: 2;
             justify-content: flex-start;
             padding-left: 15px;
         }
         
-        /* UPDATED: Pomodoro start mode selectors are now clickable */
         #pomodoro-settings .setting-item.label {
             cursor: pointer;
         }
 
-        #play-stop-metronome, .back-button { flex-basis: 100%; justify-content: center; }
+        .back-button { flex-basis: 100%; justify-content: center; }
         #reset-metronome { flex-grow: 1; flex-basis: 0; }
-        #bpm-slider-container { flex-grow: 2; flex-basis: 0; }
+        #bpm-slider-container { flex-grow: 1; padding: 0 8px; }
         
         #settings-container { position: relative; height: 125px; }
         
-        #timer-options-wrapper {
+        .options-wrapper {
             display: flex;
             flex-direction: column;
             gap: 10px;
             width: 100%;
-            max-height: 180px; /* Adjust to fit content */
+            max-height: 180px;
             overflow: hidden;
             transition: max-height 0.5s ease-in-out, gap 0.5s ease-in-out;
         }
 
-        #timer-options-wrapper.hidden {
+        .options-wrapper.hidden {
             max-height: 0;
             gap: 0;
         }
@@ -319,18 +331,19 @@
         input[type=number] { -moz-appearance: textfield; }
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        
         #bpm-slider {
-            -webkit-appearance: none; appearance: none; width: 100%; height: 4px;
+            -webkit-appearance: none; appearance: none; width: 100%; height: 8px;
             background: var(--secondary-color); outline: none; opacity: 0.7;
-            transition: opacity .2s; border-radius: 2px;
+            transition: opacity .2s; border-radius: 4px;
         }
         #bpm-slider:hover { opacity: 1; }
         #bpm-slider::-webkit-slider-thumb {
-            -webkit-appearance: none; appearance: none; width: 18px; height: 18px;
+            -webkit-appearance: none; appearance: none; width: 20px; height: 20px;
             background: var(--primary-color); cursor: pointer; border-radius: 50%;
         }
         #bpm-slider::-moz-range-thumb {
-            width: 18px; height: 18px; background: var(--primary-color);
+            width: 20px; height: 20px; background: var(--primary-color);
             cursor: pointer; border-radius: 50%; border: none;
         }
 
@@ -384,8 +397,8 @@
         #camelot-table th, #camelot-table td {
             border: 2px solid var(--secondary-color);
             text-align: center;
-            padding: 4px 0; /* Reduced padding */
-            font-size: 0.8rem; /* Increased font size */
+            padding: 4px 0;
+            font-size: 0.8rem;
             font-weight: 600;
         }
         #camelot-table th {
@@ -415,12 +428,79 @@
             background-color: var(--camelot-switch-key-color);
         }
 
-        /* ADDED: Style for time units in calc tables */
         .time-unit {
             font-size: 0.5rem;
             color: var(--secondary-color);
             opacity: 0.8;
             margin-left: 2px;
+        }
+        
+        /* --- Color Checker Styles --- */
+        #color-checker-container {
+            width: 100%;
+            max-width: 240px; 
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        #color-checker-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 5px;
+            width: 100%;
+            border: 2px solid var(--secondary-color);
+            padding: 5px;
+            background-color: #333;
+            box-sizing: border-box;
+        }
+        .color-swatch {
+            width: 100%;
+            padding-bottom: 100%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s ease-in-out;
+        }
+        .color-swatch.selected {
+            border-color: white;
+            transform: scale(1.05);
+            box-shadow: 0 0 10px white;
+        }
+        #color-info-display {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            border: 2px solid var(--secondary-color);
+            padding: 8px;
+            min-height: 60px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            box-sizing: border-box;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+        }
+        .info-label {
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        .info-value {
+            color: var(--primary-color);
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.05em;
+        }
+        .info-value-hex {
+            text-transform: uppercase;
+        }
+
+        #color-checker-container:fullscreen {
+            max-width: none;
+            width: 100%;
+            height: 100%;
+            padding: 5vw;
+            background: var(--background-color);
+            justify-content: center;
+            box-sizing: border-box;
         }
         
         .hidden { display: none !important; }
@@ -431,6 +511,7 @@
     <div id="app-wrapper">
         <img src="https://www.dropbox.com/scl/fi/5b4motyxla5bkgbk1c3d0/metronome-svgrepo-com.svg?rlkey=w161g2mtryo635255gqooha7z&raw=1" alt="Metronome Icon" class="site-icon-left" id="metronome-icon">
         <img src="https://www.dropbox.com/scl/fi/1m4jb4opjgtxoy6yz2yf0/bell-svgrepo-com.svg?rlkey=8po6w24uqopz056gd5vwk42o2&raw=1" alt="Bell Icon" class="site-icon-left" id="bell-icon">
+        <svg id="color-checker-icon" viewBox="0 0 24 24" class="site-icon-left" xmlns="http://www.w3.org/2000/svg"><path d="M2 2v20h20V2H2zm2 2h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zm-6 6h4v4h-4v-4zm-6 0h4v4H4v-4zm12 0h4v4h-4v-4zm-6 6h4v4h-4v-4zm-6 0h4v4H4v-4zm12 0h4v4h-4v-4z"/></svg>
         <img src="https://www.dropbox.com/scl/fi/y2i8ul09le7i5v03lehma/500.png?rlkey=rbh2kx5rbcgmgowl49ceb9tpv&raw=1" alt="Logo" class="site-logo" id="main-logo" onerror="this.style.display='none'">
 
         <div class="sticky-wrapper">
@@ -452,13 +533,23 @@
                     <div id="bpm-label">BPM</div>
                 </div>
             </div>
+            <div id="color-checker-display-sticky" class="sticky-display">
+                <div id="color-checker-container">
+                    <div id="color-checker-grid"></div>
+                    <div id="color-info-display">
+                        <div class="info-row"><span class="info-label">Name</span> <span id="color-name-value" class="info-value"></span></div>
+                        <div class="info-row"><span class="info-label">HEX</span> <span id="color-hex-value" class="info-value info-value-hex"></span></div>
+                        <div class="info-row"><span class="info-label">RGB</span> <span id="color-rgb-value" class="info-value"></span></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="scrollable-content">
             <div id="timer-controls" class="module-controls active">
                 <div id="mode-display">Work</div>
                 <div class="control-panel">
-                    <div id="timer-options-wrapper">
+                    <div id="timer-options-wrapper" class="options-wrapper">
                         <div class="control-group"><button class="mode-btn" data-mode="pomodoro">Pomodoro</button><button class="mode-btn" data-mode="sports">Sports</button></div>
                         <div id="settings-container">
                             <div id="pomodoro-settings" class="settings-panel">
@@ -476,17 +567,29 @@
                 </div>
             </div>
             <div id="metronome-controls" class="module-controls">
-                <div class="mode-display">Metronome</div>
+                <div id="metronome-view-title">Metronome</div>
                 <div class="control-panel">
-                    <div class="control-group"><button class="control-btn" id="play-stop-metronome">Play</button></div>
                     <div class="control-group">
+                        <button class="control-btn" id="play-stop-metronome">Play</button>
                         <button class="control-btn" id="reset-metronome">Reset</button>
-                        <div class="setting-item" id="bpm-slider-container">
-                            <input type="range" min="40" max="220" value="135" id="bpm-slider">
+                    </div>
+                    <div id="metronome-options-wrapper" class="options-wrapper">
+                        <div class="control-group">
+                            <div class="setting-item" id="bpm-slider-container">
+                                <input type="range" min="40" max="220" value="135" id="bpm-slider">
+                            </div>
                         </div>
                     </div>
                     <div class="control-group"><button class="control-btn back-button" id="back-to-timer-from-metro">Back to Timer</button></div>
                 </div>
+            </div>
+            
+            <div id="color-checker-controls" class="module-controls">
+                 <div id="color-checker-title">Color Checker</div>
+                 <div class="control-panel">
+                    <div class="control-group"><button class="control-btn" id="fullscreen-btn">Fullscreen</button></div>
+                    <div class="control-group"><button class="control-btn back-button" id="back-to-timer-from-checker">Back to Timer</button></div>
+                 </div>
             </div>
         
             <div id="camelot-panel" class="collapsible-panel">
@@ -513,7 +616,6 @@
                 </div>
             </div>
 
-            <!-- Calculators Panel -->
             <div id="calc-panel" class="collapsible-panel">
                 <div id="calc-view-title">CALCULATOR (<span id="delay-bpm-display">135</span> BPM)</div>
                 <table id="delay-table" class="calc-table">
@@ -556,9 +658,12 @@
             appWrapper: document.getElementById('app-wrapper'),
             timerDisplaySticky: document.getElementById('timer-display-sticky'),
             metronomeDisplaySticky: document.getElementById('metronome-display-sticky'),
+            colorCheckerDisplaySticky: document.getElementById('color-checker-display-sticky'),
             timerControls: document.getElementById('timer-controls'),
             metronomeControls: document.getElementById('metronome-controls'),
+            colorCheckerControls: document.getElementById('color-checker-controls'),
             metronomeIcon: document.getElementById('metronome-icon'),
+            colorCheckerIcon: document.getElementById('color-checker-icon'),
             bellIcon: document.getElementById('bell-icon'),
             mainLogo: document.getElementById('main-logo'),
             timeLeftDisplay: document.getElementById('time-left'),
@@ -571,13 +676,15 @@
             pomodoroSettings: document.getElementById('pomodoro-settings'),
             sportsSettings: document.getElementById('sports-settings'),
             allTimerInputs: document.querySelectorAll('#timer-controls .settings-panel input'),
-            timerOptionsWrapper: document.getElementById('timer-options-wrapper'), // Added
+            timerOptionsWrapper: document.getElementById('timer-options-wrapper'), 
+            metronomeOptionsWrapper: document.getElementById('metronome-options-wrapper'),
             bpmDisplay: document.getElementById('bpm-display'),
             bpmSlider: document.getElementById('bpm-slider'),
             playStopMetronomeBtn: document.getElementById('play-stop-metronome'),
             visualBeatIndicator: document.getElementById('metronome-tap-area'),
             resetMetronomeBtn: document.getElementById('reset-metronome'),
             backToTimerBtn: document.getElementById('back-to-timer-from-metro'),
+            backToTimerFromChecker: document.getElementById('back-to-timer-from-checker'),
             openCalcBtn: document.getElementById('open-calc-btn'),
             calcPanel: document.getElementById('calc-panel'),
             delayBpmDisplay: document.getElementById('delay-bpm-display'),
@@ -586,6 +693,12 @@
             camelotTableBody: document.querySelector('#camelot-table tbody'),
             camelotViewTitle: document.getElementById('camelot-view-title'),
             camelotModeBtns: document.querySelectorAll('.camelot-mode-btn'),
+            colorCheckerGrid: document.getElementById('color-checker-grid'),
+            colorNameValue: document.getElementById('color-name-value'),
+            colorHexValue: document.getElementById('color-hex-value'),
+            colorRgbValue: document.getElementById('color-rgb-value'),
+            colorCheckerTitle: document.getElementById('color-checker-title'),
+            fullscreenBtn: document.getElementById('fullscreen-btn'),
         };
 
         const AppState = {
@@ -595,7 +708,7 @@
             audioContext: null, bpm: 135, isMetronomePlaying: false,
             schedulerTimerID: null, beatNumber: 1, beatsPerMeasure: 4,
             tapTimestamps: [], tapTimeoutId: null, isSoundEnabled: true,
-            pomodoroInitialState: 'work', // Added for starting state
+            pomodoroInitialState: 'work',
             bellEnabledSrc: "https://www.dropbox.com/scl/fi/1m4jb4opjgtxoy6yz2yf0/bell-svgrepo-com.svg?rlkey=8po6w24uqopz056gd5vwk42o2&raw=1",
             bellDisabledSrc: "https://www.dropbox.com/scl/fi/syg6jjwvngtxl1mwk0hdv/bell-disabled-svgrepo-com.svg?rlkey=lrawxg597knm9h8jifkw21ngj&raw=1",
         };
@@ -616,16 +729,15 @@
             initContext: function() {
                 if (!AppState.audioContext) { try { AppState.audioContext = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { console.error("Web Audio API is not supported"); } }
             },
-            playSound: function(frequency) {
+            playSound: function(frequency, duration = 1.0) {
                 if (!AppState.isSoundEnabled || !AppState.audioContext) return;
                 const osc = AppState.audioContext.createOscillator();
                 const gain = AppState.audioContext.createGain();
-                const toneDuration = 1.0; 
                 osc.frequency.value = frequency; osc.type = 'sine';
                 gain.gain.setValueAtTime(0.5, AppState.audioContext.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, AppState.audioContext.currentTime + toneDuration);
+                gain.gain.exponentialRampToValueAtTime(0.001, AppState.audioContext.currentTime + duration);
                 osc.connect(gain); gain.connect(AppState.audioContext.destination);
-                osc.start(AppState.audioContext.currentTime); osc.stop(AppState.audioContext.currentTime + toneDuration);
+                osc.start(AppState.audioContext.currentTime); osc.stop(AppState.audioContext.currentTime + duration);
             }
         };
 
@@ -633,13 +745,20 @@
             showModule: function(mode) {
                 AppState.currentAppMode = mode;
                 const isTimer = mode === 'timer';
+                const isMetronome = mode === 'metronome';
+                const isColorChecker = mode === 'color-checker';
+
                 UIElements.timerDisplaySticky.classList.toggle('active', isTimer);
                 UIElements.timerControls.classList.toggle('active', isTimer);
-                UIElements.metronomeDisplaySticky.classList.toggle('active', !isTimer);
-                UIElements.metronomeControls.classList.toggle('active', !isTimer);
+                UIElements.metronomeDisplaySticky.classList.toggle('active', isMetronome);
+                UIElements.metronomeControls.classList.toggle('active', isMetronome);
+                UIElements.colorCheckerDisplaySticky.classList.toggle('active', isColorChecker);
+                UIElements.colorCheckerControls.classList.toggle('active', isColorChecker);
+
                 UIElements.mainLogo.classList.toggle('hidden', !isTimer);
                 UIElements.metronomeIcon.classList.toggle('hidden', !isTimer);
                 UIElements.bellIcon.classList.toggle('hidden', !isTimer);
+                UIElements.colorCheckerIcon.classList.toggle('hidden', !isTimer);
             },
             updateTimerDisplay: function(timeLeft, totalDuration) {
                 if (totalDuration <= 0) totalDuration = 1;
@@ -693,7 +812,6 @@
                 UIElements.startPauseBtn.textContent = 'Start';
                 UIElements.progressCircle.style.strokeDashoffset = circumference;
                 UIElements.progressDot.style.display = 'block';
-                // Reset the initial state to 'work' on full reset
                 AppState.pomodoroInitialState = 'work';
                 if (AppState.currentTimerMode === 'pomodoro') Timer.pomodoroReset();
                 if (AppState.currentTimerMode === 'sports') Timer.sportsReset();
@@ -735,7 +853,7 @@
                 AppState.pomodoro.timeLeft = AppState.pomodoro.mode === 'work' ? AppState.pomodoro.workSec : AppState.pomodoro.breakSec;
                 AppState.pomodoro.totalDuration = AppState.pomodoro.timeLeft;
                 UIElements.modeDisplay.textContent = AppState.pomodoro.mode.charAt(0).toUpperCase() + AppState.pomodoro.mode.slice(1);
-                AppState.pomodoroInitialState = AppState.pomodoro.mode; // Persist the next mode
+                AppState.pomodoroInitialState = AppState.pomodoro.mode;
                 AppState.targetTime = Date.now() + AppState.pomodoro.timeLeft * 1000;
                 UI.updateTimerDisplay(AppState.pomodoro.timeLeft, AppState.pomodoro.totalDuration);
             },
@@ -833,37 +951,24 @@
             mode: 'key', // 'key' or 'sequence'
             selectedKey: null,
             wheelData: [
-                { num: 1, A: 'G♯m', B: 'B' },
-                { num: 2, A: 'D♯m', B: 'F♯' },
-                { num: 3, A: 'A♯m', B: 'C♯' },
-                { num: 4, A: 'Fm', B: 'A♭' },
-                { num: 5, A: 'Cm', B: 'E♭' },
-                { num: 6, A: 'Gm', B: 'B♭' },
-                { num: 7, A: 'Dm', B: 'F' },
-                { num: 8, A: 'Am', B: 'C' },
-                { num: 9, A: 'Em', B: 'G' },
-                { num: 10, A: 'Bm', B: 'D' },
-                { num: 11, A: 'F♯m', B: 'A' },
-                { num: 12, A: 'C♯m', B: 'E' },
+                { num: 1, A: 'G♯m', B: 'B' }, { num: 2, A: 'D♯m', B: 'F♯' }, { num: 3, A: 'A♯m', B: 'C♯' },
+                { num: 4, A: 'Fm', B: 'A♭' }, { num: 5, A: 'Cm', B: 'E♭' }, { num: 6, A: 'Gm', B: 'B♭' },
+                { num: 7, A: 'Dm', B: 'F' }, { num: 8, A: 'Am', B: 'C' }, { num: 9, A: 'Em', B: 'G' },
+                { num: 10, A: 'Bm', B: 'D' }, { num: 11, A: 'F♯m', B: 'A' }, { num: 12, A: 'C♯m', B: 'E' },
             ],
-            init: function() {
-                this.drawTable();
-            },
+            init: function() { this.drawTable(); },
             drawTable: function() {
-                UIElements.camelotTableBody.innerHTML = ''; // Clear existing table
+                UIElements.camelotTableBody.innerHTML = '';
                 this.wheelData.forEach(row => {
                     const tr = document.createElement('tr');
-                    
                     const tdA = document.createElement('td');
                     tdA.classList.add('key-cell');
                     tdA.dataset.id = `${row.num}A`;
                     tdA.textContent = `${row.num}A - ${row.A}`;
-                    
                     const tdB = document.createElement('td');
                     tdB.classList.add('key-cell');
                     tdB.dataset.id = `${row.num}B`;
                     tdB.textContent = `${row.num}B - ${row.B}`;
-                    
                     tr.appendChild(tdA);
                     tr.appendChild(tdB);
                     UIElements.camelotTableBody.appendChild(tr);
@@ -877,46 +982,33 @@
             },
             updateHighlighting: function() {
                 if (!this.selectedKey) return;
-                
                 const selectedId = this.selectedKey;
                 const num = parseInt(selectedId.slice(0, -1));
                 const mode = selectedId.slice(-1);
-
                 const fullKeyName = this.wheelData.find(r => r.num === num)[mode];
                 UIElements.camelotViewTitle.textContent = `${selectedId} - ${fullKeyName}`;
-
                 let compatible = [];
-                let sequenceStep1 = null;
-                let sequenceStep2 = null;
-                let switchKey = null;
+                let sequenceStep1 = null, sequenceStep2 = null, switchKey = null;
 
                 if (this.mode === 'key') {
-                    // Standard harmonic mixing
                     compatible.push(((num - 2 + 12) % 12 + 1) + mode);
                     compatible.push((num % 12 + 1) + mode);
                     compatible.push(num + (mode === 'A' ? 'B' : 'A'));
-                } else { // sequence mode
-                    // 1-4-9-2 sequence
-                    sequenceStep1 = ((num - 1 + 3) % 12 + 1) + mode; // 4
-                    sequenceStep2 = ((num - 1 + 8) % 12 + 1) + mode; // 9
-                    switchKey = ((num - 1 + 1) % 12 + 1) + mode;     // 2
+                } else {
+                    sequenceStep1 = ((num - 1 + 3) % 12 + 1) + mode;
+                    sequenceStep2 = ((num - 1 + 8) % 12 + 1) + mode;
+                    switchKey = ((num - 1 + 1) % 12 + 1) + mode;
                 }
                 
                 document.querySelectorAll('.key-cell').forEach(cell => {
                     const cellId = cell.dataset.id;
                     cell.classList.remove('selected', 'compatible', 'sequence-step1', 'sequence-step2', 'switch-key');
-                    if (cellId === selectedId) {
-                        cell.classList.add('selected');
-                    } else if (this.mode === 'key' && compatible.includes(cellId)) {
-                        cell.classList.add('compatible');
-                    } else if (this.mode === 'sequence') {
-                        if (cellId === sequenceStep1) {
-                            cell.classList.add('sequence-step1');
-                        } else if (cellId === sequenceStep2) {
-                             cell.classList.add('sequence-step2');
-                        } else if (cellId === switchKey) {
-                            cell.classList.add('switch-key');
-                        }
+                    if (cellId === selectedId) cell.classList.add('selected');
+                    else if (this.mode === 'key' && compatible.includes(cellId)) cell.classList.add('compatible');
+                    else if (this.mode === 'sequence') {
+                        if (cellId === sequenceStep1) cell.classList.add('sequence-step1');
+                        else if (cellId === sequenceStep2) cell.classList.add('sequence-step2');
+                        else if (cellId === switchKey) cell.classList.add('switch-key');
                     }
                 });
             },
@@ -926,41 +1018,113 @@
             }
         };
 
+        const ColorChecker = {
+            colors: [
+                { name: 'Dark Skin', hex: '#735244' }, { name: 'Light Skin', hex: '#c29682' },
+                { name: 'Blue Sky', hex: '#688bc3' }, { name: 'Foliage', hex: '#67a070' },
+                { name: 'Blue Flower', hex: '#6058a0' }, { name: 'Bluish Green', hex: '#58c5b6' },
+                { name: 'Orange', hex: '#d17b43' }, { name: 'Purplish Blue', hex: '#515a96' },
+                { name: 'Moderate Red', hex: '#c05b8a' }, { name: 'Purple', hex: '#8e59a9' },
+                { name: 'Yellow Green', hex: '#a1b758' }, { name: 'Orange Yellow', hex: '#e7a23d' },
+                { name: 'Blue', hex: '#3e498c' }, { name: 'Green', hex: '#4d9d6d' },
+                { name: 'Red', hex: '#b54b48' }, { name: 'Yellow', hex: '#e9c73e' },
+                { name: 'Magenta', hex: '#be6ea2' }, { name: 'Cyan', hex: '#5095c4' },
+                { name: 'White', hex: '#f3f3f2' }, { name: 'Neutral 8', hex: '#c8c8c8' },
+                { name: 'Neutral 6.5', hex: '#9a9a9a' }, { name: 'Neutral 5', hex: '#787878' },
+                { name: 'Neutral 3.5', hex: '#454545' }, { name: 'Black', hex: '#202020' }
+            ],
+            init: function() {
+                this.drawChecker();
+                this.updateInfo(this.colors[0]);
+                document.querySelector('.color-swatch').classList.add('selected');
+            },
+            drawChecker: function() {
+                UIElements.colorCheckerGrid.innerHTML = '';
+                this.colors.forEach(color => {
+                    const swatch = document.createElement('div');
+                    swatch.classList.add('color-swatch');
+                    swatch.style.backgroundColor = color.hex;
+                    swatch.dataset.name = color.name;
+                    swatch.dataset.hex = color.hex;
+                    UIElements.colorCheckerGrid.appendChild(swatch);
+                });
+            },
+            updateInfo: function(color) {
+                const rgb = this.hexToRgb(color.hex);
+                UIElements.colorNameValue.textContent = color.name;
+                UIElements.colorHexValue.textContent = color.hex;
+                UIElements.colorRgbValue.textContent = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+            },
+            handleSelection: function(event) {
+                const swatch = event.target.closest('.color-swatch');
+                if (!swatch) return;
+
+                document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+                swatch.classList.add('selected');
+                
+                this.updateInfo(swatch.dataset);
+            },
+            hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                  r: parseInt(result[1], 16),
+                  g: parseInt(result[2], 16),
+                  b: parseInt(result[3], 16)
+                } : null;
+            }
+        };
+
         // --- Event Listeners & Initializer ---
+        function toggleMainOptions(shouldHide) {
+             UIElements.timerOptionsWrapper.classList.toggle('hidden', shouldHide);
+        }
+
         function setupEventListeners() {
             UIElements.metronomeIcon.addEventListener('click', () => UI.showModule('metronome'));
+            UIElements.colorCheckerIcon.addEventListener('click', () => UI.showModule('color-checker'));
+
             UIElements.backToTimerBtn.addEventListener('click', () => {
                 if (AppState.isMetronomePlaying) Metronome.stop();
                 UI.showModule('timer');
             });
+            UIElements.backToTimerFromChecker.addEventListener('click', () => {
+                UI.showModule('timer');
+            });
+
             UIElements.bellIcon.addEventListener('click', () => {
                 AppState.isSoundEnabled = !AppState.isSoundEnabled;
                 UIElements.bellIcon.src = AppState.isSoundEnabled ? AppState.bellEnabledSrc : AppState.bellDisabledSrc;
                 Storage.save('soundEnabled', AppState.isSoundEnabled);
             });
             UIElements.openCalcBtn.addEventListener('click', () => {
-                const isVisible = UIElements.calcPanel.classList.toggle('visible');
-                UIElements.appWrapper.classList.toggle('is-panel-open', isVisible || UIElements.camelotPanel.classList.contains('visible'));
-                UIElements.openCalcBtn.textContent = isVisible ? "Close" : "Calculators";
-                UIElements.timerOptionsWrapper.classList.toggle('hidden', isVisible || UIElements.camelotPanel.classList.contains('visible'));
-                if(isVisible) { UI.updateCalcTables(); }
+                const isCalcVisible = UIElements.calcPanel.classList.toggle('visible');
+                const isCamelotVisible = UIElements.camelotPanel.classList.contains('visible');
+                const anyPanelVisible = isCalcVisible || isCamelotVisible;
+                
+                UIElements.appWrapper.classList.toggle('is-panel-open', anyPanelVisible);
+                UIElements.openCalcBtn.textContent = isCalcVisible ? "Close" : "Calculators";
+                toggleMainOptions(anyPanelVisible);
+                if(isCalcVisible) { UI.updateCalcTables(); }
             });
             UIElements.openCamelotBtn.addEventListener('click', () => {
-                const isVisible = UIElements.camelotPanel.classList.toggle('visible');
-                UIElements.appWrapper.classList.toggle('is-panel-open', isVisible || UIElements.calcPanel.classList.contains('visible'));
-                UIElements.openCamelotBtn.textContent = isVisible ? "Close" : "Camelot";
-                UIElements.timerOptionsWrapper.classList.toggle('hidden', isVisible || UIElements.calcPanel.classList.contains('visible'));
+                const isCamelotVisible = UIElements.camelotPanel.classList.toggle('visible');
+                const isCalcVisible = UIElements.calcPanel.classList.contains('visible');
+                const anyPanelVisible = isCamelotVisible || isCalcVisible;
+
+                UIElements.appWrapper.classList.toggle('is-panel-open', anyPanelVisible);
+                UIElements.openCamelotBtn.textContent = isCamelotVisible ? "Close" : "Camelot";
+                toggleMainOptions(anyPanelVisible);
             });
             UIElements.startPauseBtn.addEventListener('click', () => {
                 Audio.initContext();
                 if (AppState.isPaused) {
+                    if (!AppState.hasStarted) { Timer.pomodoroReset(); }
                     Timer.start(); 
                 } 
                 else { Timer.pause(); }
             });
             UIElements.resetBtn.addEventListener('click', Timer.resetAll);
             
-            // Setup listeners for pomodoro work/break labels to set start mode
             document.querySelectorAll('#pomodoro-settings .setting-item.label').forEach(el => {
                 el.addEventListener('click', () => {
                     if (AppState.currentTimerMode === 'pomodoro' && !AppState.hasStarted) {
@@ -1007,7 +1171,6 @@
             UIElements.visualBeatIndicator.addEventListener('click', Metronome.handleBpmTap);
             UIElements.resetMetronomeBtn.addEventListener('click', Metronome.reset);
             
-            // Camelot event listeners
             if (UIElements.camelotTableBody) {
                 UIElements.camelotTableBody.addEventListener('click', Camelot.handleSelection.bind(Camelot));
             }
@@ -1017,6 +1180,21 @@
                     btn.classList.add('active');
                     Camelot.setMode(btn.dataset.mode);
                 });
+            });
+
+            UIElements.colorCheckerGrid.addEventListener('click', ColorChecker.handleSelection.bind(ColorChecker));
+
+            UIElements.fullscreenBtn.addEventListener('click', () => {
+                try {
+                    const elementToFullscreen = document.getElementById('color-checker-container');
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen();
+                    } else {
+                        elementToFullscreen.requestFullscreen();
+                    }
+                } catch (error) {
+                    console.error("Fullscreen API error:", error);
+                }
             });
         }
 
@@ -1039,6 +1217,7 @@
             UIElements.bellIcon.src = AppState.isSoundEnabled ? AppState.bellEnabledSrc : AppState.bellDisabledSrc;
 
             Camelot.init();
+            ColorChecker.init();
             setupEventListeners();
             UI.showModule('timer');
             Timer.resetAll();
