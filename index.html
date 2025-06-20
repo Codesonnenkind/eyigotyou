@@ -26,9 +26,9 @@
             font-family: 'Inter', sans-serif;
             display: flex;
             justify-content: center;
-            overflow: hidden;
-            padding-top: 20px;
-            box-sizing: border-box;
+            /* UPDATED: Scrolling behavior defined */
+            overflow: hidden; /* Hide scrollbars on the body */
+            overflow-x: hidden; /* Explicitly prevent horizontal scroll */
         }
 
         #app-wrapper {
@@ -38,9 +38,15 @@
              width: 100%;
              height: 100%;
              max-height: 100%;
-             overflow-y: auto;
+             /* UPDATED: Vertical scroll is hidden by default */
+             overflow-y: hidden;
              padding: 5vh 20px 20px 20px;
              box-sizing: border-box;
+        }
+
+        /* ADDED: Class to enable scrolling only when calculator is open */
+        #app-wrapper.is-calculator-open {
+            overflow-y: auto;
         }
         
         /* --- Corner Icons (RESTORED to original) --- */
@@ -564,6 +570,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         // --- DOM Elements ---
         const UIElements = {
+            appWrapper: document.getElementById('app-wrapper'), // Added for scroll control
             allModules: document.querySelectorAll('.module'),
             timerModule: document.getElementById('timer-module'),
             metronomeModule: document.getElementById('metronome-module'),
@@ -639,14 +646,15 @@
                 if (!AppState.isSoundEnabled || !AppState.audioContext) return;
                 const osc = AppState.audioContext.createOscillator();
                 const gain = AppState.audioContext.createGain();
+                const toneDuration = 1.0; 
                 osc.frequency.value = frequency;
                 osc.type = 'sine';
                 gain.gain.setValueAtTime(0.5, AppState.audioContext.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, AppState.audioContext.currentTime + 0.5);
+                gain.gain.exponentialRampToValueAtTime(0.001, AppState.audioContext.currentTime + toneDuration);
                 osc.connect(gain);
                 gain.connect(AppState.audioContext.destination);
                 osc.start(AppState.audioContext.currentTime);
-                osc.stop(AppState.audioContext.currentTime + 0.5);
+                osc.stop(AppState.audioContext.currentTime + toneDuration);
             }
         };
 
@@ -667,11 +675,18 @@
                 const seconds = timeLeft % 60;
                 UIElements.timeLeftDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
                 
-                let progress = (totalDuration - timeLeft) / totalDuration;
-                let isBreak = (AppState.currentTimerMode === 'pomodoro' && AppState.pomodoro.mode === 'break') ||
+                const progress = (totalDuration - timeLeft) / totalDuration;
+                const isBreak = (AppState.currentTimerMode === 'pomodoro' && AppState.pomodoro.mode === 'break') ||
                               (AppState.currentTimerMode === 'sports' && !AppState.sports.isWorkout);
                 
-                UIElements.progressCircle.style.stroke = isBreak ? 'var(--accent-color)' : 'var(--primary-color)';
+                let strokeColor = 'var(--primary-color)'; // Default color
+                if (isBreak) {
+                    strokeColor = 'var(--accent-color)';
+                } else if (progress >= 0.95) {
+                    strokeColor = 'var(--warning-color)'; // Warning color at 95%
+                }
+                UIElements.progressCircle.style.stroke = strokeColor;
+                
                 const offset = circumference * (1 - progress);
                 UIElements.progressCircle.style.strokeDashoffset = offset;
 
@@ -866,10 +881,14 @@
                 UIElements.bellIcon.src = AppState.isSoundEnabled ? AppState.bellEnabledSrc : AppState.bellDisabledSrc;
                 Storage.save('soundEnabled', AppState.isSoundEnabled);
             });
+            // UPDATED: Event listener for calculator toggles scroll class
             UIElements.openCalcBtn.addEventListener('click', () => {
                 const isVisible = UIElements.calcPanel.classList.toggle('visible');
+                UIElements.appWrapper.classList.toggle('is-calculator-open', isVisible);
                 UIElements.openCalcBtn.textContent = isVisible ? "Close" : "Calculators";
-                UI.updateCalcTables();
+                if(isVisible) {
+                    UI.updateCalcTables();
+                }
             });
             UIElements.startPauseBtn.addEventListener('click', () => {
                 Audio.initContext();
