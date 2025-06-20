@@ -14,7 +14,7 @@
             --primary-color: #FFFFFF;
             --secondary-color: #888888;
             
-            --break-color: #22C55E; /* Green */
+            --break-color: #1E8449; /* Darker, Roland-inspired Green */
             --warning-color: #EF4444; /* Red for break warning */
         }
 
@@ -27,7 +27,7 @@
             display: flex;
             justify-content: center;
             overflow: hidden; 
-            padding: 20px;
+            padding-top: 20px;
             box-sizing: border-box;
         }
 
@@ -157,8 +157,8 @@
         
         #mode-display, #calc-view-title {
             z-index: 2;
-            font-size: 0.8rem;
-            font-weight: 600;
+            font-size: 0.7rem;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.2em;
             color: var(--secondary-color);
@@ -353,14 +353,13 @@
             max-height: 1000px; /* Large enough to fit content */
         }
         #calc-view-title {
-             margin-bottom: 20px;
+             margin-bottom: 15px;
         }
         .calc-header-container {
             display: flex;
             border: 2px solid var(--secondary-color);
             overflow: hidden;
             margin-bottom: -2px; /* Overlap borders */
-            width: 100%;
         }
         .calc-header {
             flex: 1;
@@ -389,9 +388,10 @@
         }
         .calc-table th, .calc-table td {
             border: 2px solid var(--secondary-color);
-            padding: 4px;
+            padding: 3px; /* More compact */
             text-align: center;
             font-weight: 500;
+            font-size: 0.65rem; /* More compact */
         }
         
         #delay-table thead {
@@ -489,7 +489,7 @@
         <div id="calc-panel" class="hidden">
             <div id="calc-modal-content" class="module-container" style="max-width: 300px; padding:0; gap: 0;">
                 <div id="calc-view-title">CALCULATOR (<span id="delay-bpm-display">120</span> BPM)</div>
-                <div class="calc-header-container" style="margin-top:15px;">
+                <div class="calc-header-container" style="margin-top:15px; width: 100%;">
                     <div class="calc-header" id="calc-delay-header">DELAY</div>
                 </div>
                 <table id="delay-table" class="calc-table" style="margin-top: -2px;">
@@ -505,7 +505,7 @@
                         <tr><td>1/32</td><td id="t-1-32"></td><td id="t-1-32-d"></td><td id="t-1-32-t"></td></tr>
                     </tbody>
                 </table>
-                 <div class="calc-header-container" style="margin-top:10px;">
+                 <div class="calc-header-container" style="margin-top:10px; width: 100%;">
                     <div class="calc-header" id="calc-reverb-header">REVERB</div>
                 </div>
                 <table id="reverb-table" class="calc-table" style="margin-top: -2px;">
