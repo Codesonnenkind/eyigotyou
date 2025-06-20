@@ -38,7 +38,6 @@
              height: 100%;
              max-height: 100%;
              overflow-y: hidden;
-             padding: 0 20px 20px 20px; /* Adjusted padding */
              box-sizing: border-box;
         }
 
@@ -76,32 +75,7 @@
             top: 65px; /* Position below the first icon */
         }
 
-
-        /* --- Main Module Containers --- */
-        .module {
-            display: none; /* Hidden by default */
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 320px;
-        }
-
-        .module.active {
-            display: flex; /* Show active module */
-        }
-        
-        .module-container {
-            background-color: transparent;
-            border: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            position: relative;
-            width: 100%;
-        }
-        
-        /* ADDED: Wrapper for sticky display elements */
+        /* --- UPDATED: New Layout Structure for Sticky Header --- */
         .sticky-wrapper {
             position: -webkit-sticky;
             position: sticky;
@@ -116,6 +90,35 @@
             width: 100%;
         }
 
+        .scrollable-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding: 0 20px 20px 20px;
+            box-sizing: border-box;
+        }
+
+        .module-controls {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .module-controls.active {
+            display: flex;
+        }
+
+        .sticky-display {
+            display: none;
+        }
+        .sticky-display.active {
+            display: flex;
+        }
+
+
         /* --- Timer Specific --- */
         .timer-container {
             position: relative;
@@ -127,7 +130,6 @@
             justify-content: center;
             align-items: center;
             cursor: default;
-            /* REMOVED: margin-top handled by sticky-wrapper */
         }
 
         .timer-svg {
@@ -421,7 +423,6 @@
             max-width: 240px;
         }
 
-        /* --- UPDATED: Styles for Delay Table --- */
         #delay-table {
             border-collapse: collapse;
             margin-top: 15px;
@@ -470,22 +471,31 @@
         <img src="https://www.dropbox.com/scl/fi/1m4jb4opjgtxoy6yz2yf0/bell-svgrepo-com.svg?rlkey=8po6w24uqopz056gd5vwk42o2&raw=1" alt="Bell Icon" class="site-icon-left" id="bell-icon">
         <img src="https://www.dropbox.com/scl/fi/y2i8ul09le7i5v03lehma/500.png?rlkey=rbh2kx5rbcgmgowl49ceb9tpv&raw=1" alt="Logo" class="site-logo" id="main-logo" onerror="this.style.display='none'">
 
-        <!-- Timer Module -->
-        <div id="timer-module" class="module active">
-            <div class="module-container">
-                <!-- UPDATED: Added sticky wrapper -->
-                <div class="sticky-wrapper">
-                    <div class="timer-container">
-                        <svg class="timer-svg" viewBox="0 0 100 100">
-                            <circle class="timer-circle" id="timer-track" cx="50" cy="50" r="45"></circle>
-                            <circle class="timer-circle" id="timer-progress" cx="50" cy="50" r="45"></circle>
-                            <g transform="rotate(90, 50, 50)">
-                                <circle id="progress-dot" cx="50" cy="5" r="2"></circle>
-                            </g>
-                        </svg>
-                        <div id="time-left" role="timer" aria-live="polite">25:00</div>
-                    </div>
+        <!-- UPDATED: Sticky Wrapper for non-scrolling displays -->
+        <div class="sticky-wrapper">
+            <div id="timer-display-sticky" class="sticky-display active">
+                <div class="timer-container">
+                    <svg class="timer-svg" viewBox="0 0 100 100">
+                        <circle class="timer-circle" id="timer-track" cx="50" cy="50" r="45"></circle>
+                        <circle class="timer-circle" id="timer-progress" cx="50" cy="50" r="45"></circle>
+                        <g transform="rotate(90, 50, 50)">
+                            <circle id="progress-dot" cx="50" cy="5" r="2"></circle>
+                        </g>
+                    </svg>
+                    <div id="time-left" role="timer" aria-live="polite">25:00</div>
                 </div>
+            </div>
+            <div id="metronome-display-sticky" class="sticky-display">
+                <div id="metronome-tap-area" class="metronome-display">
+                    <div id="bpm-display">135</div>
+                    <div id="bpm-label">BPM</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- UPDATED: Scrollable container for all controls and calculators -->
+        <div class="scrollable-content">
+            <div id="timer-controls" class="module-controls active">
                 <div id="mode-display">Work</div>
                 <div class="control-panel">
                     <div class="control-group"><button class="mode-btn" data-mode="pomodoro">Pomodoro</button><button class="mode-btn" data-mode="sports">Sports</button></div>
@@ -503,18 +513,7 @@
                     <div class="control-group"><button class="control-btn" id="start-pause-btn" role="button">Start</button><button class="control-btn" id="reset-btn" role="button">Reset</button></div>
                 </div>
             </div>
-        </div>
-
-        <!-- Metronome Module -->
-        <div id="metronome-module" class="module">
-            <div class="module-container">
-                 <!-- UPDATED: Added sticky wrapper -->
-                <div class="sticky-wrapper">
-                    <div id="metronome-tap-area" class="metronome-display">
-                        <div id="bpm-display">135</div>
-                        <div id="bpm-label">BPM</div>
-                    </div>
-                </div>
+            <div id="metronome-controls" class="module-controls">
                 <div class="mode-display">Metronome</div>
                 <div class="control-panel">
                     <div class="control-group">
@@ -527,49 +526,47 @@
                         </div>
                     </div>
                     <div class="control-group">
-                        <button class="control-btn back-button" id="back-to-timer-from-metro" role="button">Back to Timer</button>
+                        <button class="control-btn back-button" id="back-to-timer-from-metro">Back to Timer</button>
                     </div>
                 </div>
             </div>
-        </div>
         
-        <!-- Calculator Panel -->
-        <div id="calc-panel">
-            <div class="module-container" style="max-width: 300px; padding:0; gap: 0;">
-                <div id="calc-view-title">CALCULATOR (<span id="delay-bpm-display">135</span> BPM)</div>
-                <table id="delay-table" class="calc-table">
-                    <caption>DELAY</caption>
-                    <thead>
-                        <tr><th>NOTE</th><th>NORMAL</th><th>DOTTED</th><th>TRIPLET</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>1/1</td><td id="t-1-1"></td><td id="t-1-1-d"></td><td id="t-1-1-t"></td></tr>
-                        <tr><td>1/2</td><td id="t-1-2"></td><td id="t-1-2-d"></td><td id="t-1-2-t"></td></tr>
-                        <tr><td>1/4</td><td id="t-1-4"></td><td id="t-1-4-d"></td><td id="t-1-4-t"></td></tr>
-                        <tr><td>1/8</td><td id="t-1-8"></td><td id="t-1-8-d"></td><td id="t-1-8-t"></td></tr>
-                        <tr><td>1/16</td><td id="t-1-16"></td><td id="t-1-16-d"></td><td id="t-1-16-t"></td></tr>
-                        <tr><td>1/32</td><td id="t-1-32"></td><td id="t-1-32-d"></td><td id="t-1-32-t"></td></tr>
-                    </tbody>
-                </table>
-                 <div class="calc-header-container" style="margin-top:10px; width: 100%;">
-                    <div class="calc-header" id="calc-reverb-header">REVERB</div>
+            <div id="calc-panel">
+                <div class="module-container" style="max-width: 300px; padding:0; gap: 0;">
+                    <div id="calc-view-title">CALCULATOR (<span id="delay-bpm-display">135</span> BPM)</div>
+                    <table id="delay-table" class="calc-table">
+                        <caption>DELAY</caption>
+                        <thead>
+                            <tr><th>NOTE</th><th>NORMAL</th><th>DOTTED</th><th>TRIPLET</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1/1</td><td id="t-1-1"></td><td id="t-1-1-d"></td><td id="t-1-1-t"></td></tr>
+                            <tr><td>1/2</td><td id="t-1-2"></td><td id="t-1-2-d"></td><td id="t-1-2-t"></td></tr>
+                            <tr><td>1/4</td><td id="t-1-4"></td><td id="t-1-4-d"></td><td id="t-1-4-t"></td></tr>
+                            <tr><td>1/8</td><td id="t-1-8"></td><td id="t-1-8-d"></td><td id="t-1-8-t"></td></tr>
+                            <tr><td>1/16</td><td id="t-1-16"></td><td id="t-1-16-d"></td><td id="t-1-16-t"></td></tr>
+                            <tr><td>1/32</td><td id="t-1-32"></td><td id="t-1-32-d"></td><td id="t-1-32-t"></td></tr>
+                        </tbody>
+                    </table>
+                     <div class="calc-header-container" style="margin-top:10px; width: 100%;">
+                        <div class="calc-header" id="calc-reverb-header">REVERB</div>
+                    </div>
+                    <table id="reverb-table" class="calc-table" style="margin-top: -2px;">
+                        <thead><tr><th>SIZE</th><th>PREDELAY</th><th>DECAY</th><th>TOTAL</th></tr></thead>
+                        <tbody>
+                            <tr><td>Hall</td><td id="r-hall-pre"></td><td id="r-hall-decay"></td><td id="r-hall-total"></td></tr>
+                            <tr><td>L Room</td><td id="r-lroom-pre"></td><td id="r-lroom-decay"></td><td id="r-lroom-total"></td></tr>
+                            <tr><td>S Room</td><td id="r-sroom-pre"></td><td id="r-sroom-decay"></td><td id="r-sroom-total"></td></tr>
+                            <tr><td>Ambience</td><td id="r-ambi-pre"></td><td id="r-ambi-decay"></td><td id="r-ambi-total"></td></tr>
+                        </tbody>
+                    </table>
                 </div>
-                <table id="reverb-table" class="calc-table" style="margin-top: -2px;">
-                    <thead><tr><th>SIZE</th><th>PREDELAY</th><th>DECAY</th><th>TOTAL</th></tr></thead>
-                    <tbody>
-                        <tr><td>Hall</td><td id="r-hall-pre"></td><td id="r-hall-decay"></td><td id="r-hall-total"></td></tr>
-                        <tr><td>L Room</td><td id="r-lroom-pre"></td><td id="r-lroom-decay"></td><td id="r-lroom-total"></td></tr>
-                        <tr><td>S Room</td><td id="r-sroom-pre"></td><td id="r-sroom-decay"></td><td id="r-sroom-total"></td></tr>
-                        <tr><td>Ambience</td><td id="r-ambi-pre"></td><td id="r-ambi-decay"></td><td id="r-ambi-total"></td></tr>
-                    </tbody>
-                </table>
             </div>
-        </div>
-    
-        <!-- Global Calculator Button -->
-        <div class="control-panel" id="global-calc-btn">
-            <div class="control-group">
-                <button class="control-btn open-calc-btn" role="button" style="flex-basis: 100%; justify-content: center;">Calculators</button>
+        
+            <div class="control-panel" id="global-calc-btn">
+                <div class="control-group">
+                    <button class="control-btn open-calc-btn" role="button" style="flex-basis: 100%; justify-content: center;">Calculators</button>
+                </div>
             </div>
         </div>
     </div>
@@ -578,14 +575,18 @@
     document.addEventListener('DOMContentLoaded', () => {
         // --- DOM Elements ---
         const UIElements = {
-            appWrapper: document.getElementById('app-wrapper'), // Added for scroll control
-            allModules: document.querySelectorAll('.module'),
-            timerModule: document.getElementById('timer-module'),
-            metronomeModule: document.getElementById('metronome-module'),
+            appWrapper: document.getElementById('app-wrapper'),
+            // Sticky Displays
+            timerDisplaySticky: document.getElementById('timer-display-sticky'),
+            metronomeDisplaySticky: document.getElementById('metronome-display-sticky'),
+            // Scrollable Controls
+            timerControls: document.getElementById('timer-controls'),
+            metronomeControls: document.getElementById('metronome-controls'),
+            // Icons
             metronomeIcon: document.getElementById('metronome-icon'),
             bellIcon: document.getElementById('bell-icon'),
             mainLogo: document.getElementById('main-logo'),
-            backToTimerBtn: document.getElementById('back-to-timer-from-metro'),
+            // Timer
             timeLeftDisplay: document.getElementById('time-left'),
             startPauseBtn: document.getElementById('start-pause-btn'),
             resetBtn: document.getElementById('reset-btn'),
@@ -595,12 +596,15 @@
             modeBtns: document.querySelectorAll('.mode-btn'),
             pomodoroSettings: document.getElementById('pomodoro-settings'),
             sportsSettings: document.getElementById('sports-settings'),
-            allTimerInputs: document.querySelectorAll('#timer-module .settings-panel input'),
+            allTimerInputs: document.querySelectorAll('#timer-controls .settings-panel input'),
+            // Metronome
             bpmDisplay: document.getElementById('bpm-display'),
             bpmSlider: document.getElementById('bpm-slider'),
             playStopMetronomeBtn: document.getElementById('play-stop-metronome'),
             visualBeatIndicator: document.getElementById('metronome-tap-area'),
             resetMetronomeBtn: document.getElementById('reset-metronome'),
+            backToTimerBtn: document.getElementById('back-to-timer-from-metro'),
+            // Calculator
             openCalcBtn: document.getElementById('global-calc-btn').querySelector('button'),
             calcPanel: document.getElementById('calc-panel'),
             delayBpmDisplay: document.getElementById('delay-bpm-display'),
@@ -611,12 +615,13 @@
             mainTimerId: null,
             isPaused: true,
             hasStarted: false, 
+            currentAppMode: 'timer',
             currentTimerMode: 'pomodoro',
             targetTime: null,
             pomodoro: {},
             sports: {},
             audioContext: null,
-            bpm: 135, // UPDATED: Initial BPM to 135
+            bpm: 135,
             isMetronomePlaying: false,
             schedulerTimerID: null,
             beatNumber: 1,
@@ -632,7 +637,6 @@
         const circumference = 2 * Math.PI * radius;
         UIElements.progressCircle.style.strokeDasharray = circumference;
 
-        // --- Local Storage Functions (Functional Improvement) ---
         const Storage = {
             save: (key, value) => localStorage.setItem(`eyigotyou_${key}`, JSON.stringify(value)),
             get: (key, defaultValue) => {
@@ -641,7 +645,6 @@
             }
         };
 
-        // --- Audio Functions ---
         const Audio = {
             initContext: function() {
                 if (!AppState.audioContext) {
@@ -668,14 +671,19 @@
 
         // --- UI Update Functions ---
         const UI = {
-            showModule: function(moduleToShow) {
-                UIElements.allModules.forEach(module => module.classList.remove('active'));
-                moduleToShow.classList.add('active');
-                const isTimerModule = moduleToShow === UIElements.timerModule;
-                
-                UIElements.mainLogo.classList.toggle('hidden', !isTimerModule);
-                UIElements.metronomeIcon.classList.toggle('hidden', !isTimerModule);
-                UIElements.bellIcon.classList.toggle('hidden', !isTimerModule);
+            // UPDATED: showModule now toggles the new display/control structure
+            showModule: function(mode) {
+                AppState.currentAppMode = mode;
+                const isTimer = mode === 'timer';
+
+                UIElements.timerDisplaySticky.classList.toggle('active', isTimer);
+                UIElements.timerControls.classList.toggle('active', isTimer);
+                UIElements.metronomeDisplaySticky.classList.toggle('active', !isTimer);
+                UIElements.metronomeControls.classList.toggle('active', !isTimer);
+
+                UIElements.mainLogo.classList.toggle('hidden', !isTimer);
+                UIElements.metronomeIcon.classList.toggle('hidden', !isTimer);
+                UIElements.bellIcon.classList.toggle('hidden', !isTimer);
             },
             updateTimerDisplay: function(timeLeft, totalDuration) {
                 if (totalDuration <= 0) totalDuration = 1;
@@ -687,28 +695,27 @@
                 const isBreak = (AppState.currentTimerMode === 'pomodoro' && AppState.pomodoro.mode === 'break') ||
                               (AppState.currentTimerMode === 'sports' && !AppState.sports.isWorkout);
                 
-                let strokeColor = 'var(--primary-color)'; // Default color
+                let strokeColor = 'var(--primary-color)';
                 if (isBreak) {
                     strokeColor = 'var(--accent-color)';
                 } else if (progress >= 0.95) {
-                    strokeColor = 'var(--warning-color)'; // Warning color at 95%
+                    strokeColor = 'var(--warning-color)';
                 }
                 UIElements.progressCircle.style.stroke = strokeColor;
                 
                 const offset = circumference * (1 - progress);
                 UIElements.progressCircle.style.strokeDashoffset = offset;
 
-                // Update dot position
                 const angle = progress * 360;
                 UIElements.progressDot.parentElement.style.transform = `rotate(${angle-90}deg)`;
-
             },
             updateCalcTables: function() {
                 UIElements.delayBpmDisplay.textContent = AppState.bpm;
                 const beatMs = (60 / AppState.bpm) * 1000;
                 const noteValues = [4, 2, 1, 0.5, 0.25, 0.125];
                 noteValues.forEach((multiplier, index) => {
-                    const noteDuration = beatMs * multiplier; const noteId = `1-${Math.pow(2, index)}`;
+                    const noteId = `1-${Math.pow(2, index)}`;
+                    const noteDuration = beatMs * multiplier;
                     document.getElementById(`t-${noteId}`).textContent = noteDuration.toFixed(2);
                     document.getElementById(`t-${noteId}-d`).textContent = (noteDuration * 1.5).toFixed(2);
                     document.getElementById(`t-${noteId}-t`).textContent = (noteDuration * (2/3)).toFixed(2);
@@ -726,7 +733,7 @@
             }
         };
 
-        // --- Timer Logic ---
+        // --- Timer Logic (remains mostly the same) ---
         const Timer = {
             resetAll: function() {
                 clearInterval(AppState.mainTimerId);
@@ -853,7 +860,7 @@
             },
             reset: function() {
                 if (AppState.isMetronomePlaying) { Metronome.stop(); }
-                AppState.bpm = 135; // UPDATED: Initial BPM to 135
+                AppState.bpm = 135; 
                 UIElements.bpmDisplay.textContent = AppState.bpm; 
                 UIElements.bpmSlider.value = AppState.bpm;
                 AppState.tapTimestamps = []; clearTimeout(AppState.tapTimeoutId); UI.updateCalcTables();
@@ -879,10 +886,10 @@
 
         // --- Event Listeners & Initializer ---
         function setupEventListeners() {
-            UIElements.metronomeIcon.addEventListener('click', () => UI.showModule(UIElements.metronomeModule));
+            UIElements.metronomeIcon.addEventListener('click', () => UI.showModule('metronome'));
             UIElements.backToTimerBtn.addEventListener('click', () => {
                 if (AppState.isMetronomePlaying) Metronome.stop();
-                UI.showModule(UIElements.timerModule);
+                UI.showModule('timer');
             });
             UIElements.bellIcon.addEventListener('click', () => {
                 AppState.isSoundEnabled = !AppState.isSoundEnabled;
@@ -959,7 +966,7 @@
             UIElements.bellIcon.src = AppState.isSoundEnabled ? AppState.bellEnabledSrc : AppState.bellDisabledSrc;
 
             setupEventListeners();
-            UI.showModule(UIElements.timerModule)
+            UI.showModule('timer')
             Timer.resetAll();
             UI.updateCalcTables();
         }
