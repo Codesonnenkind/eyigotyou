@@ -26,10 +26,21 @@
             font-family: 'Inter', sans-serif;
             display: flex;
             justify-content: center;
-            align-items: center;
-            overflow: hidden; /* Prevent scrolling of the whole page */
+            overflow: hidden; 
             padding: 20px;
             box-sizing: border-box;
+        }
+
+        #app-wrapper {
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             width: 100%;
+             height: 100%;
+             max-height: 100%;
+             overflow-y: auto;
+             padding: 5vh 20px 20px 20px;
+             box-sizing: border-box;
         }
         
         /* --- Corner Icons --- */
@@ -68,8 +79,7 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
-            height: 100%;
-            justify-content: center;
+            max-width: 320px;
         }
 
         .module.active {
@@ -79,14 +89,12 @@
         .module-container {
             background-color: transparent;
             border: none;
-            padding: 3vw;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 12px;
             position: relative;
-            width: 90vw;
-            max-width: 320px; 
+            width: 100%;
         }
         
         /* --- Timer Specific --- */
@@ -100,6 +108,7 @@
             justify-content: center;
             align-items: center;
             cursor: default;
+            margin-top: 5vh;
         }
 
         .timer-svg {
@@ -146,16 +155,17 @@
             color: var(--primary-color);
         }
         
-        #mode-display, #metronome-view-title {
+        #mode-display, #calc-view-title {
             z-index: 2;
             font-size: 0.8rem;
-            font-weight: 500;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.2em;
             color: var(--secondary-color);
             transition: color 0.5s ease-in-out;
             text-align: center;
             height: 1em; /* Reserve space */
+            margin-bottom: 5px;
         }
         
         /* --- Metronome Specific --- */
@@ -232,7 +242,7 @@
             color: var(--background-color);
         }
         
-        .control-btn:hover, .mode-btn:not(.active):hover, .back-button:hover, #reset-metronome:hover, #close-calc-btn:hover {
+        .control-btn:hover, .mode-btn:not(.active):hover, .back-button:hover, #reset-metronome:hover {
             color: var(--primary-color);
         }
 
@@ -330,41 +340,27 @@
             border: none;
         }
 
-        /* --- Calculator Modal Styles --- */
-        #calc-modal-container {
-            position: fixed;
-            top: 0;
-            left: 0;
+        /* --- Calculator Panel Styles --- */
+        #calc-panel {
             width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 200;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            max-width: 300px; /* Slightly wider to match tables */
+            margin-top: 25px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, margin-top 0.5s ease-in-out;
         }
-        #calc-modal-container.visible {
-            opacity: 1;
-            visibility: visible;
+        #calc-panel.visible {
+            max-height: 1000px; /* Large enough to fit content */
         }
-        #calc-modal {
-            background-color: var(--background-color);
-            border: 2px solid var(--secondary-color);
-            padding: 15px;
-            width: 90vw;
-            max-width: 300px;
-        }
-        #metronome-view-title {
-             margin-bottom: 15px;
+        #calc-view-title {
+             margin-bottom: 20px;
         }
         .calc-header-container {
             display: flex;
             border: 2px solid var(--secondary-color);
             overflow: hidden;
-            margin-bottom: 10px;
+            margin-bottom: -2px; /* Overlap borders */
+            width: 100%;
         }
         .calc-header {
             flex: 1;
@@ -389,7 +385,7 @@
             border-collapse: collapse;
             font-size: 0.7rem;
             color: var(--secondary-color);
-            margin: 10px auto;
+            margin-bottom: 10px;
         }
         .calc-table th, .calc-table td {
             border: 2px solid var(--secondary-color);
@@ -420,12 +416,8 @@
             padding-left: 8px;
         }
         #global-calc-btn {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 150;
-            width: 90vw;
+            margin-top: 15px;
+            width: 100%;
             max-width: 240px;
         }
 
@@ -433,108 +425,107 @@
 </head>
 <body>
     
-    <img src="https://www.dropbox.com/scl/fi/5b4motyxla5bkgbk1c3d0/metronome-svgrepo-com.svg?rlkey=w161g2mtryo635255gqooha7z&raw=1" alt="Metronome Icon" class="site-icon-left" id="metronome-icon" onerror="this.style.display='none'">
-    <img src="https://www.dropbox.com/scl/fi/1m4jb4opjgtxoy6yz2yf0/bell-svgrepo-com.svg?rlkey=8po6w24uqopz056gd5vwk42o2&raw=1" alt="Bell Icon" class="site-icon-left" id="bell-icon" onerror="this.style.display='none'">
-    <img src="https://www.dropbox.com/scl/fi/y2i8ul09le7i5v03lehma/500.png?rlkey=rbh2kx5rbcgmgowl49ceb9tpv&raw=1" alt="Logo" class="site-logo" id="main-logo" onerror="this.style.display='none'">
+    <div id="app-wrapper">
+        <img src="https://www.dropbox.com/scl/fi/5b4motyxla5bkgbk1c3d0/metronome-svgrepo-com.svg?rlkey=w161g2mtryo635255gqooha7z&raw=1" alt="Metronome Icon" class="site-icon-left" id="metronome-icon">
+        <img src="https://www.dropbox.com/scl/fi/1m4jb4opjgtxoy6yz2yf0/bell-svgrepo-com.svg?rlkey=8po6w24uqopz056gd5vwk42o2&raw=1" alt="Bell Icon" class="site-icon-left" id="bell-icon">
+        <img src="https://www.dropbox.com/scl/fi/y2i8ul09le7i5v03lehma/500.png?rlkey=rbh2kx5rbcgmgowl49ceb9tpv&raw=1" alt="Logo" class="site-logo" id="main-logo" onerror="this.style.display='none'">
 
-    <!-- Timer Module -->
-    <div id="timer-module" class="module active">
-        <div class="module-container">
-            <div class="timer-container">
-                <svg class="timer-svg" viewBox="0 0 100 100">
-                    <circle class="timer-circle" id="timer-track" cx="50" cy="50" r="45"></circle>
-                    <circle class="timer-circle" id="timer-progress" cx="50" cy="50" r="45"></circle>
-                    <circle id="progress-dot" cx="95" cy="50" r="2"></circle>
-                </svg>
-                <div id="time-left">25:00</div>
-            </div>
-            <div id="mode-display">Work</div>
-            <div class="control-panel">
-                <div class="control-group"><button class="mode-btn active" data-mode="pomodoro">Pomodoro</button><button class="mode-btn" data-mode="sports">Sports</button></div>
-                <div id="settings-container">
-                    <div id="pomodoro-settings" class="settings-panel active">
-                        <div class="control-group"><div class="setting-item label">WORK <span>(MIN)</span></div><div class="setting-item"><input type="number" id="work-time" value="25" min="1"></div></div>
-                        <div class="control-group"><div class="setting-item label">BREAK <span>(MIN)</span></div><div class="setting-item"><input type="number" id="break-time" value="5" min="1"></div></div>
-                    </div>
-                    <div id="sports-settings" class="settings-panel">
-                        <div class="control-group"><div class="setting-item label">Workout <span>(SEC)</span></div><div class="setting-item"><input type="number" id="workout-time" value="45" min="0"></div></div>
-                        <div class="control-group"><div class="setting-item label">Rest <span>(SEC)</span></div><div class="setting-item"><input type="number" id="rest-time" value="15" min="0"></div></div>
-                        <div class="control-group"><div class="setting-item label">Rounds</div><div class="setting-item"><input type="number" id="rounds" value="8" min="1"></div></div>
-                    </div>
+        <!-- Timer Module -->
+        <div id="timer-module" class="module active">
+            <div class="module-container">
+                <div class="timer-container">
+                    <svg class="timer-svg" viewBox="0 0 100 100">
+                        <circle class="timer-circle" id="timer-track" cx="50" cy="50" r="45"></circle>
+                        <circle class="timer-circle" id="timer-progress" cx="50" cy="50" r="45"></circle>
+                        <circle id="progress-dot" cx="95" cy="50" r="2"></circle>
+                    </svg>
+                    <div id="time-left">25:00</div>
                 </div>
-                <div class="control-group"><button class="control-btn" id="start-pause-btn">Start</button><button class="control-btn" id="reset-btn">Reset</button></div>
+                <div id="mode-display">Work</div>
+                <div class="control-panel">
+                    <div class="control-group"><button class="mode-btn active" data-mode="pomodoro">Pomodoro</button><button class="mode-btn" data-mode="sports">Sports</button></div>
+                    <div id="settings-container">
+                        <div id="pomodoro-settings" class="settings-panel active">
+                            <div class="control-group"><div class="setting-item label">WORK <span>(MIN)</span></div><div class="setting-item"><input type="number" id="work-time" value="25" min="1"></div></div>
+                            <div class="control-group"><div class="setting-item label">BREAK <span>(MIN)</span></div><div class="setting-item"><input type="number" id="break-time" value="5" min="1"></div></div>
+                        </div>
+                        <div id="sports-settings" class="settings-panel">
+                            <div class="control-group"><div class="setting-item label">Workout <span>(SEC)</span></div><div class="setting-item"><input type="number" id="workout-time" value="45" min="0"></div></div>
+                            <div class="control-group"><div class="setting-item label">Rest <span>(SEC)</span></div><div class="setting-item"><input type="number" id="rest-time" value="15" min="0"></div></div>
+                            <div class="control-group"><div class="setting-item label">Rounds</div><div class="setting-item"><input type="number" id="rounds" value="8" min="1"></div></div>
+                        </div>
+                    </div>
+                    <div class="control-group"><button class="control-btn" id="start-pause-btn">Start</button><button class="control-btn" id="reset-btn">Reset</button></div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Metronome Module -->
-    <div id="metronome-module" class="module">
-        <div class="module-container">
-            <div id="metronome-tap-area" class="metronome-display">
-                <div id="bpm-display">120</div>
-                <div id="bpm-label">BPM</div>
-            </div>
-            <div class="mode-display">Metronome</div>
-             <div class="control-panel">
-                 <div class="control-group">
-                    <button class="control-btn" id="play-stop-metronome">Play</button>
+        <!-- Metronome Module -->
+        <div id="metronome-module" class="module">
+            <div class="module-container">
+                <div id="metronome-tap-area" class="metronome-display">
+                    <div id="bpm-display">120</div>
+                    <div id="bpm-label">BPM</div>
                 </div>
-                <div class="control-group">
-                    <button class="control-btn" id="reset-metronome">Reset</button>
-                    <div class="setting-item" id="bpm-slider-container">
-                        <input type="range" min="40" max="220" value="120" id="bpm-slider">
+                <div class="mode-display">Metronome</div>
+                <div class="control-panel">
+                    <div class="control-group">
+                        <button class="control-btn" id="play-stop-metronome">Play</button>
+                    </div>
+                    <div class="control-group">
+                        <button class="control-btn" id="reset-metronome">Reset</button>
+                        <div class="setting-item" id="bpm-slider-container">
+                            <input type="range" min="40" max="220" value="120" id="bpm-slider">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <button class="control-btn back-button" id="back-to-timer-from-metro">Back to Timer</button>
                     </div>
                 </div>
-                <div class="control-group">
-                    <button class="control-btn back-button" id="back-to-timer-from-metro">Back to Timer</button>
-                </div>
             </div>
         </div>
-    </div>
-    
-    <!-- Global Calculator Button -->
-    <div class="control-panel" id="global-calc-btn">
-        <div class="control-group">
-            <button class="control-btn open-calc-btn" style="flex-basis: 100%; justify-content: center;">Calculators</button>
-        </div>
-    </div>
-    
-    <!-- Calculator Modal -->
-    <div id="calc-modal-container">
-        <div id="calc-modal">
-             <div id="metronome-view-title">CALCULATOR (<span id="delay-bpm-display">120</span> BPM)</div>
-              <div class="calc-header-container">
-                <div class="calc-header" id="calc-delay-header">DELAY</div>
-                <div class="calc-header" id="calc-reverb-header">REVERB</div>
-            </div>
-             <table id="delay-table" class="calc-table active">
-                <thead>
-                    <tr><th>NOTE</th><th>NORMAL</th><th>DOTTED</th><th>TRIPLET</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>1/1</td><td id="t-1-1"></td><td id="t-1-1-d"></td><td id="t-1-1-t"></td></tr>
-                    <tr><td>1/2</td><td id="t-1-2"></td><td id="t-1-2-d"></td><td id="t-1-2-t"></td></tr>
-                    <tr><td>1/4</td><td id="t-1-4"></td><td id="t-1-4-d"></td><td id="t-1-4-t"></td></tr>
-                    <tr><td>1/8</td><td id="t-1-8"></td><td id="t-1-8-d"></td><td id="t-1-8-t"></td></tr>
-                    <tr><td>1/16</td><td id="t-1-16"></td><td id="t-1-16-d"></td><td id="t-1-16-t"></td></tr>
-                    <tr><td>1/32</td><td id="t-1-32"></td><td id="t-1-32-d"></td><td id="t-1-32-t"></td></tr>
-                </tbody>
-             </table>
-             <table id="reverb-table" class="calc-table active">
-                <thead>
-                    <tr><th>SIZE</th><th>PREDELAY</th><th>DECAY</th><th>TOTAL</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>Hall</td><td id="r-hall-pre"></td><td id="r-hall-decay"></td><td id="r-hall-total"></td></tr>
-                    <tr><td>L Room</td><td id="r-lroom-pre"></td><td id="r-lroom-decay"></td><td id="r-lroom-total"></td></tr>
-                    <tr><td>S Room</td><td id="r-sroom-pre"></td><td id="r-sroom-decay"></td><td id="r-sroom-total"></td></tr>
-                    <tr><td>Ambience</td><td id="r-ambi-pre"></td><td id="r-ambi-decay"></td><td id="r-ambi-total"></td></tr>
-                </tbody>
-             </table>
-              <div class="control-panel" style="max-width: 100%;">
-                <div class="control-group">
-                    <button class="control-btn back-button" id="close-calc-btn">Close</button>
+        
+        <!-- Calculator Panel -->
+        <div id="calc-panel" class="hidden">
+            <div id="calc-modal-content" class="module-container" style="max-width: 300px; padding:0; gap: 0;">
+                <div id="calc-view-title">CALCULATOR (<span id="delay-bpm-display">120</span> BPM)</div>
+                <div class="calc-header-container" style="margin-top:15px;">
+                    <div class="calc-header" id="calc-delay-header">DELAY</div>
                 </div>
+                <table id="delay-table" class="calc-table" style="margin-top: -2px;">
+                    <thead>
+                        <tr><th>NOTE</th><th>NORMAL</th><th>DOTTED</th><th>TRIPLET</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1/1</td><td id="t-1-1"></td><td id="t-1-1-d"></td><td id="t-1-1-t"></td></tr>
+                        <tr><td>1/2</td><td id="t-1-2"></td><td id="t-1-2-d"></td><td id="t-1-2-t"></td></tr>
+                        <tr><td>1/4</td><td id="t-1-4"></td><td id="t-1-4-d"></td><td id="t-1-4-t"></td></tr>
+                        <tr><td>1/8</td><td id="t-1-8"></td><td id="t-1-8-d"></td><td id="t-1-8-t"></td></tr>
+                        <tr><td>1/16</td><td id="t-1-16"></td><td id="t-1-16-d"></td><td id="t-1-16-t"></td></tr>
+                        <tr><td>1/32</td><td id="t-1-32"></td><td id="t-1-32-d"></td><td id="t-1-32-t"></td></tr>
+                    </tbody>
+                </table>
+                 <div class="calc-header-container" style="margin-top:10px;">
+                    <div class="calc-header" id="calc-reverb-header">REVERB</div>
+                </div>
+                <table id="reverb-table" class="calc-table" style="margin-top: -2px;">
+                    <thead>
+                        <tr><th>SIZE</th><th>PREDELAY</th><th>DECAY</th><th>TOTAL</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Hall</td><td id="r-hall-pre"></td><td id="r-hall-decay"></td><td id="r-hall-total"></td></tr>
+                        <tr><td>L Room</td><td id="r-lroom-pre"></td><td id="r-lroom-decay"></td><td id="r-lroom-total"></td></tr>
+                        <tr><td>S Room</td><td id="r-sroom-pre"></td><td id="r-sroom-decay"></td><td id="r-sroom-total"></td></tr>
+                        <tr><td>Ambience</td><td id="r-ambi-pre"></td><td id="r-ambi-decay"></td><td id="r-ambi-total"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    
+        <!-- Global Calculator Button -->
+        <div class="control-panel" id="global-calc-btn">
+            <div class="control-group">
+                <button class="control-btn open-calc-btn" style="flex-basis: 100%; justify-content: center;">Calculators</button>
             </div>
         </div>
     </div>
@@ -570,11 +561,10 @@
         const playStopMetronomeBtn = document.getElementById('play-stop-metronome');
         const visualBeatIndicator = document.getElementById('metronome-tap-area');
         const resetMetronomeBtn = document.getElementById('reset-metronome');
-        const openCalcBtn = document.getElementById('global-calc-btn');
+        const openCalcBtn = document.getElementById('global-calc-btn').querySelector('button');
+        const calcPanel = document.getElementById('calc-panel');
         const delayBpmDisplay = document.getElementById('delay-bpm-display');
-        const calcModal = document.getElementById('calc-modal-container');
-        const closeCalcBtn = document.getElementById('close-calc-btn');
-
+        
         // --- State ---
         let mainTimerId = null;
         let isPaused = true;
@@ -620,11 +610,10 @@
         });
         
         openCalcBtn.addEventListener('click', () => {
-            calcModal.classList.add('visible');
+            const isVisible = calcPanel.classList.toggle('visible');
+            openCalcBtn.textContent = isVisible ? "Close" : "Calculators";
             updateAllTables();
         });
-
-        closeCalcBtn.addEventListener('click', () => calcModal.classList.remove('visible'));
 
 
         // --- 2. Timer Logic ---
@@ -733,7 +722,9 @@
              if (sportsState.isWorkout) { playSound(523.25); sportsState.isWorkout = false; sportsState.timeLeft = sportsState.restSec; modeDisplay.textContent = 'Rest'; } 
              else { playSound(783.99); sportsState.currentRound++;
                 if (sportsState.currentRound > sportsState.totalRounds) { modeDisplay.textContent = 'Complete!'; resetAllTimers(); return; }
-                sportsState.isWorkout = true; sportsState.timeLeft = sportsState.workoutSec; modeDisplay.textContent = `Round ${sportsState.currentRound}`;
+                sportsState.isWorkout = true;
+                sportsState.timeLeft = sportsState.workoutSec;
+                modeDisplay.textContent = `Round ${sportsState.currentRound}`;
              }
              sportsState.totalDuration = sportsState.timeLeft;
              targetTime = Date.now() + sportsState.timeLeft * 1000;
