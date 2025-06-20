@@ -64,18 +64,18 @@
 
         /* --- Main Module Containers --- */
         .module {
-            display: flex;
+            display: none; /* Hidden by default */
             flex-direction: column;
             align-items: center;
             width: 100%;
             height: 100%;
             justify-content: center;
         }
-        
-        .hidden {
-            display: none;
-        }
 
+        .module.active {
+            display: flex; /* Show active module */
+        }
+        
         .module-container {
             background-color: transparent;
             border: none;
@@ -86,15 +86,15 @@
             gap: 12px;
             position: relative;
             width: 90vw;
-            max-width: 320px; /* Reduced max-width for more compact layout */
+            max-width: 320px; 
         }
         
         /* --- Timer Specific --- */
         .timer-container {
             position: relative;
-            width: 65vw; /* Reduced size */
+            width: 65vw; 
             height: 65vw;
-            max-width: 240px; /* Reduced max size */
+            max-width: 240px; 
             max-height: 240px;
             display: flex;
             justify-content: center;
@@ -140,13 +140,13 @@
         
         #time-left {
             z-index: 1; 
-            font-size: clamp(2rem, 10vw, 3rem); /* Slightly smaller font */
+            font-size: clamp(2rem, 10vw, 3rem); 
             font-weight: 700;
             letter-spacing: 0.1em;
             color: var(--primary-color);
         }
         
-        #mode-display {
+        #mode-display, #metronome-view-title {
             z-index: 2;
             font-size: 0.8rem;
             font-weight: 500;
@@ -160,7 +160,7 @@
         
         /* --- Metronome Specific --- */
         .metronome-display {
-            width: 65vw; /* Reduced size to match timer */
+            width: 65vw; 
             height: 65vw;
             max-width: 240px;
             max-height: 240px;
@@ -178,7 +178,7 @@
         }
 
         #bpm-display {
-            font-size: clamp(2.5rem, 11vw, 3.5rem); /* Slightly smaller font */
+            font-size: clamp(2.5rem, 11vw, 3.5rem); 
             font-weight: 700;
             color: var(--primary-color);
         }
@@ -232,7 +232,7 @@
             color: var(--background-color);
         }
         
-        .control-btn:hover, .mode-btn:not(.active):hover, .back-button:hover, #reset-metronome:hover {
+        .control-btn:hover, .mode-btn:not(.active):hover, .back-button:hover, #reset-metronome:hover, #close-calc-btn:hover {
             color: var(--primary-color);
         }
 
@@ -329,6 +329,106 @@
             border-radius: 50%;
             border: none;
         }
+
+        /* --- Calculator Modal Styles --- */
+        #calc-modal-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 200;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        #calc-modal-container.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        #calc-modal {
+            background-color: var(--background-color);
+            border: 2px solid var(--secondary-color);
+            padding: 15px;
+            width: 90vw;
+            max-width: 300px;
+        }
+        #metronome-view-title {
+             margin-bottom: 15px;
+        }
+        .calc-header-container {
+            display: flex;
+            border: 2px solid var(--secondary-color);
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .calc-header {
+            flex: 1;
+            padding: 8px;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        #calc-delay-header {
+            background-color: var(--break-color);
+            color: var(--background-color);
+        }
+        #calc-reverb-header {
+             background-color: var(--secondary-color);
+             color: var(--background-color);
+        }
+
+
+        .calc-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.7rem;
+            color: var(--secondary-color);
+            margin: 10px auto;
+        }
+        .calc-table th, .calc-table td {
+            border: 2px solid var(--secondary-color);
+            padding: 4px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        #delay-table thead {
+            background-color: var(--break-color);
+        }
+        
+        #delay-table thead th {
+             color: var(--background-color);
+        }
+        
+        #reverb-table thead {
+             background-color: var(--secondary-color);
+        }
+         #reverb-table thead th {
+             color: var(--background-color);
+        }
+
+        .calc-table td:first-child {
+            font-weight: 600;
+            color: var(--primary-color);
+            text-align: left;
+            padding-left: 8px;
+        }
+        #global-calc-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 150;
+            width: 90vw;
+            max-width: 240px;
+        }
+
     </style>
 </head>
 <body>
@@ -338,7 +438,7 @@
     <img src="https://www.dropbox.com/scl/fi/y2i8ul09le7i5v03lehma/500.png?rlkey=rbh2kx5rbcgmgowl49ceb9tpv&raw=1" alt="Logo" class="site-logo" id="main-logo" onerror="this.style.display='none'">
 
     <!-- Timer Module -->
-    <div id="timer-module" class="module">
+    <div id="timer-module" class="module active">
         <div class="module-container">
             <div class="timer-container">
                 <svg class="timer-svg" viewBox="0 0 100 100">
@@ -368,13 +468,13 @@
     </div>
 
     <!-- Metronome Module -->
-    <div id="metronome-module" class="module hidden">
+    <div id="metronome-module" class="module">
         <div class="module-container">
             <div id="metronome-tap-area" class="metronome-display">
                 <div id="bpm-display">120</div>
                 <div id="bpm-label">BPM</div>
             </div>
-            <div id="metronome-mode-display" class="mode-display">Metronome</div>
+            <div class="mode-display">Metronome</div>
              <div class="control-panel">
                  <div class="control-group">
                     <button class="control-btn" id="play-stop-metronome">Play</button>
@@ -391,11 +491,60 @@
             </div>
         </div>
     </div>
+    
+    <!-- Global Calculator Button -->
+    <div class="control-panel" id="global-calc-btn">
+        <div class="control-group">
+            <button class="control-btn open-calc-btn" style="flex-basis: 100%; justify-content: center;">Calculators</button>
+        </div>
+    </div>
+    
+    <!-- Calculator Modal -->
+    <div id="calc-modal-container">
+        <div id="calc-modal">
+             <div id="metronome-view-title">CALCULATOR (<span id="delay-bpm-display">120</span> BPM)</div>
+              <div class="calc-header-container">
+                <div class="calc-header" id="calc-delay-header">DELAY</div>
+                <div class="calc-header" id="calc-reverb-header">REVERB</div>
+            </div>
+             <table id="delay-table" class="calc-table active">
+                <thead>
+                    <tr><th>NOTE</th><th>NORMAL</th><th>DOTTED</th><th>TRIPLET</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>1/1</td><td id="t-1-1"></td><td id="t-1-1-d"></td><td id="t-1-1-t"></td></tr>
+                    <tr><td>1/2</td><td id="t-1-2"></td><td id="t-1-2-d"></td><td id="t-1-2-t"></td></tr>
+                    <tr><td>1/4</td><td id="t-1-4"></td><td id="t-1-4-d"></td><td id="t-1-4-t"></td></tr>
+                    <tr><td>1/8</td><td id="t-1-8"></td><td id="t-1-8-d"></td><td id="t-1-8-t"></td></tr>
+                    <tr><td>1/16</td><td id="t-1-16"></td><td id="t-1-16-d"></td><td id="t-1-16-t"></td></tr>
+                    <tr><td>1/32</td><td id="t-1-32"></td><td id="t-1-32-d"></td><td id="t-1-32-t"></td></tr>
+                </tbody>
+             </table>
+             <table id="reverb-table" class="calc-table active">
+                <thead>
+                    <tr><th>SIZE</th><th>PREDELAY</th><th>DECAY</th><th>TOTAL</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Hall</td><td id="r-hall-pre"></td><td id="r-hall-decay"></td><td id="r-hall-total"></td></tr>
+                    <tr><td>L Room</td><td id="r-lroom-pre"></td><td id="r-lroom-decay"></td><td id="r-lroom-total"></td></tr>
+                    <tr><td>S Room</td><td id="r-sroom-pre"></td><td id="r-sroom-decay"></td><td id="r-sroom-total"></td></tr>
+                    <tr><td>Ambience</td><td id="r-ambi-pre"></td><td id="r-ambi-decay"></td><td id="r-ambi-total"></td></tr>
+                </tbody>
+             </table>
+              <div class="control-panel" style="max-width: 100%;">
+                <div class="control-group">
+                    <button class="control-btn back-button" id="close-calc-btn">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
 
         // --- Module Switching Elements ---
+        const allModules = document.querySelectorAll('.module');
         const timerModule = document.getElementById('timer-module');
         const metronomeModule = document.getElementById('metronome-module');
         const metronomeIcon = document.getElementById('metronome-icon');
@@ -421,8 +570,12 @@
         const playStopMetronomeBtn = document.getElementById('play-stop-metronome');
         const visualBeatIndicator = document.getElementById('metronome-tap-area');
         const resetMetronomeBtn = document.getElementById('reset-metronome');
+        const openCalcBtn = document.getElementById('global-calc-btn');
+        const delayBpmDisplay = document.getElementById('delay-bpm-display');
+        const calcModal = document.getElementById('calc-modal-container');
+        const closeCalcBtn = document.getElementById('close-calc-btn');
 
-        // --- Timer State ---
+        // --- State ---
         let mainTimerId = null;
         let isPaused = true;
         let hasStarted = false; 
@@ -430,8 +583,6 @@
         let targetTime = null;
         let pomodoroState = {};
         let sportsState = {};
-
-        // --- Metronome State ---
         let audioContext;
         let bpm = 120;
         let isMetronomePlaying = false;
@@ -440,8 +591,6 @@
         const beatsPerMeasure = 4;
         let tapTimestamps = [];
         let tapTimeoutId = null;
-        
-        // --- Notification State ---
         let isSoundEnabled = true;
         const bellEnabledSrc = "https://www.dropbox.com/scl/fi/1m4jb4opjgtxoy6yz2yf0/bell-svgrepo-com.svg?rlkey=8po6w24uqopz056gd5vwk42o2&raw=1";
         const bellDisabledSrc = "https://www.dropbox.com/scl/fi/syg6jjwvngtxl1mwk0hdv/bell-disabled-svgrepo-com.svg?rlkey=lrawxg597knm9h8jifkw21ngj&raw=1";
@@ -449,14 +598,13 @@
 
         // --- 1. Module Switching Logic ---
         function showModule(moduleToShow) {
-            [timerModule, metronomeModule].forEach(module => {
-                module.classList.add('hidden');
-            });
-            moduleToShow.classList.remove('hidden');
+            allModules.forEach(module => module.classList.remove('active'));
+            moduleToShow.classList.add('active');
 
             const isTimerModule = moduleToShow === timerModule;
+            
             mainLogo.classList.toggle('hidden', !isTimerModule);
-            metronomeIcon.classList.toggle('hidden', !isTimerModule);
+            metronomeIcon.classList.toggle('hidden', isTimerModule);
             bellIcon.classList.toggle('hidden', !isTimerModule);
         }
 
@@ -470,6 +618,13 @@
             isSoundEnabled = !isSoundEnabled;
             bellIcon.src = isSoundEnabled ? bellEnabledSrc : bellDisabledSrc;
         });
+        
+        openCalcBtn.addEventListener('click', () => {
+            calcModal.classList.add('visible');
+            updateAllTables();
+        });
+
+        closeCalcBtn.addEventListener('click', () => calcModal.classList.remove('visible'));
 
 
         // --- 2. Timer Logic ---
@@ -480,7 +635,7 @@
         function playSound(frequency) {
             if (!isSoundEnabled) return;
             initAudioContext();
-            if(!audioContext) return; // Exit if context couldn't be created
+            if(!audioContext) return; 
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
             osc.frequency.value = frequency;
@@ -551,12 +706,7 @@
         }
 
         function pomodoroSwitch() {
-            // Play sound based on the upcoming mode
-            if (pomodoroState.mode === 'work') { // Ending work, starting break
-                playSound(523.25); // Lower pitch (C5)
-            } else { // Ending break, starting work
-                playSound(783.99); // Higher pitch (G5)
-            }
+            if (pomodoroState.mode === 'work') { playSound(523.25); } else { playSound(783.99); }
             pomodoroState.mode = pomodoroState.mode === 'work' ? 'break' : 'work';
             pomodoroState.timeLeft = pomodoroState.mode === 'work' ? pomodoroState.workSec : pomodoroState.breakSec;
             pomodoroState.totalDuration = pomodoroState.timeLeft;
@@ -580,18 +730,10 @@
         }
 
         function sportsSwitch() {
-             if (sportsState.isWorkout) { // Ending workout, starting rest
-                playSound(523.25); // Lower pitch
-                sportsState.isWorkout = false;
-                sportsState.timeLeft = sportsState.restSec;
-                modeDisplay.textContent = 'Rest';
-             } else { // Ending rest, starting workout
-                playSound(783.99); // Higher pitch
-                sportsState.currentRound++;
+             if (sportsState.isWorkout) { playSound(523.25); sportsState.isWorkout = false; sportsState.timeLeft = sportsState.restSec; modeDisplay.textContent = 'Rest'; } 
+             else { playSound(783.99); sportsState.currentRound++;
                 if (sportsState.currentRound > sportsState.totalRounds) { modeDisplay.textContent = 'Complete!'; resetAllTimers(); return; }
-                sportsState.isWorkout = true;
-                sportsState.timeLeft = sportsState.workoutSec;
-                modeDisplay.textContent = `Round ${sportsState.currentRound}`;
+                sportsState.isWorkout = true; sportsState.timeLeft = sportsState.workoutSec; modeDisplay.textContent = `Round ${sportsState.currentRound}`;
              }
              sportsState.totalDuration = sportsState.timeLeft;
              targetTime = Date.now() + sportsState.timeLeft * 1000;
@@ -605,21 +747,14 @@
         }
         
         function startTimer() {
-            isPaused = false;
-            hasStarted = true;
-            startPauseBtn.textContent = 'Pause';
-            progressDot.style.display = 'none';
+            isPaused = false; hasStarted = true; startPauseBtn.textContent = 'Pause'; progressDot.style.display = 'none';
             let currentLeft = currentMode === 'pomodoro' ? pomodoroState.timeLeft : sportsState.timeLeft;
             targetTime = Date.now() + currentLeft * 1000;
             mainTimerId = setInterval(currentMode === 'pomodoro' ? pomodoroTick : sportsTick, 1000);
         }
 
         function pauseTimer() {
-             isPaused = true;
-             startPauseBtn.textContent = 'Continue';
-             progressDot.style.display = 'block';
-             clearInterval(mainTimerId);
-             mainTimerId = null;
+             isPaused = true; startPauseBtn.textContent = 'Continue'; progressDot.style.display = 'block'; clearInterval(mainTimerId); mainTimerId = null;
              if(targetTime) {
                 const timeLeftOnPause = Math.round((targetTime - Date.now()) / 1000);
                 const timeToSave = timeLeftOnPause > 0 ? timeLeftOnPause : 0;
@@ -630,157 +765,111 @@
         }
 
         startPauseBtn.addEventListener('click', () => {
-            if (isPaused) {
-                if (!hasStarted) { if (currentMode === 'pomodoro') pomodoroReset(); if (currentMode === 'sports') sportsReset(); }
-                startTimer();
-            } else {
-                pauseTimer();
-            }
+            if (isPaused) { if (!hasStarted) { resetAllTimers(); } startTimer(); } else { pauseTimer(); }
         });
         resetBtn.addEventListener('click', resetAllTimers);
 
 
         // --- 3. Metronome Logic ---
         function initAudioContext() {
-            if (!audioContext) {
-                try {
-                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                } catch(e) {
-                    console.error("Web Audio API is not supported in this browser");
-                }
-            }
+            if (!audioContext) { try { audioContext = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { console.error("Web Audio API is not supported"); } }
         }
 
         function scheduleTick(time, currentBeat) {
             if(!audioContext) return;
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
-            
             osc.frequency.value = (currentBeat === 1) ? 1760 : 880; 
-
             gain.gain.setValueAtTime(1, time);
             gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-            osc.connect(gain);
-            gain.connect(audioContext.destination);
-            osc.start(time);
-            osc.stop(time + 0.05);
+            osc.connect(gain); gain.connect(audioContext.destination);
+            osc.start(time); osc.stop(time + 0.05);
 
             setTimeout(() => {
-                if (currentBeat === 1) {
-                    visualBeatIndicator.style.borderColor = 'var(--break-color)';
-                    visualBeatIndicator.style.transform = 'scale(1.05)';
-                } else {
-                    visualBeatIndicator.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
-                }
-                
-                setTimeout(() => {
-                    visualBeatIndicator.style.borderColor = ''; 
-                    visualBeatIndicator.style.backgroundColor = ''; 
-                    visualBeatIndicator.style.transform = ''; 
-                }, 80);
-
+                if (currentBeat === 1) { visualBeatIndicator.style.borderColor = 'var(--break-color)'; visualBeatIndicator.style.transform = 'scale(1.05)'; } 
+                else { visualBeatIndicator.style.backgroundColor = 'rgba(255, 255, 255, 0.05)'; }
+                setTimeout(() => { visualBeatIndicator.style.borderColor = ''; visualBeatIndicator.style.backgroundColor = ''; visualBeatIndicator.style.transform = ''; }, 80);
             }, (time - audioContext.currentTime) * 1000);
         }
 
         function scheduler() {
-            let nextNoteTime = audioContext.currentTime;
-            const scheduleAheadTime = 0.1;
-
+            let nextNoteTime = audioContext.currentTime; const scheduleAheadTime = 0.1;
             function scheduleLoop() {
                 while (nextNoteTime < audioContext.currentTime + scheduleAheadTime) {
-                    scheduleTick(nextNoteTime, beatNumber);
-                    nextNoteTime += 60.0 / bpm;
-                    beatNumber++;
-                    if (beatNumber > beatsPerMeasure) {
-                        beatNumber = 1;
-                    }
+                    scheduleTick(nextNoteTime, beatNumber); nextNoteTime += 60.0 / bpm; beatNumber++;
+                    if (beatNumber > beatsPerMeasure) { beatNumber = 1; }
                 }
             }
             schedulerTimerID = setInterval(scheduleLoop, 25);
         }
 
         function playMetronome() {
-            initAudioContext();
-            if(!audioContext) return;
-            if (audioContext.state === 'suspended') {
-                audioContext.resume();
-            }
-            isMetronomePlaying = true;
-            playStopMetronomeBtn.textContent = 'Stop';
-            beatNumber = 1; 
-            scheduler();
+            initAudioContext(); if(!audioContext) return;
+            if (audioContext.state === 'suspended') { audioContext.resume(); }
+            isMetronomePlaying = true; playStopMetronomeBtn.textContent = 'Stop'; beatNumber = 1; scheduler();
         }
 
         function stopMetronome() {
-            isMetronomePlaying = false;
-            playStopMetronomeBtn.textContent = 'Play';
-            clearInterval(schedulerTimerID);
+            isMetronomePlaying = false; playStopMetronomeBtn.textContent = 'Play'; clearInterval(schedulerTimerID);
         }
 
         function handleBpmTap() {
-            const now = Date.now();
-            clearTimeout(tapTimeoutId);
-            tapTimestamps.push(now);
-            
-            if (tapTimestamps.length > 5) {
-                tapTimestamps.shift();
-            }
-
+            const now = Date.now(); clearTimeout(tapTimeoutId); tapTimestamps.push(now);
+            if (tapTimestamps.length > 5) { tapTimestamps.shift(); }
             if (tapTimestamps.length > 1) {
                 const intervals = [];
-                for (let i = 1; i < tapTimestamps.length; i++) {
-                    intervals.push(tapTimestamps[i] - tapTimestamps[i-1]);
-                }
+                for (let i = 1; i < tapTimestamps.length; i++) { intervals.push(tapTimestamps[i] - tapTimestamps[i-1]); }
                 const averageInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
                 if (averageInterval > 0) {
                     let newBpm = Math.round(60000 / averageInterval);
-                    const minBpm = parseInt(bpmSlider.min, 10);
-                    const maxBpm = parseInt(bpmSlider.max, 10);
+                    const minBpm = parseInt(bpmSlider.min, 10); const maxBpm = parseInt(bpmSlider.max, 10);
                     newBpm = Math.max(minBpm, Math.min(maxBpm, newBpm));
-
-                    bpm = newBpm;
-                    bpmDisplay.textContent = bpm;
-                    bpmSlider.value = bpm;
+                    bpm = newBpm; bpmDisplay.textContent = bpm; bpmSlider.value = bpm; updateAllTables();
                 }
             }
-            
-            tapTimeoutId = setTimeout(() => {
-                tapTimestamps = [];
-            }, 2000); 
+            tapTimeoutId = setTimeout(() => { tapTimestamps = []; }, 2000); 
+        }
+        
+        function updateAllTables() {
+            delayBpmDisplay.textContent = bpm;
+            // Delay Table
+            const beatMs = (60 / bpm) * 1000;
+            const noteValues = [4, 2, 1, 0.5, 0.25, 0.125];
+            noteValues.forEach((multiplier, index) => {
+                const noteDuration = beatMs * multiplier; const noteId = `1-${Math.pow(2, index)}`;
+                document.getElementById(`t-${noteId}`).textContent = noteDuration.toFixed(2);
+                document.getElementById(`t-${noteId}-d`).textContent = (noteDuration * 1.5).toFixed(2);
+                document.getElementById(`t-${noteId}-t`).textContent = (noteDuration * (2/3)).toFixed(2);
+            });
+            // Reverb Table
+            const reverbConfigs = [
+                { id: 'hall', totalTime: beatMs * 8 },   // 2 Bars
+                { id: 'lroom', totalTime: beatMs * 4 },  // 1 Bar
+                { id: 'sroom', totalTime: beatMs * 2 },  // 1/2 Note
+                { id: 'ambi', totalTime: beatMs * 1 }    // 1/4 Note
+            ];
+            reverbConfigs.forEach(config => {
+                const predelay = config.totalTime / 64;
+                const decay = config.totalTime - predelay;
+                document.getElementById(`r-${config.id}-pre`).textContent = predelay.toFixed(2);
+                document.getElementById(`r-${config.id}-decay`).textContent = decay.toFixed(2);
+                document.getElementById(`r-${config.id}-total`).textContent = config.totalTime.toFixed(2);
+            });
         }
 
         function resetMetronome() {
-             if (isMetronomePlaying) {
-                stopMetronome();
-            }
-            bpm = 120;
-            bpmDisplay.textContent = bpm;
-            bpmSlider.value = bpm;
-            tapTimestamps = [];
-            clearTimeout(tapTimeoutId);
+             if (isMetronomePlaying) { stopMetronome(); }
+            bpm = 120; bpmDisplay.textContent = bpm; bpmSlider.value = bpm;
+            tapTimestamps = []; clearTimeout(tapTimeoutId); updateAllTables();
         }
 
-        playStopMetronomeBtn.addEventListener('click', () => {
-            if (isMetronomePlaying) {
-                stopMetronome();
-            } else {
-                playMetronome();
-            }
-        });
-
-        bpmSlider.addEventListener('input', (e) => {
-            bpm = e.target.value;
-            bpmDisplay.textContent = bpm;
-        });
-
+        playStopMetronomeBtn.addEventListener('click', () => { isMetronomePlaying ? stopMetronome() : playMetronome(); });
+        bpmSlider.addEventListener('input', (e) => { bpm = e.target.value; bpmDisplay.textContent = bpm; updateAllTables(); });
         visualBeatIndicator.addEventListener('click', handleBpmTap);
-        
         resetMetronomeBtn.addEventListener('click', resetMetronome);
 
         // --- Initial Setup ---
-        window.onload = () => {
-            resetAllTimers();
-        };
+        window.onload = () => { resetAllTimers(); updateAllTables(); };
 
     });
     </script>
