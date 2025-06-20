@@ -192,11 +192,6 @@
             margin-bottom: 15px; /* Increased margin */
         }
         
-        /* ADDED: Cursor pointer for timer mode display */
-        #timer-controls #mode-display {
-            cursor: pointer;
-        }
-
         /* --- Metronome Specific --- */
         .metronome-display {
             width: 65vw; 
@@ -280,13 +275,18 @@
             justify-content: flex-start;
             padding-left: 15px;
         }
+        
+        /* UPDATED: Pomodoro start mode selectors are now clickable */
+        #pomodoro-settings .setting-item.label {
+            cursor: pointer;
+        }
+
         #play-stop-metronome, .back-button { flex-basis: 100%; justify-content: center; }
         #reset-metronome { flex-grow: 1; flex-basis: 0; }
         #bpm-slider-container { flex-grow: 2; flex-basis: 0; }
         
         #settings-container { position: relative; height: 125px; }
         
-        /* ADDED: Collapsible wrapper for timer options */
         #timer-options-wrapper {
             display: flex;
             flex-direction: column;
@@ -458,13 +458,12 @@
             <div id="timer-controls" class="module-controls active">
                 <div id="mode-display">Work</div>
                 <div class="control-panel">
-                    <!-- ADDED: Wrapper for collapsible timer options -->
                     <div id="timer-options-wrapper">
                         <div class="control-group"><button class="mode-btn" data-mode="pomodoro">Pomodoro</button><button class="mode-btn" data-mode="sports">Sports</button></div>
                         <div id="settings-container">
                             <div id="pomodoro-settings" class="settings-panel">
-                                <div class="control-group"><div class="setting-item label">WORK <span>(MIN)</span></div><div class="setting-item"><input type="number" id="work-time" value="25" min="1"></div></div>
-                                <div class="control-group"><div class="setting-item label">BREAK <span>(MIN)</span></div><div class="setting-item"><input type="number" id="break-time" value="5" min="1"></div></div>
+                                <div class="control-group"><div class="setting-item label" data-start-mode="work">WORK <span>(MIN)</span></div><div class="setting-item"><input type="number" id="work-time" value="25" min="1"></div></div>
+                                <div class="control-group"><div class="setting-item label" data-start-mode="break">BREAK <span>(MIN)</span></div><div class="setting-item"><input type="number" id="break-time" value="5" min="1"></div></div>
                             </div>
                             <div id="sports-settings" class="settings-panel">
                                 <div class="control-group"><div class="setting-item label">Workout <span>(SEC)</span></div><div class="setting-item"><input type="number" id="workout-time" value="45" min="0"></div></div>
@@ -954,22 +953,30 @@
             });
             UIElements.startPauseBtn.addEventListener('click', () => {
                 Audio.initContext();
-                if (AppState.isPaused) { if (!AppState.hasStarted) { Timer.resetAll(); } Timer.start(); } 
+                if (AppState.isPaused) {
+                    Timer.start(); 
+                } 
                 else { Timer.pause(); }
             });
             UIElements.resetBtn.addEventListener('click', Timer.resetAll);
             
-            // ADDED: Click listener for toggling start mode
-            UIElements.modeDisplay.addEventListener('click', () => {
-                if (AppState.currentTimerMode === 'pomodoro' && !AppState.hasStarted) {
-                    AppState.pomodoroInitialState = AppState.pomodoroInitialState === 'work' ? 'break' : 'work';
-                    Timer.pomodoroReset(); 
-                }
+            // Setup listeners for pomodoro work/break labels to set start mode
+            document.querySelectorAll('#pomodoro-settings .setting-item.label').forEach(el => {
+                el.addEventListener('click', () => {
+                    if (AppState.currentTimerMode === 'pomodoro' && !AppState.hasStarted) {
+                        AppState.pomodoroInitialState = el.dataset.startMode;
+                        Timer.pomodoroReset();
+                    }
+                });
             });
+
 
             UIElements.allTimerInputs.forEach(input => {
                 input.addEventListener('change', () => {
-                    if(!AppState.hasStarted) Timer.resetAll();
+                    if(!AppState.hasStarted) {
+                         if (AppState.currentTimerMode === 'pomodoro') Timer.pomodoroReset();
+                         if (AppState.currentTimerMode === 'sports') Timer.sportsReset();
+                    }
                     Storage.save('pomodoroWork', document.getElementById('work-time').value);
                     Storage.save('pomodoroBreak', document.getElementById('break-time').value);
                     Storage.save('sportsWorkout', document.getElementById('workout-time').value);
