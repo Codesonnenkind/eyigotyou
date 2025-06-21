@@ -64,33 +64,28 @@
             z-index: 100;
         }
         
+        /* MODIFIED: Updated icon styles */
         .site-icon-left {
             position: fixed;
-            top: 15px;
-            left: 15px;
             width: 32px;
             height: auto;
             z-index: 100;
-            filter: invert(100%);
+            filter: invert(1) opacity(0.6);
             cursor: pointer;
-            transition: transform 0.2s ease-in-out;
+            transition: all 0.2s ease-in-out;
+            top: 15px;
+            left: 15px;
         }
         
         .site-icon-left:hover {
             transform: scale(1.1);
-        }
-
-        #bell-icon {
-            top: 65px; 
-        }
-
-        #color-checker-icon {
-            top: 115px;
+            filter: invert(1) opacity(1);
         }
         
-        #food-timer-icon {
-            top: 165px;
-        }
+        #bell-icon { top: 65px; }
+        #color-checker-icon { top: 115px; }
+        #food-timer-icon { top: 165px; }
+        #notepad-icon { top: 215px; width: 38px; }
 
 
         /* --- Layout Structure --- */
@@ -195,7 +190,7 @@
             color: var(--primary-color);
         }
         
-        #mode-display, #calc-view-title, #camelot-view-title, #color-checker-title, #metronome-view-title, #food-timer-title {
+        #mode-display, #calc-view-title, #camelot-view-title, #color-checker-title, #metronome-view-title, #food-timer-title, #notepad-title {
             z-index: 2;
             font-size: 0.7rem;
             font-weight: 700;
@@ -331,6 +326,67 @@
         }
         .pulsating-title {
           animation: pulsate-bright 1s ease-in-out;
+        }
+        
+        #notepad-panel {
+            width: 100%;
+            max-width: 300px;
+        }
+        #notepad-panel .control-panel {
+            max-width: 100%;
+        }
+        #notepad-textarea {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid var(--secondary-color);
+            color: var(--primary-color);
+            border-radius: 0;
+            padding: 8px;
+            font-family: 'Inter', sans-serif;
+            resize: vertical;
+            min-height: 60px;
+            box-sizing: border-box;
+        }
+        #notepad-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        #notepad-content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-height: 40vh;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        .note-item {
+            background-color: rgba(255,255,255,0.05);
+            border: 2px solid var(--secondary-color);
+            padding: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .note-text {
+            flex-grow: 1;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-size: 0.8rem;
+        }
+        .copy-note-btn {
+            background: var(--secondary-color);
+            color: var(--background-color);
+            border: none;
+            padding: 4px 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .copy-note-btn:hover {
+            background: var(--primary-color);
         }
 
         /* --- Generic Controls --- */
@@ -609,7 +665,10 @@
         <img src="https://www.dropbox.com/scl/fi/1m4jb4opjgtxoy6yz2yf0/bell-svgrepo-com.svg?rlkey=8po6w24uqopz056gd5vwk42o2&raw=1" alt="Bell Icon" class="site-icon-left" id="bell-icon">
         <svg id="color-checker-icon" viewBox="0 0 24 24" class="site-icon-left" xmlns="http://www.w3.org/2000/svg"><path d="M2 2v20h20V2H2zm2 2h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zm-6 6h4v4h-4v-4zm-6 0h4v4H4v-4zm12 0h4v4h-4v-4zm-6 6h4v4h-4v-4zm-6 0h4v4H4v-4zm12 0h4v4h-4v-4z"/></svg>
         <img src="https://www.dropbox.com/scl/fi/06zb1jshbaq0jexaoglmu/fork-and-knife-combination-svgrepo-com.svg?rlkey=kbojyzwetkn5tz5ls8wnw62b4&raw=1" alt="Food Timer Icon" class="site-icon-left" id="food-timer-icon">
+        <!-- MODIFIED: Notepad icon moved to the left -->
+        <img src="https://www.dropbox.com/scl/fi/1uvselpcovxwl1ahvdhjz/notes-svgrepo-com.svg?rlkey=eidktq0vfjc2ss4kuw2252hl1&raw=1" alt="Notepad Icon" class="site-icon-left" id="notepad-icon">
         <img src="https://www.dropbox.com/scl/fi/y2i8ul09le7i5v03lehma/500.png?rlkey=rbh2kx5rbcgmgowl49ceb9tpv&raw=1" alt="Logo" class="site-logo" id="main-logo" onerror="this.style.display='none'">
+        
 
         <div class="sticky-wrapper">
             <div id="timer-display-sticky" class="sticky-display active">
@@ -720,7 +779,19 @@
                     <div class="control-group"><button class="control-btn back-button" id="back-to-timer-from-food">Back to Timer</button></div>
                 </div>
             </div>
-        
+            
+            <div id="notepad-panel" class="collapsible-panel">
+                <div id="notepad-title">Notepad</div>
+                 <div class="control-panel" style="max-width: 100%;">
+                    <textarea id="notepad-textarea" placeholder="Paste text here..."></textarea>
+                    <div class="control-group">
+                        <button class="control-btn" id="save-note-btn">Save Note</button>
+                        <button class="control-btn" id="clear-notes-btn">Clear All</button>
+                    </div>
+                    <div id="notepad-content"></div>
+                </div>
+            </div>
+            
             <div id="camelot-panel" class="collapsible-panel">
                 <div id="camelot-view-title">Harmonic Mixing</div>
                 <div class="control-panel" style="margin-bottom: 10px; max-width: 300px;">
@@ -796,6 +867,7 @@
             metronomeIcon: document.getElementById('metronome-icon'),
             colorCheckerIcon: document.getElementById('color-checker-icon'),
             foodTimerIcon: document.getElementById('food-timer-icon'),
+            notepadIcon: document.getElementById('notepad-icon'),
             bellIcon: document.getElementById('bell-icon'),
             mainLogo: document.getElementById('main-logo'),
             timeLeftDisplay: document.getElementById('time-left'),
@@ -839,6 +911,12 @@
             foodPercentagesDisplay: document.getElementById('food-percentages-display'),
             generateMealBtn: document.getElementById('generate-meal-btn'),
             generateSnackBtn: document.getElementById('generate-snack-btn'),
+            // Notepad elements
+            notepadPanel: document.getElementById('notepad-panel'),
+            notepadTextarea: document.getElementById('notepad-textarea'),
+            saveNoteBtn: document.getElementById('save-note-btn'),
+            clearNotesBtn: document.getElementById('clear-notes-btn'),
+            notepadContent: document.getElementById('notepad-content'),
         };
 
         const AppState = {
@@ -851,6 +929,7 @@
             pomodoroInitialState: 'work',
             bellEnabledSrc: "https://www.dropbox.com/scl/fi/1m4jb4opjgtxoy6yz2yf0/bell-svgrepo-com.svg?rlkey=8po6w24uqopz056gd5vwk42o2&raw=1",
             bellDisabledSrc: "https://www.dropbox.com/scl/fi/syg6jjwvngtxl1mwk0hdv/bell-disabled-svgrepo-com.svg?rlkey=lrawxg597knm9h8jifkw21ngj&raw=1",
+            notes: [],
         };
 
         const radius = UIElements.progressCircle.r.baseVal.value;
@@ -1237,6 +1316,11 @@
                     { name: 'Omelette', water: 75, macros: [{ name: 'Carbs', percent: 5, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 40, color: 'var(--protein-color)'}, { name: 'Fats', percent: 55, color: 'var(--fats-color)'}]},
                     { name: 'Veggie Stir-Fry', water: 85, macros: [{ name: 'Carbs', percent: 70, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 10, color: 'var(--fats-color)'}]},
                     { name: 'Halloumi Wrap', water: 60, macros: [{ name: 'Carbs', percent: 40, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 25, color: 'var(--protein-color)'}, { name: 'Fats', percent: 35, color: 'var(--fats-color)'}]},
+                    { name: 'Tomato Bruschetta', water: 75, macros: [{ name: 'Carbs', percent: 65, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 10, color: 'var(--protein-color)'}, { name: 'Fats', percent: 25, color: 'var(--fats-color)'}]},
+                    { name: 'Pita Falafel Tzatziki', water: 60, macros: [{ name: 'Carbs', percent: 45, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 35, color: 'var(--fats-color)'}]},
+                    { name: 'Chicken Caesar Wrap', water: 65, macros: [{ name: 'Carbs', percent: 35, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 35, color: 'var(--protein-color)'}, { name: 'Fats', percent: 30, color: 'var(--fats-color)'}]},
+                    { name: 'Scrambled Eggs & Feta', water: 70, macros: [{ name: 'Carbs', percent: 5, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 40, color: 'var(--protein-color)'}, { name: 'Fats', percent: 55, color: 'var(--fats-color)'}]},
+                    { name: 'Garlic Bread', water: 30, macros: [{ name: 'Carbs', percent: 55, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 10, color: 'var(--protein-color)'}, { name: 'Fats', percent: 35, color: 'var(--fats-color)'}]},
                 ],
                 snacks: [
                     { name: 'Watermelon & Honey', water: 92, macros: [ { name: 'Carbs', percent: 93, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 5, color: 'var(--protein-color)' }, { name: 'Fats', percent: 2, color: 'var(--fats-color)' } ] },
@@ -1257,6 +1341,11 @@
                     { name: 'A Pickle', water: 94, macros: [{ name: 'Carbs', percent: 85, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 5, color: 'var(--protein-color)'}, { name: 'Fats', percent: 10, color: 'var(--fats-color)'}]},
                     { name: 'Salted Peanuts', water: 2, macros: [{ name: 'Carbs', percent: 15, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 25, color: 'var(--protein-color)'}, { name: 'Fats', percent: 60, color: 'var(--fats-color)'}]},
                     { name: 'Studentenfutter', water: 5, macros: [{ name: 'Carbs', percent: 35, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 45, color: 'var(--fats-color)'}]},
+                    { name: 'Bell Peppers & Hummus', water: 90, macros: [{ name: 'Carbs', percent: 50, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 30, color: 'var(--fats-color)'}]},
+                    { name: 'Granola Bar', water: 10, macros: [{ name: 'Carbs', percent: 65, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 15, color: 'var(--protein-color)'}, { name: 'Fats', percent: 20, color: 'var(--fats-color)'}]},
+                    { name: 'Trail Mix', water: 5, macros: [{ name: 'Carbs', percent: 40, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 40, color: 'var(--fats-color)'}]},
+                    { name: 'Grapes & Cheese', water: 80, macros: [{ name: 'Carbs', percent: 40, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 40, color: 'var(--fats-color)'}]},
+                    { name: 'A Handful of Almonds', water: 5, macros: [{ name: 'Carbs', percent: 15, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 65, color: 'var(--fats-color)'}]},
                 ]
             },
             init: function() {
@@ -1389,6 +1478,17 @@
                 UIElements.openCamelotBtn.textContent = isCamelotVisible ? "Close" : "Camelot";
                 toggleMainOptions(anyPanelVisible);
             });
+            
+            // Notepad listener
+            UIElements.notepadIcon.addEventListener('click', () => {
+                const isNotepadVisible = UIElements.notepadPanel.classList.toggle('visible');
+                const anyPanelVisible = isNotepadVisible || UIElements.calcPanel.classList.contains('visible') || UIElements.camelotPanel.classList.contains('visible');
+                
+                UIElements.appWrapper.classList.toggle('is-panel-open', anyPanelVisible);
+                toggleMainOptions(anyPanelVisible);
+            });
+
+
             UIElements.startPauseBtn.addEventListener('click', () => {
                 Audio.initContext();
                 if (AppState.isPaused) {
