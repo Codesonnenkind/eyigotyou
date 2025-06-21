@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EYIGOTYOU</title>
-    <!-- RESTORED: Original Favicon Link -->
     <link rel="icon" type="image/jpeg" href="https://www.dropbox.com/scl/fi/n2ez50rho6xydpma93sq2/500.jpeg?rlkey=8omntfna9sqvagk8p6cs7gjwh&raw=1" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>E</text></svg>'">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,7 +63,6 @@
             z-index: 100;
         }
         
-        /* MODIFIED: Updated icon styles */
         .site-icon-left {
             position: fixed;
             width: 32px;
@@ -82,11 +80,32 @@
             filter: invert(1) opacity(1);
         }
         
-        #bell-icon { top: 65px; }
-        #color-checker-icon { top: 115px; }
-        #food-timer-icon { top: 165px; }
-        #notepad-icon { top: 215px; width: 38px; }
+        /* MODIFIED: Repositioned all icons */
+        #menu-icon { top: 15px; z-index: 101; }
+        #metronome-icon { top: 65px; }
+        #bell-icon { top: 115px; }
+        #color-checker-icon { top: 165px; }
+        #food-timer-icon { top: 215px; }
+        #notepad-icon { top: 265px; width: 38px; }
 
+        #left-icon-menu .site-icon-left:not(#menu-icon) {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(-20px);
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+        }
+        #left-icon-menu.menu-open .site-icon-left:not(#menu-icon) {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+        
+        #left-icon-menu .site-icon-left:nth-child(2) { transition-delay: 0.05s; }
+        #left-icon-menu .site-icon-left:nth-child(3) { transition-delay: 0.1s; }
+        #left-icon-menu .site-icon-left:nth-child(4) { transition-delay: 0.15s; }
+        #left-icon-menu .site-icon-left:nth-child(5) { transition-delay: 0.2s; }
+        #left-icon-menu .site-icon-left:nth-child(6) { transition-delay: 0.25s; }
+        
 
         /* --- Layout Structure --- */
         .sticky-wrapper {
@@ -344,49 +363,13 @@
             padding: 8px;
             font-family: 'Inter', sans-serif;
             resize: vertical;
-            min-height: 60px;
+            min-height: 120px;
             box-sizing: border-box;
+            margin-bottom: 10px;
         }
         #notepad-textarea:focus {
             outline: none;
             border-color: var(--primary-color);
-        }
-        #notepad-content {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 100%;
-            max-height: 40vh;
-            overflow-y: auto;
-            margin-top: 10px;
-        }
-        .note-item {
-            background-color: rgba(255,255,255,0.05);
-            border: 2px solid var(--secondary-color);
-            padding: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 10px;
-        }
-        .note-text {
-            flex-grow: 1;
-            white-space: pre-wrap;
-            word-break: break-word;
-            font-size: 0.8rem;
-        }
-        .copy-note-btn {
-            background: var(--secondary-color);
-            color: var(--background-color);
-            border: none;
-            padding: 4px 8px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-        .copy-note-btn:hover {
-            background: var(--primary-color);
         }
 
         /* --- Generic Controls --- */
@@ -661,12 +644,14 @@
 <body>
     
     <div id="app-wrapper">
-        <img src="https://www.dropbox.com/scl/fi/5b4motyxla5bkgbk1c3d0/metronome-svgrepo-com.svg?rlkey=w161g2mtryo635255gqooha7z&raw=1" alt="Metronome Icon" class="site-icon-left" id="metronome-icon">
-        <img src="https://www.dropbox.com/scl/fi/1m4jb4opjgtxoy6yz2yf0/bell-svgrepo-com.svg?rlkey=8po6w24uqopz056gd5vwk42o2&raw=1" alt="Bell Icon" class="site-icon-left" id="bell-icon">
-        <svg id="color-checker-icon" viewBox="0 0 24 24" class="site-icon-left" xmlns="http://www.w3.org/2000/svg"><path d="M2 2v20h20V2H2zm2 2h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zm-6 6h4v4h-4v-4zm-6 0h4v4H4v-4zm12 0h4v4h-4v-4zm-6 6h4v4h-4v-4zm-6 0h4v4H4v-4zm12 0h4v4h-4v-4z"/></svg>
-        <img src="https://www.dropbox.com/scl/fi/06zb1jshbaq0jexaoglmu/fork-and-knife-combination-svgrepo-com.svg?rlkey=kbojyzwetkn5tz5ls8wnw62b4&raw=1" alt="Food Timer Icon" class="site-icon-left" id="food-timer-icon">
-        <!-- MODIFIED: Notepad icon moved to the left -->
-        <img src="https://www.dropbox.com/scl/fi/1uvselpcovxwl1ahvdhjz/notes-svgrepo-com.svg?rlkey=eidktq0vfjc2ss4kuw2252hl1&raw=1" alt="Notepad Icon" class="site-icon-left" id="notepad-icon">
+        <div id="left-icon-menu">
+            <img src="https://www.dropbox.com/scl/fi/nsoox7qxngmnv2m051oq6/flower-svgrepo-com.svg?rlkey=m66gvnscbizjt7wopju9ym95t&raw=1" alt="Menu Icon" class="site-icon-left" id="menu-icon">
+            <img src="https://www.dropbox.com/scl/fi/5b4motyxla5bkgbk1c3d0/metronome-svgrepo-com.svg?rlkey=w161g2mtryo635255gqooha7z&raw=1" alt="Metronome Icon" class="site-icon-left" id="metronome-icon">
+            <img src="https://www.dropbox.com/scl/fi/1m4jb4opjgtxoy6yz2yf0/bell-svgrepo-com.svg?rlkey=8po6w24uqopz056gd5vwk42o2&raw=1" alt="Bell Icon" class="site-icon-left" id="bell-icon">
+            <svg id="color-checker-icon" viewBox="0 0 24 24" class="site-icon-left" xmlns="http://www.w3.org/2000/svg"><path d="M2 2v20h20V2H2zm2 2h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zm-6 6h4v4h-4v-4zm-6 0h4v4H4v-4zm12 0h4v4h-4v-4zm-6 6h4v4h-4v-4zm-6 0h4v4H4v-4zm12 0h4v4h-4v-4z"/></svg>
+            <img src="https://www.dropbox.com/scl/fi/06zb1jshbaq0jexaoglmu/fork-and-knife-combination-svgrepo-com.svg?rlkey=kbojyzwetkn5tz5ls8wnw62b4&raw=1" alt="Food Timer Icon" class="site-icon-left" id="food-timer-icon">
+            <img src="https://www.dropbox.com/scl/fi/1uvselpcovxwl1ahvdhjz/notes-svgrepo-com.svg?rlkey=eidktq0vfjc2ss4kuw2252hl1&raw=1" alt="Notepad Icon" class="site-icon-left" id="notepad-icon">
+        </div>
         <img src="https://www.dropbox.com/scl/fi/y2i8ul09le7i5v03lehma/500.png?rlkey=rbh2kx5rbcgmgowl49ceb9tpv&raw=1" alt="Logo" class="site-logo" id="main-logo" onerror="this.style.display='none'">
         
 
@@ -783,12 +768,11 @@
             <div id="notepad-panel" class="collapsible-panel">
                 <div id="notepad-title">Notepad</div>
                  <div class="control-panel" style="max-width: 100%;">
-                    <textarea id="notepad-textarea" placeholder="Paste text here..."></textarea>
+                    <textarea id="notepad-textarea" placeholder="Add and save your notes here..."></textarea>
                     <div class="control-group">
-                        <button class="control-btn" id="save-note-btn">Save Note</button>
-                        <button class="control-btn" id="clear-notes-btn">Clear All</button>
+                        <button class="control-btn" id="copy-notes-btn">Copy</button>
+                        <button class="control-btn" id="clear-notes-btn">Clear</button>
                     </div>
-                    <div id="notepad-content"></div>
                 </div>
             </div>
             
@@ -864,11 +848,13 @@
             metronomeControls: document.getElementById('metronome-controls'),
             colorCheckerControls: document.getElementById('color-checker-controls'),
             foodTimerControls: document.getElementById('food-timer-controls'),
+            leftIconMenu: document.getElementById('left-icon-menu'),
+            menuIcon: document.getElementById('menu-icon'),
             metronomeIcon: document.getElementById('metronome-icon'),
+            bellIcon: document.getElementById('bell-icon'),
             colorCheckerIcon: document.getElementById('color-checker-icon'),
             foodTimerIcon: document.getElementById('food-timer-icon'),
             notepadIcon: document.getElementById('notepad-icon'),
-            bellIcon: document.getElementById('bell-icon'),
             mainLogo: document.getElementById('main-logo'),
             timeLeftDisplay: document.getElementById('time-left'),
             startPauseBtn: document.getElementById('start-pause-btn'),
@@ -914,9 +900,8 @@
             // Notepad elements
             notepadPanel: document.getElementById('notepad-panel'),
             notepadTextarea: document.getElementById('notepad-textarea'),
-            saveNoteBtn: document.getElementById('save-note-btn'),
+            copyNotesBtn: document.getElementById('copy-notes-btn'),
             clearNotesBtn: document.getElementById('clear-notes-btn'),
-            notepadContent: document.getElementById('notepad-content'),
         };
 
         const AppState = {
@@ -978,10 +963,6 @@
                 UIElements.foodTimerControls.classList.toggle('active', isFoodTimer);
 
                 UIElements.mainLogo.classList.toggle('hidden', !isTimer);
-                UIElements.metronomeIcon.classList.toggle('hidden', !isTimer);
-                UIElements.bellIcon.classList.toggle('hidden', !isTimer);
-                UIElements.colorCheckerIcon.classList.toggle('hidden', !isTimer);
-                UIElements.foodTimerIcon.classList.toggle('hidden', !isTimer);
             },
             updateTimerDisplay: function(timeLeft, totalDuration) {
                 if (totalDuration <= 0) totalDuration = 1;
@@ -1432,6 +1413,40 @@
             }
         };
 
+        const Notepad = {
+            init: function() {
+                this.loadNote();
+                UIElements.notepadTextarea.addEventListener('input', this.saveNote.bind(this));
+                UIElements.copyNotesBtn.addEventListener('click', this.copyNote.bind(this));
+                UIElements.clearNotesBtn.addEventListener('click', this.clearNote.bind(this));
+            },
+            saveNote: function() {
+                Storage.save('notepadContent', UIElements.notepadTextarea.value);
+            },
+            loadNote: function() {
+                UIElements.notepadTextarea.value = Storage.get('notepadContent', '');
+            },
+            copyNote: function() {
+                const textarea = UIElements.notepadTextarea;
+                if (textarea.value) {
+                    textarea.select();
+                    textarea.setSelectionRange(0, 99999); 
+                    try {
+                        document.execCommand('copy');
+                        UIElements.copyNotesBtn.textContent = 'Copied!';
+                        setTimeout(() => { UIElements.copyNotesBtn.textContent = 'Copy'; }, 1500);
+                    } catch (err) {
+                        console.error('Fallback: Oops, unable to copy', err);
+                    }
+                    window.getSelection().removeAllRanges();
+                }
+            },
+            clearNote: function() {
+                UIElements.notepadTextarea.value = '';
+                this.saveNote();
+            }
+        };
+
 
         // --- Event Listeners & Initializer ---
         function toggleMainOptions(shouldHide) {
@@ -1439,9 +1454,26 @@
         }
 
         function setupEventListeners() {
+            UIElements.menuIcon.addEventListener('click', () => {
+                UIElements.leftIconMenu.classList.toggle('menu-open');
+            });
+            
             UIElements.metronomeIcon.addEventListener('click', () => UI.showModule('metronome'));
+            UIElements.bellIcon.addEventListener('click', () => {
+                AppState.isSoundEnabled = !AppState.isSoundEnabled;
+                UIElements.bellIcon.src = AppState.isSoundEnabled ? AppState.bellEnabledSrc : AppState.bellDisabledSrc;
+                Storage.save('soundEnabled', AppState.isSoundEnabled);
+            });
             UIElements.colorCheckerIcon.addEventListener('click', () => UI.showModule('color-checker'));
             UIElements.foodTimerIcon.addEventListener('click', () => UI.showModule('food-timer'));
+            UIElements.notepadIcon.addEventListener('click', () => {
+                const isNotepadVisible = UIElements.notepadPanel.classList.toggle('visible');
+                const anyPanelVisible = isNotepadVisible || UIElements.calcPanel.classList.contains('visible') || UIElements.camelotPanel.classList.contains('visible');
+                
+                UIElements.appWrapper.classList.toggle('is-panel-open', anyPanelVisible);
+                toggleMainOptions(anyPanelVisible);
+            });
+
 
             UIElements.backToTimerBtn.addEventListener('click', () => {
                 if (AppState.isMetronomePlaying) Metronome.stop();
@@ -1454,15 +1486,9 @@
                 UI.showModule('timer');
             });
 
-            UIElements.bellIcon.addEventListener('click', () => {
-                AppState.isSoundEnabled = !AppState.isSoundEnabled;
-                UIElements.bellIcon.src = AppState.isSoundEnabled ? AppState.bellEnabledSrc : AppState.bellDisabledSrc;
-                Storage.save('soundEnabled', AppState.isSoundEnabled);
-            });
             UIElements.openCalcBtn.addEventListener('click', () => {
                 const isCalcVisible = UIElements.calcPanel.classList.toggle('visible');
-                const isCamelotVisible = UIElements.camelotPanel.classList.contains('visible');
-                const anyPanelVisible = isCalcVisible || isCamelotVisible;
+                const anyPanelVisible = isCalcVisible || UIElements.camelotPanel.classList.contains('visible') || UIElements.notepadPanel.classList.contains('visible');
                 
                 UIElements.appWrapper.classList.toggle('is-panel-open', anyPanelVisible);
                 UIElements.openCalcBtn.textContent = isCalcVisible ? "Close" : "Calculators";
@@ -1471,24 +1497,13 @@
             });
             UIElements.openCamelotBtn.addEventListener('click', () => {
                 const isCamelotVisible = UIElements.camelotPanel.classList.toggle('visible');
-                const isCalcVisible = UIElements.calcPanel.classList.contains('visible');
-                const anyPanelVisible = isCamelotVisible || isCalcVisible;
+                const anyPanelVisible = isCamelotVisible || UIElements.calcPanel.classList.contains('visible') || UIElements.notepadPanel.classList.contains('visible');
 
                 UIElements.appWrapper.classList.toggle('is-panel-open', anyPanelVisible);
                 UIElements.openCamelotBtn.textContent = isCamelotVisible ? "Close" : "Camelot";
                 toggleMainOptions(anyPanelVisible);
             });
             
-            // Notepad listener
-            UIElements.notepadIcon.addEventListener('click', () => {
-                const isNotepadVisible = UIElements.notepadPanel.classList.toggle('visible');
-                const anyPanelVisible = isNotepadVisible || UIElements.calcPanel.classList.contains('visible') || UIElements.camelotPanel.classList.contains('visible');
-                
-                UIElements.appWrapper.classList.toggle('is-panel-open', anyPanelVisible);
-                toggleMainOptions(anyPanelVisible);
-            });
-
-
             UIElements.startPauseBtn.addEventListener('click', () => {
                 Audio.initContext();
                 if (AppState.isPaused) {
@@ -1597,6 +1612,7 @@
             Camelot.init();
             ColorChecker.init();
             SnackTime.init();
+            Notepad.init();
             setupEventListeners();
             UI.showModule('timer');
             Timer.resetAll();
