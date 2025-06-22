@@ -723,7 +723,10 @@
             flex-direction: column;
             gap: 10px;
             width: 100%;
-            max-width: 320px; /* Wider for better layout */
+            max-width: 240px; 
+        }
+        #color-picker-controls .control-panel {
+            max-width: 240px;
         }
         #palette-swatches-container {
             display: flex;
@@ -989,7 +992,7 @@
 
             <div id="color-picker-controls" class="module-controls">
                  <div id="color-picker-title">Color Palette Tool</div>
-                 <div class="control-panel" style="max-width: 320px;">
+                 <div class="control-panel">
                     <div class="control-group">
                        <button class="control-btn" id="eyedropper-btn">Pick Color</button>
                        <input type="color" id="color-input-fallback">
