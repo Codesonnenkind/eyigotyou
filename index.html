@@ -961,7 +961,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="control-group"><button class="control-btn back-button" id="back-to-timer-from-metro">Back to Timer</button></div>
                 </div>
             </div>
             
@@ -969,7 +968,6 @@
                  <div id="color-checker-title">Color Checker</div>
                  <div class="control-panel">
                     <div class="control-group"><button class="control-btn" id="fullscreen-btn">Fullscreen</button></div>
-                    <div class="control-group"><button class="control-btn back-button" id="back-to-timer-from-checker">Back to Timer</button></div>
                  </div>
             </div>
 
@@ -986,7 +984,6 @@
                         <div class="legend-item"><div class="legend-color-swatch" style="background-color: var(--protein-color);"></div>Protein</div>
                         <div class="legend-item"><div class="legend-color-swatch" style="background-color: var(--fats-color);"></div>Fats</div>
                     </div>
-                    <div class="control-group"><button class="control-btn back-button" id="back-to-timer-from-food">Back to Timer</button></div>
                 </div>
             </div>
 
@@ -1023,8 +1020,7 @@
                      <div class="control-group">
                         <button class="control-btn" id="palette-export-btn">Export</button>
                     </div>
-                    <div class="control-group"><button class="control-btn back-button" id="back-to-timer-from-picker">Back to Timer</button></div>
-                 </div>
+                </div>
             </div>
             
             <div id="notepad-panel" class="collapsible-panel">
@@ -1142,10 +1138,6 @@
             playStopMetronomeBtn: document.getElementById('play-stop-metronome'),
             visualBeatIndicator: document.getElementById('metronome-tap-area'),
             resetMetronomeBtn: document.getElementById('reset-metronome'),
-            backToTimerBtn: document.getElementById('back-to-timer-from-metro'),
-            backToTimerFromChecker: document.getElementById('back-to-timer-from-checker'),
-            backToTimerFromFood: document.getElementById('back-to-timer-from-food'),
-            backToTimerFromPicker: document.getElementById('back-to-timer-from-picker'),
             openCalcBtn: document.getElementById('open-calc-btn'),
             calcPanel: document.getElementById('calc-panel'),
             delayBpmDisplay: document.getElementById('delay-bpm-display'),
@@ -1606,7 +1598,9 @@
             },
             openEyeDropper: async function() {
                 if (!window.EyeDropper) {
-                    // Fallback handled by event listener setup
+                    const picker = UIElements.colorInputFallback;
+                    picker.focus();
+                    picker.click();
                     return;
                 }
                 try {
@@ -1884,11 +1878,49 @@
                     { name: 'Greek Salad', water: 85, macros: [ { name: 'Carbs', percent: 14, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 7, color: 'var(--protein-color)' }, { name: 'Fats', percent: 79, color: 'var(--fats-color)' } ] },
                     { name: 'Avocado Toast', water: 75, macros: [ { name: 'Carbs', percent: 45, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 15, color: 'var(--protein-color)' }, { name: 'Fats', percent: 40, color: 'var(--fats-color)' } ] },
                     { name: 'Margarita Pizza', water: 60, macros: [ { name: 'Carbs', percent: 55, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 20, color: 'var(--protein-color)' }, { name: 'Fats', percent: 25, color: 'var(--fats-color)' } ] },
+                    { name: 'Spaghetti Tomato', water: 70, macros: [ { name: 'Carbs', percent: 80, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 15, color: 'var(--protein-color)' }, { name: 'Fats', percent: 5, color: 'var(--fats-color)' } ] },
+                    { name: 'Couscous Salad', water: 80, macros: [ { name: 'Carbs', percent: 60, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 15, color: 'var(--protein-color)' }, { name: 'Fats', percent: 25, color: 'var(--fats-color)' } ] },
+                    { name: 'Pita & Hummus', water: 65, macros: [ { name: 'Carbs', percent: 50, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 20, color: 'var(--protein-color)' }, { name: 'Fats', percent: 30, color: 'var(--fats-color)' } ] },
+                    { name: 'Fried Egg Toast', water: 70, macros: [ { name: 'Carbs', percent: 35, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 25, color: 'var(--protein-color)' }, { name: 'Fats', percent: 40, color: 'var(--fats-color)' } ] },
+                    { name: 'Ramen with Egg', water: 88, macros: [{ name: 'Carbs', percent: 50, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 25, color: 'var(--protein-color)'}, { name: 'Fats', percent: 25, color: 'var(--fats-color)'}]},
+                    { name: 'Fried Rice', water: 70, macros: [{ name: 'Carbs', percent: 75, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 15, color: 'var(--protein-color)'}, { name: 'Fats', percent: 10, color: 'var(--fats-color)'}]},
+                    { name: 'Sweet Potato Fries', water: 60, macros: [{ name: 'Carbs', percent: 70, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 5, color: 'var(--protein-color)'}, { name: 'Fats', percent: 25, color: 'var(--fats-color)'}]},
+                    { name: 'Chicken Burger & Fries', water: 55, macros: [{ name: 'Carbs', percent: 45, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 25, color: 'var(--protein-color)'}, { name: 'Fats', percent: 30, color: 'var(--fats-color)'}]},
+                    { name: 'Grilled Cheese', water: 40, macros: [{ name: 'Carbs', percent: 40, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 40, color: 'var(--fats-color)'}]},
+                    { name: 'Pasta Pesto', water: 65, macros: [{ name: 'Carbs', percent: 55, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 15, color: 'var(--protein-color)'}, { name: 'Fats', percent: 30, color: 'var(--fats-color)'}]},
+                    { name: 'Omelette', water: 75, macros: [{ name: 'Carbs', percent: 5, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 40, color: 'var(--protein-color)'}, { name: 'Fats', percent: 55, color: 'var(--fats-color)'}]},
+                    { name: 'Veggie Stir-Fry', water: 85, macros: [{ name: 'Carbs', percent: 70, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 10, color: 'var(--fats-color)'}]},
+                    { name: 'Halloumi Wrap', water: 60, macros: [{ name: 'Carbs', percent: 40, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 25, color: 'var(--protein-color)'}, { name: 'Fats', percent: 35, color: 'var(--fats-color)'}]},
+                    { name: 'Tomato Bruschetta', water: 75, macros: [{ name: 'Carbs', percent: 65, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 10, color: 'var(--protein-color)'}, { name: 'Fats', percent: 25, color: 'var(--fats-color)'}]},
+                    { name: 'Pita Falafel Tzatziki', water: 60, macros: [{ name: 'Carbs', percent: 45, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 35, color: 'var(--fats-color)'}]},
+                    { name: 'Chicken Caesar Wrap', water: 65, macros: [{ name: 'Carbs', percent: 35, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 35, color: 'var(--protein-color)'}, { name: 'Fats', percent: 30, color: 'var(--fats-color)'}]},
+                    { name: 'Scrambled Eggs & Feta', water: 70, macros: [{ name: 'Carbs', percent: 5, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 40, color: 'var(--protein-color)'}, { name: 'Fats', percent: 55, color: 'var(--fats-color)'}]},
+                    { name: 'Garlic Bread', water: 30, macros: [{ name: 'Carbs', percent: 55, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 10, color: 'var(--protein-color)'}, { name: 'Fats', percent: 35, color: 'var(--fats-color)'}]},
                 ],
                 snacks: [
                     { name: 'Watermelon & Honey', water: 92, macros: [ { name: 'Carbs', percent: 93, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 5, color: 'var(--protein-color)' }, { name: 'Fats', percent: 2, color: 'var(--fats-color)' } ] },
                     { name: 'Snickers', water: 10, macros: [ { name: 'Carbs', percent: 55, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 10, color: 'var(--protein-color)' }, { name: 'Fats', percent: 35, color: 'var(--fats-color)' } ] },
                     { name: "Ben & Jerry's", water: 60, macros: [ { name: 'Carbs', percent: 50, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 10, color: 'var(--protein-color)' }, { name: 'Fats', percent: 40, color: 'var(--fats-color)' } ] },
+                    { name: 'Slice of Cake', water: 40, macros: [ { name: 'Carbs', percent: 60, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 5, color: 'var(--protein-color)' }, { name: 'Fats', percent: 35, color: 'var(--fats-color)' } ] },
+                    { name: 'Chips', water: 5, macros: [ { name: 'Carbs', percent: 60, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 5, color: 'var(--protein-color)' }, { name: 'Fats', percent: 35, color: 'var(--fats-color)' } ] },
+                    { name: 'Can of Coke', water: 89, macros: [ { name: 'Carbs', percent: 100, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 0, color: 'var(--protein-color)' }, { name: 'Fats', percent: 0, color: 'var(--fats-color)' } ] },
+                    { name: 'Chocolate Chip Cookie', water: 10, macros: [ { name: 'Carbs', percent: 65, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 5, color: 'var(--protein-color)' }, { name: 'Fats', percent: 30, color: 'var(--fats-color)' } ] },
+                    { name: 'Yogurt & Granola', water: 75, macros: [ { name: 'Carbs', percent: 50, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 25, color: 'var(--protein-color)' }, { name: 'Fats', percent: 25, color: 'var(--fats-color)' } ] },
+                    { name: 'Mini Donuts', water: 20, macros: [{ name: 'Carbs', percent: 55, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 5, color: 'var(--protein-color)'}, { name: 'Fats', percent: 40, color: 'var(--fats-color)'}]},
+                    { name: 'Mozzarella Sticks', water: 45, macros: [{ name: 'Carbs', percent: 30, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 25, color: 'var(--protein-color)'}, { name: 'Fats', percent: 45, color: 'var(--fats-color)'}]},
+                    { name: 'Cucumber with Salt', water: 95, macros: [{ name: 'Carbs', percent: 80, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 15, color: 'var(--protein-color)'}, { name: 'Fats', percent: 5, color: 'var(--fats-color)'}]},
+                    { name: 'Tiramisu', water: 50, macros: [{ name: 'Carbs', percent: 40, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 10, color: 'var(--protein-color)'}, { name: 'Fats', percent: 50, color: 'var(--fats-color)'}]},
+                    { name: 'Fruit Gummy Pack', water: 15, macros: [{ name: 'Carbs', percent: 90, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 5, color: 'var(--protein-color)'}, { name: 'Fats', percent: 5, color: 'var(--fats-color)'}]},
+                    { name: 'Chocolate Croissant', water: 25, macros: [{ name: 'Carbs', percent: 50, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 10, color: 'var(--protein-color)'}, { name: 'Fats', percent: 40, color: 'var(--fats-color)'}]},
+                    { name: 'Nachos with Salsa', water: 50, macros: [{ name: 'Carbs', percent: 60, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 10, color: 'var(--protein-color)'}, { name: 'Fats', percent: 30, color: 'var(--fats-color)'}]},
+                    { name: 'A Pickle', water: 94, macros: [{ name: 'Carbs', percent: 85, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 5, color: 'var(--protein-color)'}, { name: 'Fats', percent: 10, color: 'var(--fats-color)'}]},
+                    { name: 'Salted Peanuts', water: 2, macros: [{ name: 'Carbs', percent: 15, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 25, color: 'var(--protein-color)'}, { name: 'Fats', percent: 60, color: 'var(--fats-color)'}]},
+                    { name: 'Studentenfutter', water: 5, macros: [{ name: 'Carbs', percent: 35, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 45, color: 'var(--fats-color)'}]},
+                    { name: 'Bell Peppers & Hummus', water: 90, macros: [{ name: 'Carbs', percent: 50, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 30, color: 'var(--fats-color)'}]},
+                    { name: 'Granola Bar', water: 10, macros: [{ name: 'Carbs', percent: 65, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 15, color: 'var(--protein-color)'}, { name: 'Fats', percent: 20, color: 'var(--fats-color)'}]},
+                    { name: 'Trail Mix', water: 5, macros: [{ name: 'Carbs', percent: 40, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 40, color: 'var(--fats-color)'}]},
+                    { name: 'Grapes & Cheese', water: 80, macros: [{ name: 'Carbs', percent: 40, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 40, color: 'var(--fats-color)'}]},
+                    { name: 'A Handful of Almonds', water: 5, macros: [{ name: 'Carbs', percent: 15, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 65, color: 'var(--fats-color)'}]},
                 ]
             },
             init: function() {
@@ -2012,15 +2044,29 @@
                 UIElements.leftIconMenu.classList.toggle('menu-open');
             });
             
-            UIElements.metronomeIcon.addEventListener('click', () => UI.showModule('metronome'));
+            // Toggling module views
+            function setupModuleToggle(iconElement, moduleName) {
+                iconElement.addEventListener('click', () => {
+                    if (AppState.currentAppMode === moduleName) {
+                        UI.showModule('timer');
+                    } else {
+                        UI.showModule(moduleName);
+                    }
+                });
+            }
+
+            setupModuleToggle(UIElements.metronomeIcon, 'metronome');
+            setupModuleToggle(UIElements.colorCheckerIcon, 'color-checker');
+            setupModuleToggle(UIElements.foodTimerIcon, 'food-timer');
+            setupModuleToggle(UIElements.colorPickerIcon, 'color-picker');
+
+
             UIElements.bellIcon.addEventListener('click', () => {
                 AppState.isSoundEnabled = !AppState.isSoundEnabled;
                 UIElements.bellIcon.src = AppState.isSoundEnabled ? AppState.bellEnabledSrc : AppState.bellDisabledSrc;
                 Storage.save('soundEnabled', AppState.isSoundEnabled);
             });
-            UIElements.colorCheckerIcon.addEventListener('click', () => UI.showModule('color-checker'));
-            UIElements.foodTimerIcon.addEventListener('click', () => UI.showModule('food-timer'));
-            UIElements.colorPickerIcon.addEventListener('click', () => UI.showModule('color-picker'));
+            
 
             UIElements.mainLogo.addEventListener('click', () => UI.toggleDonateOverlay(true));
             UIElements.closeDonateBtn.addEventListener('click', () => UI.toggleDonateOverlay(false));
@@ -2032,15 +2078,6 @@
                 UIElements.appWrapper.classList.toggle('is-panel-open', anyPanelVisible);
                 toggleMainOptions(anyPanelVisible);
             });
-
-
-            UIElements.backToTimerBtn.addEventListener('click', () => {
-                if (AppState.isMetronomePlaying) Metronome.stop();
-                UI.showModule('timer');
-            });
-            UIElements.backToTimerFromChecker.addEventListener('click', () => UI.showModule('timer'));
-            UIElements.backToTimerFromFood.addEventListener('click', () => UI.showModule('timer'));
-            UIElements.backToTimerFromPicker.addEventListener('click', () => UI.showModule('timer'));
 
             UIElements.openCalcBtn.addEventListener('click', () => {
                 const isCalcVisible = UIElements.calcPanel.classList.toggle('visible');
@@ -2134,10 +2171,6 @@
                     else { elementToFullscreen.requestFullscreen(); }
                 } catch (error) { console.error("Fullscreen API error:", error); }
             });
-
-            // Snack Time listeners
-            UIElements.generateMealBtn.addEventListener('click', () => SnackTime.generateRandom('meals'));
-            UIElements.generateSnackBtn.addEventListener('click', () => SnackTime.generateRandom('snacks'));
 
             // Color Palette Tool Listeners
             UIElements.eyedropperBtn.addEventListener('click', () => {
