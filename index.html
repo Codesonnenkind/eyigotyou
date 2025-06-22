@@ -827,6 +827,16 @@
              font-family: 'Orbitron', sans-serif;
              margin-left: 8px;
         }
+        
+        /* Safari Fallback for Color Input */
+        #color-input-fallback {
+            visibility: hidden;
+            position: absolute;
+            width: 0;
+            height: 0;
+            padding: 0;
+            border: none;
+        }
 
 
         .hidden { display: none !important; }
@@ -982,7 +992,7 @@
                  <div class="control-panel" style="max-width: 320px;">
                     <div class="control-group">
                        <button class="control-btn" id="eyedropper-btn">Pick Color</button>
-                       <input type="color" id="color-input-fallback" style="display:none;">
+                       <input type="color" id="color-input-fallback">
                     </div>
                     <select class="palette-preset-select" id="palette-ratio-preset-select">
                         <option value="">Apply Ratio Preset...</option>
@@ -2131,7 +2141,9 @@
                  if (window.EyeDropper) {
                     ColorPaletteTool.openEyeDropper();
                 } else {
-                    UIElements.colorInputFallback.click();
+                    const picker = UIElements.colorInputFallback;
+                    picker.focus();
+                    picker.click();
                 }
             });
             UIElements.colorInputFallback.addEventListener('input', (event) => {
