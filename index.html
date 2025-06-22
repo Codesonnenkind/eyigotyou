@@ -980,7 +980,10 @@
             <div id="color-picker-controls" class="module-controls">
                  <div id="color-picker-title">Color Palette Tool</div>
                  <div class="control-panel" style="max-width: 320px;">
-                    <div class="control-group"><button class="control-btn" id="eyedropper-btn">Pick Color</button></div>
+                    <div class="control-group">
+                       <button class="control-btn" id="eyedropper-btn">Pick Color</button>
+                       <input type="color" id="color-input-fallback" style="display:none;">
+                    </div>
                     <select class="palette-preset-select" id="palette-ratio-preset-select">
                         <option value="">Apply Ratio Preset...</option>
                         <optgroup label="Film Ratios">
@@ -1158,6 +1161,7 @@
             clearNotesBtn: document.getElementById('clear-notes-btn'),
             // Color Palette Tool elements
             eyedropperBtn: document.getElementById('eyedropper-btn'),
+            colorInputFallback: document.getElementById('color-input-fallback'),
             paletteSwatchesContainer: document.getElementById('palette-swatches-container'),
             paletteRatioChart: document.getElementById('palette-ratio-chart'),
             paletteContrastValue: document.getElementById('palette-contrast-value'),
@@ -1589,7 +1593,7 @@
             },
             openEyeDropper: async function() {
                 if (!window.EyeDropper) {
-                    alert("Your browser doesn't support the EyeDropper API yet.");
+                    // Fallback handled by event listener setup
                     return;
                 }
                 try {
@@ -2123,7 +2127,16 @@
             UIElements.generateSnackBtn.addEventListener('click', () => SnackTime.generateRandom('snacks'));
 
             // Color Palette Tool Listeners
-            UIElements.eyedropperBtn.addEventListener('click', () => ColorPaletteTool.openEyeDropper());
+            UIElements.eyedropperBtn.addEventListener('click', () => {
+                 if (window.EyeDropper) {
+                    ColorPaletteTool.openEyeDropper();
+                } else {
+                    UIElements.colorInputFallback.click();
+                }
+            });
+            UIElements.colorInputFallback.addEventListener('input', (event) => {
+                ColorPaletteTool.addSwatch(event.target.value.toUpperCase());
+            });
             UIElements.paletteCopyAllBtn.addEventListener('click', () => ColorPaletteTool.copyAllSwatches());
             UIElements.paletteClearBtn.addEventListener('click', () => ColorPaletteTool.clearAllSwatches());
             UIElements.paletteRatioPresetSelect.addEventListener('change', () => ColorPaletteTool.applyRatioPreset());
