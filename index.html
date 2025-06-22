@@ -2197,6 +2197,11 @@
                 }
             });
 
+            // *** FIX STARTS HERE ***
+            // Snack Time Listeners
+            UIElements.generateMealBtn.addEventListener('click', () => SnackTime.generateRandom('meals'));
+            UIElements.generateSnackBtn.addEventListener('click', () => SnackTime.generateRandom('snacks'));
+            // *** FIX ENDS HERE ***
         }
 
         function initializeApp() {
