@@ -61,6 +61,11 @@
             width: 45px;
             height: auto;
             z-index: 100;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .site-logo:hover {
+            transform: scale(1.1);
         }
         
         .site-icon-left {
@@ -71,8 +76,6 @@
             filter: invert(1) opacity(0.6);
             cursor: pointer;
             transition: all 0.2s ease-in-out;
-            top: 15px;
-            left: 15px;
         }
         
         .site-icon-left:hover {
@@ -80,13 +83,18 @@
             filter: invert(1) opacity(1);
         }
         
-        /* MODIFIED: Repositioned all icons */
-        #menu-icon { top: 15px; z-index: 101; }
-        #metronome-icon { top: 65px; }
-        #bell-icon { top: 115px; }
-        #color-checker-icon { top: 165px; }
-        #food-timer-icon { top: 215px; }
-        #notepad-icon { top: 265px; width: 38px; }
+        #menu-icon { top: 15px; left: 15px; z-index: 101; }
+        
+        /* Horizontal utility icons */
+        #bell-icon { top: 15px; left: 60px; }
+        #notepad-icon { top: 15px; left: 105px; width: 38px; }
+        #food-timer-icon { top: 15px; left: 155px; }
+
+        /* Vertical creative tool icons */
+        #metronome-icon { top: 65px; left: 15px; }
+        #color-checker-icon { top: 115px; left: 15px; }
+        #color-picker-icon { top: 165px; left: 15px; }
+
 
         #left-icon-menu .site-icon-left:not(#menu-icon) {
             opacity: 0;
@@ -100,11 +108,13 @@
             transform: translateX(0);
         }
         
+        /* Transition delays for all animated icons */
         #left-icon-menu .site-icon-left:nth-child(2) { transition-delay: 0.05s; }
         #left-icon-menu .site-icon-left:nth-child(3) { transition-delay: 0.1s; }
         #left-icon-menu .site-icon-left:nth-child(4) { transition-delay: 0.15s; }
         #left-icon-menu .site-icon-left:nth-child(5) { transition-delay: 0.2s; }
         #left-icon-menu .site-icon-left:nth-child(6) { transition-delay: 0.25s; }
+        #left-icon-menu .site-icon-left:nth-child(7) { transition-delay: 0.3s; }
         
 
         /* --- Layout Structure --- */
@@ -149,9 +159,78 @@
             width: 100%;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
         }
         .sticky-display.active {
             display: flex;
+        }
+        
+        /* --- Donate Overlay --- */
+        #donate-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(10, 10, 10, 0.95);
+            z-index: 200;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        #donate-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        #donate-content {
+            color: var(--primary-color);
+            max-width: 420px;
+            width: 100%;
+            text-align: left;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        #donate-intro-text p {
+            margin: 0 0 1em 0;
+            color: var(--secondary-color);
+            min-height: 1.6em; /* Reserve space to prevent layout shift */
+        }
+        .typing-cursor {
+            border-right: .15em solid var(--accent-color);
+            animation: blink-caret .75s step-end infinite;
+        }
+        @keyframes blink-caret {
+          from, to { border-color: transparent }
+          50% { border-color: var(--accent-color); }
+        }
+
+        #kofi-container {
+            border: 2px solid #2a2a2a;
+            padding: 4px;
+            background: #121212;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        #close-donate-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            color: var(--secondary-color);
+            background: none;
+            border: none;
+            cursor: pointer;
+            line-height: 1;
+        }
+        #close-donate-btn:hover {
+            color: var(--primary-color);
         }
 
 
@@ -209,7 +288,7 @@
             color: var(--primary-color);
         }
         
-        #mode-display, #calc-view-title, #camelot-view-title, #color-checker-title, #metronome-view-title, #food-timer-title, #notepad-title {
+        #mode-display, #calc-view-title, #camelot-view-title, #color-checker-title, #metronome-view-title, #food-timer-title, #notepad-title, #color-picker-title {
             z-index: 2;
             font-size: 0.7rem;
             font-weight: 700;
@@ -638,6 +717,118 @@
             box-sizing: border-box;
         }
         
+        /* --- Color Palette Tool Styles --- */
+        #color-palette-tool-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-width: 320px; /* Wider for better layout */
+        }
+        #palette-swatches-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 8px;
+            border: 2px solid var(--secondary-color);
+            min-height: 120px;
+            width: 100%;
+            box-sizing: border-box;
+            align-content: flex-start;
+        }
+        .palette-swatch {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--secondary-color);
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.3s ease;
+        }
+        .palette-swatch:hover {
+            transform: scale(1.05);
+            border-color: var(--primary-color);
+        }
+        .palette-swatch.locked {
+            border-color: var(--accent-color);
+        }
+        .swatch-delete-btn, .swatch-lock-btn {
+            position: absolute;
+            top: -1px;
+            background: var(--background-color);
+            border: 1px solid var(--secondary-color);
+            color: var(--secondary-color);
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
+            line-height: 14px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .swatch-delete-btn { right: -1px; }
+        .swatch-lock-btn { left: -1px; }
+        .swatch-lock-btn.locked { color: var(--accent-color); }
+
+        .swatch-ratio-input {
+            position: absolute;
+            bottom: 2px;
+            left: 2px;
+            width: calc(100% - 4px);
+            background: rgba(0,0,0,0.6);
+            border: none;
+            color: white;
+            text-align: center;
+            font-size: 10px;
+            -moz-appearance: textfield;
+            font-family: 'Orbitron', sans-serif;
+        }
+        input.swatch-ratio-input::-webkit-outer-spin-button,
+        input.swatch-ratio-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+       
+        #palette-ratio-chart {
+            display: flex;
+            width: 100%;
+            height: 20px;
+            border: 2px solid var(--secondary-color);
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        .ratio-bar-segment {
+            height: 100%;
+            transition: width 0.3s ease-in-out;
+        }
+        .palette-preset-select {
+             background: transparent;
+             color: var(--secondary-color);
+             border: 2px solid var(--secondary-color);
+             padding: 8px;
+             width: 100%;
+             font-family: inherit;
+             font-weight: 600;
+        }
+        .palette-preset-select:focus { outline: none; border-color: var(--primary-color); }
+        
+        #palette-contrast-display {
+            padding: 8px;
+            text-align: center;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+            letter-spacing: 0.1em;
+        }
+        #palette-contrast-value {
+             color: var(--primary-color);
+             font-family: 'Orbitron', sans-serif;
+             margin-left: 8px;
+        }
+
+
         .hidden { display: none !important; }
     </style>
 </head>
@@ -646,14 +837,28 @@
     <div id="app-wrapper">
         <div id="left-icon-menu">
             <img src="https://www.dropbox.com/scl/fi/nsoox7qxngmnv2m051oq6/flower-svgrepo-com.svg?rlkey=m66gvnscbizjt7wopju9ym95t&raw=1" alt="Menu Icon" class="site-icon-left" id="menu-icon">
-            <img src="https://www.dropbox.com/scl/fi/5b4motyxla5bkgbk1c3d0/metronome-svgrepo-com.svg?rlkey=w161g2mtryo635255gqooha7z&raw=1" alt="Metronome Icon" class="site-icon-left" id="metronome-icon">
             <img src="https://www.dropbox.com/scl/fi/1m4jb4opjgtxoy6yz2yf0/bell-svgrepo-com.svg?rlkey=8po6w24uqopz056gd5vwk42o2&raw=1" alt="Bell Icon" class="site-icon-left" id="bell-icon">
-            <svg id="color-checker-icon" viewBox="0 0 24 24" class="site-icon-left" xmlns="http://www.w3.org/2000/svg"><path d="M2 2v20h20V2H2zm2 2h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zm-6 6h4v4h-4v-4zm-6 0h4v4H4v-4zm12 0h4v4h-4v-4zm-6 6h4v4h-4v-4zm-6 0h4v4H4v-4zm12 0h4v4h-4v-4z"/></svg>
+            <img src="https://www.dropbox.com/scl/fi/1uvselpcovxwl1ahvdhjz/notes-svgrepo-com.svg?rlkey=eidktq0vfjc2ss4kuw2252hl1&raw=1" alt="Notepad Icon" class="site-icon-left" id="notepad-icon" style="width: 38px;">
             <img src="https://www.dropbox.com/scl/fi/06zb1jshbaq0jexaoglmu/fork-and-knife-combination-svgrepo-com.svg?rlkey=kbojyzwetkn5tz5ls8wnw62b4&raw=1" alt="Food Timer Icon" class="site-icon-left" id="food-timer-icon">
-            <img src="https://www.dropbox.com/scl/fi/1uvselpcovxwl1ahvdhjz/notes-svgrepo-com.svg?rlkey=eidktq0vfjc2ss4kuw2252hl1&raw=1" alt="Notepad Icon" class="site-icon-left" id="notepad-icon">
+            <img src="https://www.dropbox.com/scl/fi/5b4motyxla5bkgbk1c3d0/metronome-svgrepo-com.svg?rlkey=w161g2mtryo635255gqooha7z&raw=1" alt="Metronome Icon" class="site-icon-left" id="metronome-icon">
+            <svg id="color-checker-icon" viewBox="0 0 24 24" class="site-icon-left" xmlns="http://www.w3.org/2000/svg"><path d="M2 2v20h20V2H2zm2 2h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zm-6 6h4v4h-4v-4zm-6 0h4v4H4v-4zm12 0h4v4h-4v-4zm-6 6h4v4h-4v-4zm-6 0h4v4H4v-4zm12 0h4v4h-4v-4z"/></svg>
+            <img src="https://www.dropbox.com/scl/fi/fsnyl0iyxkbo28hcvmiee/pipette-svgrepo-com.svg?rlkey=c3ehuk0e6z7ex6u02fb6t6rbr&raw=1" alt="Color Picker Icon" class="site-icon-left" id="color-picker-icon">
         </div>
+
         <img src="https://www.dropbox.com/scl/fi/y2i8ul09le7i5v03lehma/500.png?rlkey=rbh2kx5rbcgmgowl49ceb9tpv&raw=1" alt="Logo" class="site-logo" id="main-logo" onerror="this.style.display='none'">
         
+        <div id="donate-overlay">
+            <div id="donate-content">
+                <button id="close-donate-btn">&times;</button>
+                <div id="donate-intro-text">
+                    <p id="donate-line-1"></p>
+                    <p id="donate-line-2"></p>
+                </div>
+                 <div id="kofi-container">
+                    <iframe id='kofiframe' src='https://ko-fi.com/konstantinsonnenkind/?hidefeed=true&widget=true&embed=true&preview=true&theme=dark' style='border:none;width:100%;' height='712' title='konstantinsonnenkind'></iframe>
+                </div>
+            </div>
+        </div>
 
         <div class="sticky-wrapper">
             <div id="timer-display-sticky" class="sticky-display active">
@@ -697,6 +902,13 @@
                         <g id="pie-chart-slices"></g>
                     </svg>
                     <div id="food-percentages-display"></div>
+                </div>
+            </div>
+            <div id="color-picker-display-sticky" class="sticky-display">
+                <div id="color-palette-tool-wrapper">
+                    <div id="palette-swatches-container"></div>
+                    <div id="palette-ratio-chart"></div>
+                    <div id="palette-contrast-display">Contrast: <span id="palette-contrast-value">N/A</span></div>
                 </div>
             </div>
         </div>
@@ -763,6 +975,40 @@
                     </div>
                     <div class="control-group"><button class="control-btn back-button" id="back-to-timer-from-food">Back to Timer</button></div>
                 </div>
+            </div>
+
+            <div id="color-picker-controls" class="module-controls">
+                 <div id="color-picker-title">Color Palette Tool</div>
+                 <div class="control-panel" style="max-width: 320px;">
+                    <div class="control-group"><button class="control-btn" id="eyedropper-btn">Pick Color</button></div>
+                    <select class="palette-preset-select" id="palette-ratio-preset-select">
+                        <option value="">Apply Ratio Preset...</option>
+                        <optgroup label="Film Ratios">
+                            <option value="bladeRunnerRatios">Blade Runner</option>
+                            <option value="herRatios">Her</option>
+                            <option value="madMaxRatios">Mad Max: Fury Road</option>
+                            <option value="jokerRatios">Joker</option>
+                        </optgroup>
+                        <optgroup label="Graphic Design Ratios">
+                            <option value="sixtyThirtyTen">60/30/10</option>
+                            <option value="complementary">Complementary</option>
+                            <option value="triadic">Triadic (Equal)</option>
+                            <option value="analogous">Analogous</option>
+                        </optgroup>
+                    </select>
+                    <div class="control-group">
+                        <button class="control-btn" id="palette-random-contrast-btn">Random Contrast</button>
+                        <button class="control-btn" id="palette-randomize-btn">Randomize Ratio</button>
+                    </div>
+                     <div class="control-group">
+                        <button class="control-btn" id="palette-copy-all-btn">Copy All</button>
+                        <button class="control-btn" id="palette-clear-btn">Clear</button>
+                    </div>
+                     <div class="control-group">
+                        <button class="control-btn" id="palette-export-btn">Export</button>
+                    </div>
+                    <div class="control-group"><button class="control-btn back-button" id="back-to-timer-from-picker">Back to Timer</button></div>
+                 </div>
             </div>
             
             <div id="notepad-panel" class="collapsible-panel">
@@ -844,10 +1090,12 @@
             metronomeDisplaySticky: document.getElementById('metronome-display-sticky'),
             colorCheckerDisplaySticky: document.getElementById('color-checker-display-sticky'),
             foodTimerDisplaySticky: document.getElementById('food-timer-display-sticky'),
+            colorPickerDisplaySticky: document.getElementById('color-picker-display-sticky'),
             timerControls: document.getElementById('timer-controls'),
             metronomeControls: document.getElementById('metronome-controls'),
             colorCheckerControls: document.getElementById('color-checker-controls'),
             foodTimerControls: document.getElementById('food-timer-controls'),
+            colorPickerControls: document.getElementById('color-picker-controls'),
             leftIconMenu: document.getElementById('left-icon-menu'),
             menuIcon: document.getElementById('menu-icon'),
             metronomeIcon: document.getElementById('metronome-icon'),
@@ -855,7 +1103,12 @@
             colorCheckerIcon: document.getElementById('color-checker-icon'),
             foodTimerIcon: document.getElementById('food-timer-icon'),
             notepadIcon: document.getElementById('notepad-icon'),
+            colorPickerIcon: document.getElementById('color-picker-icon'),
             mainLogo: document.getElementById('main-logo'),
+            donateOverlay: document.getElementById('donate-overlay'),
+            closeDonateBtn: document.getElementById('close-donate-btn'),
+            donateLine1: document.getElementById('donate-line-1'),
+            donateLine2: document.getElementById('donate-line-2'),
             timeLeftDisplay: document.getElementById('time-left'),
             startPauseBtn: document.getElementById('start-pause-btn'),
             resetBtn: document.getElementById('reset-btn'),
@@ -876,6 +1129,7 @@
             backToTimerBtn: document.getElementById('back-to-timer-from-metro'),
             backToTimerFromChecker: document.getElementById('back-to-timer-from-checker'),
             backToTimerFromFood: document.getElementById('back-to-timer-from-food'),
+            backToTimerFromPicker: document.getElementById('back-to-timer-from-picker'),
             openCalcBtn: document.getElementById('open-calc-btn'),
             calcPanel: document.getElementById('calc-panel'),
             delayBpmDisplay: document.getElementById('delay-bpm-display'),
@@ -902,6 +1156,17 @@
             notepadTextarea: document.getElementById('notepad-textarea'),
             copyNotesBtn: document.getElementById('copy-notes-btn'),
             clearNotesBtn: document.getElementById('clear-notes-btn'),
+            // Color Palette Tool elements
+            eyedropperBtn: document.getElementById('eyedropper-btn'),
+            paletteSwatchesContainer: document.getElementById('palette-swatches-container'),
+            paletteRatioChart: document.getElementById('palette-ratio-chart'),
+            paletteContrastValue: document.getElementById('palette-contrast-value'),
+            paletteRandomContrastBtn: document.getElementById('palette-random-contrast-btn'),
+            paletteCopyAllBtn: document.getElementById('palette-copy-all-btn'),
+            paletteClearBtn: document.getElementById('palette-clear-btn'),
+            paletteExportBtn: document.getElementById('palette-export-btn'),
+            paletteRatioPresetSelect: document.getElementById('palette-ratio-preset-select'),
+            paletteRandomizeBtn: document.getElementById('palette-randomize-btn'),
         };
 
         const AppState = {
@@ -914,7 +1179,10 @@
             pomodoroInitialState: 'work',
             bellEnabledSrc: "https://www.dropbox.com/scl/fi/1m4jb4opjgtxoy6yz2yf0/bell-svgrepo-com.svg?rlkey=8po6w24uqopz056gd5vwk42o2&raw=1",
             bellDisabledSrc: "https://www.dropbox.com/scl/fi/syg6jjwvngtxl1mwk0hdv/bell-disabled-svgrepo-com.svg?rlkey=lrawxg597knm9h8jifkw21ngj&raw=1",
-            notes: [],
+            palette: {
+                lastUsedRatios: []
+            },
+            typewriterTimeout: null,
         };
 
         const radius = UIElements.progressCircle.r.baseVal.value;
@@ -948,21 +1216,57 @@
         const UI = {
             showModule: function(mode) {
                 AppState.currentAppMode = mode;
-                const isTimer = mode === 'timer';
-                const isMetronome = mode === 'metronome';
-                const isColorChecker = mode === 'color-checker';
-                const isFoodTimer = mode === 'food-timer';
+                const modules = ['timer', 'metronome', 'color-checker', 'food-timer', 'color-picker'];
+                
+                const toCamelCase = str => str.replace(/-./g, x => x[1].toUpperCase());
 
-                UIElements.timerDisplaySticky.classList.toggle('active', isTimer);
-                UIElements.timerControls.classList.toggle('active', isTimer);
-                UIElements.metronomeDisplaySticky.classList.toggle('active', isMetronome);
-                UIElements.metronomeControls.classList.toggle('active', isMetronome);
-                UIElements.colorCheckerDisplaySticky.classList.toggle('active', isColorChecker);
-                UIElements.colorCheckerControls.classList.toggle('active', isColorChecker);
-                UIElements.foodTimerDisplaySticky.classList.toggle('active', isFoodTimer);
-                UIElements.foodTimerControls.classList.toggle('active', isFoodTimer);
+                modules.forEach(m => {
+                    const camelCaseName = toCamelCase(m);
+                    const display = UIElements[`${camelCaseName}DisplaySticky`];
+                    const controls = UIElements[`${camelCaseName}Controls`];
+                    
+                    if (display) display.classList.toggle('active', m === mode);
+                    if (controls) controls.classList.toggle('active', m === mode);
+                });
+                UIElements.mainLogo.classList.toggle('hidden', mode === 'donate');
+                UIElements.donateOverlay.classList.remove('active');
+            },
+            typewriter: function(element, text, speed, onComplete = () => {}) {
+                let i = 0;
+                element.innerHTML = ''; 
+                
+                function type() {
+                    if (i < text.length) {
+                        element.innerHTML = text.substring(0, i + 1) + '<span class="typing-cursor"></span>';
+                        i++;
+                        AppState.typewriterTimeout = setTimeout(type, speed);
+                    } else {
+                        element.innerHTML = text; 
+                        onComplete();
+                    }
+                }
+                type();
+            },
+            toggleDonateOverlay: function(show) {
+                 UIElements.donateOverlay.classList.toggle('active', show);
+                 const line1 = UIElements.donateLine1;
+                 const line2 = UIElements.donateLine2;
+                 
+                 clearTimeout(AppState.typewriterTimeout);
+                 line1.innerHTML = '';
+                 line2.innerHTML = '';
 
-                UIElements.mainLogo.classList.toggle('hidden', !isTimer);
+                 if(show) {
+                    UIElements.mainLogo.classList.add('hidden');
+                    const text1 = "Dear Supporters,";
+                    const text2 = "This app was built with love to keep things simple, focused, and free. If you find it useful and want to help keep it alive, please consider a small donation.";
+                    this.typewriter(line1, text1, 50, () => {
+                        this.typewriter(line2, text2, 30);
+                    });
+
+                 } else {
+                    UIElements.mainLogo.classList.remove('hidden');
+                 }
             },
             updateTimerDisplay: function(timeLeft, totalDuration) {
                 if (totalDuration <= 0) totalDuration = 1;
@@ -1152,7 +1456,7 @@
         };
 
         const Camelot = {
-            mode: 'key', // 'key' or 'sequence'
+            mode: 'key',
             selectedKey: null,
             wheelData: [
                 { num: 1, A: 'G♯m', B: 'B' }, { num: 2, A: 'D♯m', B: 'F♯' }, { num: 3, A: 'A♯m', B: 'C♯' },
@@ -1254,7 +1558,7 @@
                 });
             },
             updateInfo: function(color) {
-                const rgb = this.hexToRgb(color.hex);
+                const rgb = ColorUtils.hexToRgb(color.hex);
                 UIElements.colorNameValue.textContent = color.name;
                 UIElements.colorHexValue.textContent = color.hex;
                 UIElements.colorRgbValue.textContent = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
@@ -1262,12 +1566,241 @@
             handleSelection: function(event) {
                 const swatch = event.target.closest('.color-swatch');
                 if (!swatch) return;
-
                 document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
                 swatch.classList.add('selected');
-                
                 this.updateInfo(swatch.dataset);
             },
+        };
+
+        const ColorPaletteTool = {
+            ratioPresets: {
+                bladeRunnerRatios: [30, 25, 20, 15, 10],
+                herRatios: [40, 25, 15, 10, 10],
+                madMaxRatios: [40, 35, 15, 5, 5],
+                jokerRatios: [30, 25, 20, 15, 10],
+                sixtyThirtyTen: [60, 30, 10],
+                complementary: [75, 25],
+                triadic: [34, 33, 33],
+                analogous: [60, 25, 15],
+            },
+            init: function() { 
+                this.loadSwatchesFromStorage(); 
+                this.analyzeContrast();
+            },
+            openEyeDropper: async function() {
+                if (!window.EyeDropper) {
+                    alert("Your browser doesn't support the EyeDropper API yet.");
+                    return;
+                }
+                try {
+                    const eyeDropper = new EyeDropper();
+                    const result = await eyeDropper.open();
+                    this.addSwatch(result.sRGBHex.toUpperCase());
+                } catch (e) {
+                    console.log('EyeDropper was cancelled.');
+                }
+            },
+            addSwatch: function(hex, ratio = 0, isLocked = false, fromStorage = false) {
+                const swatch = document.createElement('div');
+                swatch.className = 'palette-swatch';
+                swatch.style.backgroundColor = hex;
+                swatch.dataset.hex = hex;
+                swatch.dataset.locked = isLocked;
+                if(isLocked) swatch.classList.add('locked');
+
+                swatch.addEventListener('click', (e) => {
+                    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+                        navigator.clipboard.writeText(hex);
+                        e.target.style.borderColor = 'var(--primary-color)';
+                        setTimeout(() => { swatch.style.borderColor = '' }, 500);
+                    }
+                });
+
+                const ratioInput = document.createElement('input');
+                ratioInput.type = 'number';
+                ratioInput.className = 'swatch-ratio-input';
+                ratioInput.placeholder = '%';
+                ratioInput.value = ratio;
+                ratioInput.addEventListener('change', () => this.saveSwatchesToStorage());
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'swatch-delete-btn';
+                deleteBtn.innerHTML = '&times;';
+                deleteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    swatch.remove();
+                    this.saveSwatchesToStorage();
+                });
+
+                const lockBtn = document.createElement('button');
+                lockBtn.className = 'swatch-lock-btn';
+                lockBtn.innerHTML = isLocked ? '&#128274;' : '&#128275;';
+                if(isLocked) lockBtn.classList.add('locked');
+                lockBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const currentlyLocked = swatch.dataset.locked === 'true';
+                    swatch.dataset.locked = !currentlyLocked;
+                    swatch.classList.toggle('locked');
+                    lockBtn.innerHTML = !currentlyLocked ? '&#128274;' : '&#128275;';
+                    lockBtn.classList.toggle('locked');
+                    this.saveSwatchesToStorage();
+                });
+                
+                swatch.appendChild(lockBtn);
+                swatch.appendChild(deleteBtn);
+                swatch.appendChild(ratioInput);
+                UIElements.paletteSwatchesContainer.appendChild(swatch);
+                if (!fromStorage) this.saveSwatchesToStorage();
+            },
+            getSwatchesData: function(includeNode = false) {
+                const swatches = [];
+                document.querySelectorAll('.palette-swatch').forEach(sw => {
+                    const data = {
+                        hex: sw.dataset.hex,
+                        ratio: sw.querySelector('.swatch-ratio-input').value || 0,
+                        isLocked: sw.dataset.locked === 'true'
+                    };
+                    if(includeNode) data.node = sw;
+                    swatches.push(data);
+                });
+                return swatches;
+            },
+            saveSwatchesToStorage: function() {
+                const swatchesData = this.getSwatchesData();
+                Storage.save('colorPalette', swatchesData);
+                this.updateRatioChart();
+                this.analyzeContrast();
+            },
+            loadSwatchesFromStorage: function() {
+                const swatchesData = Storage.get('colorPalette', []);
+                UIElements.paletteSwatchesContainer.innerHTML = '';
+                swatchesData.forEach(s => this.addSwatch(s.hex, s.ratio, s.isLocked, true));
+                this.updateRatioChart();
+                this.analyzeContrast();
+            },
+            copyAllSwatches: function() {
+                const hexCodes = this.getSwatchesData().map(s => s.hex).join(', ');
+                navigator.clipboard.writeText(hexCodes);
+            },
+            clearAllSwatches: function() {
+                document.querySelectorAll('.palette-swatch:not(.locked)').forEach(sw => sw.remove());
+                this.saveSwatchesToStorage();
+            },
+            updateRatioChart: function() {
+                const swatchesData = this.getSwatchesData();
+                const totalRatio = swatchesData.reduce((sum, s) => sum + Number(s.ratio), 0);
+                UIElements.paletteRatioChart.innerHTML = '';
+
+                if (totalRatio === 0) return;
+
+                swatchesData.forEach(s => {
+                    if (s.ratio > 0) {
+                        const segment = document.createElement('div');
+                        segment.className = 'ratio-bar-segment';
+                        segment.style.backgroundColor = s.hex;
+                        segment.style.width = `${(s.ratio / totalRatio) * 100}%`;
+                        UIElements.paletteRatioChart.appendChild(segment);
+                    }
+                });
+            },
+            applyRatioPreset: function() {
+                const presetName = UIElements.paletteRatioPresetSelect.value;
+                if (!presetName || !this.ratioPresets[presetName]) return;
+
+                const ratios = this.ratioPresets[presetName];
+                AppState.palette.lastUsedRatios = [...ratios];
+                const swatches = document.querySelectorAll('.palette-swatch');
+
+                swatches.forEach((swatch, index) => {
+                    const ratioInput = swatch.querySelector('.swatch-ratio-input');
+                    ratioInput.value = ratios[index] || 0;
+                });
+
+                this.saveSwatchesToStorage();
+                UIElements.paletteRatioPresetSelect.value = '';
+            },
+            randomizeRatios: function() {
+                let ratiosToShuffle = AppState.palette.lastUsedRatios;
+                if (!ratiosToShuffle || ratiosToShuffle.length === 0) {
+                    ratiosToShuffle = this.getSwatchesData().map(s => s.ratio);
+                }
+                
+                for (let i = ratiosToShuffle.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [ratiosToShuffle[i], ratiosToShuffle[j]] = [ratiosToShuffle[j], ratiosToShuffle[i]];
+                }
+                
+                const swatches = document.querySelectorAll('.palette-swatch');
+                swatches.forEach((swatch, index) => {
+                    const ratioInput = swatch.querySelector('.swatch-ratio-input');
+                    ratioInput.value = ratiosToShuffle[index] || 0;
+                });
+                
+                this.saveSwatchesToStorage();
+            },
+             analyzeContrast: function() {
+                const swatches = this.getSwatchesData().filter(s => Number(s.ratio) > 0);
+                if (swatches.length < 2) {
+                    UIElements.paletteContrastValue.textContent = 'N/A';
+                    return;
+                }
+
+                const totalWeight = swatches.reduce((sum, s) => sum + Number(s.ratio), 0);
+                if(totalWeight === 0) {
+                     UIElements.paletteContrastValue.textContent = 'N/A';
+                    return;
+                }
+
+                const weightedMean = swatches.reduce((sum, s) => sum + (ColorUtils.getLuminance(s.hex) * Number(s.ratio)), 0) / totalWeight;
+                const weightedVariance = swatches.reduce((sum, s) => sum + (Number(s.ratio) * Math.pow(ColorUtils.getLuminance(s.hex) - weightedMean, 2)), 0) / totalWeight;
+                const stdDev = Math.sqrt(weightedVariance);
+
+                let rating = 'Flat';
+                if (stdDev > 40) rating = 'Dynamic';
+                else if (stdDev > 20) rating = 'Good';
+
+                UIElements.paletteContrastValue.textContent = `${rating} (σ=${stdDev.toFixed(1)})`;
+            },
+            randomizeContrast: function() {
+                const swatches = this.getSwatchesData(true);
+                if (swatches.length < 2) return;
+
+                const hslSwatches = swatches.map(s => ({ ...ColorUtils.hexToHsl(s.hex), node: s.node, originalHex: s.hex }));
+                hslSwatches.sort((a, b) => a.l - b.l); 
+
+                const n = swatches.length;
+                const targetLightness = Array.from({ length: n }, (_, i) => 0.1 + (i * (0.8 / (n - 1))));
+                
+                for (let i = targetLightness.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [targetLightness[i], targetLightness[j]] = [targetLightness[j], targetLightness[i]];
+                }
+
+                hslSwatches.forEach((swatch, index) => {
+                    const newHsl = { h: swatch.h, s: swatch.s, l: targetLightness[index] };
+                    const newHex = ColorUtils.hslToHex(newHsl);
+                    
+                    swatch.node.dataset.hex = newHex;
+                    swatch.node.style.backgroundColor = newHex;
+                });
+
+                this.saveSwatchesToStorage();
+            },
+            exportToNotepad: function() {
+                const swatchesData = this.getSwatchesData();
+                if(swatchesData.length === 0) return;
+                
+                let exportText = `\n\n--- Color Palette (${new Date().toLocaleString()}) ---\n`;
+                swatchesData.forEach(s => {
+                    exportText += `${s.hex} (${s.ratio}%)\n`;
+                });
+                exportText += '------------------------------------------\n';
+                
+                Notepad.appendToNote(exportText);
+            }
+        };
+
+        const ColorUtils = {
             hexToRgb(hex) {
                 const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
                 return result ? {
@@ -1275,6 +1808,56 @@
                   g: parseInt(result[2], 16),
                   b: parseInt(result[3], 16)
                 } : null;
+            },
+            getLuminance(hex) {
+                const rgb = this.hexToRgb(hex);
+                if (!rgb) return 0;
+                return 0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b;
+            },
+            hexToHsl(hex) {
+                const rgb = this.hexToRgb(hex);
+                const r = rgb.r / 255, g = rgb.g / 255, b = rgb.b / 255;
+                const max = Math.max(r, g, b), min = Math.min(r, g, b);
+                let h = 0, s, l = (max + min) / 2;
+
+                if (max !== min) {
+                    const d = max - min;
+                    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                    switch (max) {
+                        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                        case g: h = (b - r) / d + 2; break;
+                        case b: h = (r - g) / d + 4; break;
+                    }
+                    h /= 6;
+                } else {
+                   h = s = 0; 
+                }
+                return { h, s, l };
+            },
+            hslToHex({h, s, l}) {
+                let r, g, b;
+                if (s === 0) {
+                    r = g = b = l; 
+                } else {
+                    const hue2rgb = (p, q, t) => {
+                        if (t < 0) t += 1;
+                        if (t > 1) t -= 1;
+                        if (t < 1/6) return p + (q - p) * 6 * t;
+                        if (t < 1/2) return q;
+                        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                        return p;
+                    };
+                    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                    const p = 2 * l - q;
+                    r = hue2rgb(p, q, h + 1/3);
+                    g = hue2rgb(p, q, h);
+                    b = hue2rgb(p, q, h - 1/3);
+                }
+                const toHex = x => {
+                    const hex = Math.round(x * 255).toString(16);
+                    return hex.length === 1 ? '0' + hex : hex;
+                };
+                return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toUpperCase();
             }
         };
 
@@ -1284,49 +1867,11 @@
                     { name: 'Greek Salad', water: 85, macros: [ { name: 'Carbs', percent: 14, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 7, color: 'var(--protein-color)' }, { name: 'Fats', percent: 79, color: 'var(--fats-color)' } ] },
                     { name: 'Avocado Toast', water: 75, macros: [ { name: 'Carbs', percent: 45, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 15, color: 'var(--protein-color)' }, { name: 'Fats', percent: 40, color: 'var(--fats-color)' } ] },
                     { name: 'Margarita Pizza', water: 60, macros: [ { name: 'Carbs', percent: 55, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 20, color: 'var(--protein-color)' }, { name: 'Fats', percent: 25, color: 'var(--fats-color)' } ] },
-                    { name: 'Spaghetti Tomato', water: 70, macros: [ { name: 'Carbs', percent: 80, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 15, color: 'var(--protein-color)' }, { name: 'Fats', percent: 5, color: 'var(--fats-color)' } ] },
-                    { name: 'Couscous Salad', water: 80, macros: [ { name: 'Carbs', percent: 60, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 15, color: 'var(--protein-color)' }, { name: 'Fats', percent: 25, color: 'var(--fats-color)' } ] },
-                    { name: 'Pita & Hummus', water: 65, macros: [ { name: 'Carbs', percent: 50, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 20, color: 'var(--protein-color)' }, { name: 'Fats', percent: 30, color: 'var(--fats-color)' } ] },
-                    { name: 'Fried Egg Toast', water: 70, macros: [ { name: 'Carbs', percent: 35, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 25, color: 'var(--protein-color)' }, { name: 'Fats', percent: 40, color: 'var(--fats-color)' } ] },
-                    { name: 'Ramen with Egg', water: 88, macros: [{ name: 'Carbs', percent: 50, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 25, color: 'var(--protein-color)'}, { name: 'Fats', percent: 25, color: 'var(--fats-color)'}]},
-                    { name: 'Fried Rice', water: 70, macros: [{ name: 'Carbs', percent: 75, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 15, color: 'var(--protein-color)'}, { name: 'Fats', percent: 10, color: 'var(--fats-color)'}]},
-                    { name: 'Sweet Potato Fries', water: 60, macros: [{ name: 'Carbs', percent: 70, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 5, color: 'var(--protein-color)'}, { name: 'Fats', percent: 25, color: 'var(--fats-color)'}]},
-                    { name: 'Chicken Burger & Fries', water: 55, macros: [{ name: 'Carbs', percent: 45, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 25, color: 'var(--protein-color)'}, { name: 'Fats', percent: 30, color: 'var(--fats-color)'}]},
-                    { name: 'Grilled Cheese', water: 40, macros: [{ name: 'Carbs', percent: 40, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 40, color: 'var(--fats-color)'}]},
-                    { name: 'Pasta Pesto', water: 65, macros: [{ name: 'Carbs', percent: 55, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 15, color: 'var(--protein-color)'}, { name: 'Fats', percent: 30, color: 'var(--fats-color)'}]},
-                    { name: 'Omelette', water: 75, macros: [{ name: 'Carbs', percent: 5, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 40, color: 'var(--protein-color)'}, { name: 'Fats', percent: 55, color: 'var(--fats-color)'}]},
-                    { name: 'Veggie Stir-Fry', water: 85, macros: [{ name: 'Carbs', percent: 70, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 10, color: 'var(--fats-color)'}]},
-                    { name: 'Halloumi Wrap', water: 60, macros: [{ name: 'Carbs', percent: 40, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 25, color: 'var(--protein-color)'}, { name: 'Fats', percent: 35, color: 'var(--fats-color)'}]},
-                    { name: 'Tomato Bruschetta', water: 75, macros: [{ name: 'Carbs', percent: 65, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 10, color: 'var(--protein-color)'}, { name: 'Fats', percent: 25, color: 'var(--fats-color)'}]},
-                    { name: 'Pita Falafel Tzatziki', water: 60, macros: [{ name: 'Carbs', percent: 45, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 35, color: 'var(--fats-color)'}]},
-                    { name: 'Chicken Caesar Wrap', water: 65, macros: [{ name: 'Carbs', percent: 35, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 35, color: 'var(--protein-color)'}, { name: 'Fats', percent: 30, color: 'var(--fats-color)'}]},
-                    { name: 'Scrambled Eggs & Feta', water: 70, macros: [{ name: 'Carbs', percent: 5, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 40, color: 'var(--protein-color)'}, { name: 'Fats', percent: 55, color: 'var(--fats-color)'}]},
-                    { name: 'Garlic Bread', water: 30, macros: [{ name: 'Carbs', percent: 55, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 10, color: 'var(--protein-color)'}, { name: 'Fats', percent: 35, color: 'var(--fats-color)'}]},
                 ],
                 snacks: [
                     { name: 'Watermelon & Honey', water: 92, macros: [ { name: 'Carbs', percent: 93, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 5, color: 'var(--protein-color)' }, { name: 'Fats', percent: 2, color: 'var(--fats-color)' } ] },
                     { name: 'Snickers', water: 10, macros: [ { name: 'Carbs', percent: 55, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 10, color: 'var(--protein-color)' }, { name: 'Fats', percent: 35, color: 'var(--fats-color)' } ] },
                     { name: "Ben & Jerry's", water: 60, macros: [ { name: 'Carbs', percent: 50, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 10, color: 'var(--protein-color)' }, { name: 'Fats', percent: 40, color: 'var(--fats-color)' } ] },
-                    { name: 'Slice of Cake', water: 40, macros: [ { name: 'Carbs', percent: 60, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 5, color: 'var(--protein-color)' }, { name: 'Fats', percent: 35, color: 'var(--fats-color)' } ] },
-                    { name: 'Chips', water: 5, macros: [ { name: 'Carbs', percent: 60, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 5, color: 'var(--protein-color)' }, { name: 'Fats', percent: 35, color: 'var(--fats-color)' } ] },
-                    { name: 'Can of Coke', water: 89, macros: [ { name: 'Carbs', percent: 100, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 0, color: 'var(--protein-color)' }, { name: 'Fats', percent: 0, color: 'var(--fats-color)' } ] },
-                    { name: 'Chocolate Chip Cookie', water: 10, macros: [ { name: 'Carbs', percent: 65, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 5, color: 'var(--protein-color)' }, { name: 'Fats', percent: 30, color: 'var(--fats-color)' } ] },
-                    { name: 'Yogurt & Granola', water: 75, macros: [ { name: 'Carbs', percent: 50, color: 'var(--carbs-color)' }, { name: 'Protein', percent: 25, color: 'var(--protein-color)' }, { name: 'Fats', percent: 25, color: 'var(--fats-color)' } ] },
-                    { name: 'Mini Donuts', water: 20, macros: [{ name: 'Carbs', percent: 55, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 5, color: 'var(--protein-color)'}, { name: 'Fats', percent: 40, color: 'var(--fats-color)'}]},
-                    { name: 'Mozzarella Sticks', water: 45, macros: [{ name: 'Carbs', percent: 30, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 25, color: 'var(--protein-color)'}, { name: 'Fats', percent: 45, color: 'var(--fats-color)'}]},
-                    { name: 'Cucumber with Salt', water: 95, macros: [{ name: 'Carbs', percent: 80, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 15, color: 'var(--protein-color)'}, { name: 'Fats', percent: 5, color: 'var(--fats-color)'}]},
-                    { name: 'Tiramisu', water: 50, macros: [{ name: 'Carbs', percent: 40, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 10, color: 'var(--protein-color)'}, { name: 'Fats', percent: 50, color: 'var(--fats-color)'}]},
-                    { name: 'Fruit Gummy Pack', water: 15, macros: [{ name: 'Carbs', percent: 90, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 5, color: 'var(--protein-color)'}, { name: 'Fats', percent: 5, color: 'var(--fats-color)'}]},
-                    { name: 'Chocolate Croissant', water: 25, macros: [{ name: 'Carbs', percent: 50, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 10, color: 'var(--protein-color)'}, { name: 'Fats', percent: 40, color: 'var(--fats-color)'}]},
-                    { name: 'Nachos with Salsa', water: 50, macros: [{ name: 'Carbs', percent: 60, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 10, color: 'var(--protein-color)'}, { name: 'Fats', percent: 30, color: 'var(--fats-color)'}]},
-                    { name: 'A Pickle', water: 94, macros: [{ name: 'Carbs', percent: 85, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 5, color: 'var(--protein-color)'}, { name: 'Fats', percent: 10, color: 'var(--fats-color)'}]},
-                    { name: 'Salted Peanuts', water: 2, macros: [{ name: 'Carbs', percent: 15, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 25, color: 'var(--protein-color)'}, { name: 'Fats', percent: 60, color: 'var(--fats-color)'}]},
-                    { name: 'Studentenfutter', water: 5, macros: [{ name: 'Carbs', percent: 35, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 45, color: 'var(--fats-color)'}]},
-                    { name: 'Bell Peppers & Hummus', water: 90, macros: [{ name: 'Carbs', percent: 50, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 30, color: 'var(--fats-color)'}]},
-                    { name: 'Granola Bar', water: 10, macros: [{ name: 'Carbs', percent: 65, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 15, color: 'var(--protein-color)'}, { name: 'Fats', percent: 20, color: 'var(--fats-color)'}]},
-                    { name: 'Trail Mix', water: 5, macros: [{ name: 'Carbs', percent: 40, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 40, color: 'var(--fats-color)'}]},
-                    { name: 'Grapes & Cheese', water: 80, macros: [{ name: 'Carbs', percent: 40, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 40, color: 'var(--fats-color)'}]},
-                    { name: 'A Handful of Almonds', water: 5, macros: [{ name: 'Carbs', percent: 15, color: 'var(--carbs-color)'}, { name: 'Protein', percent: 20, color: 'var(--protein-color)'}, { name: 'Fats', percent: 65, color: 'var(--fats-color)'}]},
                 ]
             },
             init: function() {
@@ -1339,7 +1884,6 @@
             },
             updateDisplay: function(food) {
                 const titleEl = UIElements.foodTimerTitle;
-
                 titleEl.textContent = food.name.toUpperCase();
                 titleEl.classList.remove('pulsating-title');
                 void titleEl.offsetWidth;
@@ -1367,7 +1911,6 @@
                     }
                 });
                 percentagesDiv.appendChild(macroRow);
-
                 this.drawMacroRing(food.macros);
                 this.updateWaterRing(food.water);
             },
@@ -1376,7 +1919,6 @@
                 const radius = ring.r.baseVal.value;
                 const circumference = 2 * Math.PI * radius;
                 const offset = circumference - (percent / 100 * circumference);
-                
                 ring.style.strokeDasharray = `${circumference} ${circumference}`;
                 ring.style.strokeDashoffset = offset;
             },
@@ -1387,14 +1929,10 @@
                 const strokeWidth = 6; 
                 const circumference = 2 * Math.PI * radius;
                 let cumulativeRotation = 0;
-
                 slicesGroup.setAttribute('transform', 'rotate(-90 50 50)');
-
                 data.forEach(slice => {
                     if (slice.percent === 0) return;
-
                     const arcLength = (slice.percent / 100) * circumference;
-                    
                     const newRing = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                     newRing.setAttribute('cx', 50);
                     newRing.setAttribute('cy', 50);
@@ -1405,9 +1943,7 @@
                     newRing.setAttribute('stroke-dasharray', `${arcLength} ${circumference}`);
                     newRing.setAttribute('class', 'macro-ring-slice');
                     newRing.style.transform = `rotate(${cumulativeRotation}deg)`;
-                    
                     slicesGroup.appendChild(newRing);
-                    
                     cumulativeRotation += (slice.percent / 100) * 360;
                 });
             }
@@ -1416,7 +1952,6 @@
         const Notepad = {
             init: function() {
                 this.loadNote();
-                UIElements.notepadTextarea.addEventListener('input', this.saveNote.bind(this));
                 UIElements.copyNotesBtn.addEventListener('click', this.copyNote.bind(this));
                 UIElements.clearNotesBtn.addEventListener('click', this.clearNote.bind(this));
             },
@@ -1425,6 +1960,10 @@
             },
             loadNote: function() {
                 UIElements.notepadTextarea.value = Storage.get('notepadContent', '');
+            },
+            appendToNote: function(text) {
+                UIElements.notepadTextarea.value += text;
+                this.saveNote();
             },
             copyNote: function() {
                 const textarea = UIElements.notepadTextarea;
@@ -1435,9 +1974,7 @@
                         document.execCommand('copy');
                         UIElements.copyNotesBtn.textContent = 'Copied!';
                         setTimeout(() => { UIElements.copyNotesBtn.textContent = 'Copy'; }, 1500);
-                    } catch (err) {
-                        console.error('Fallback: Oops, unable to copy', err);
-                    }
+                    } catch (err) { console.error('Fallback: Oops, unable to copy', err); }
                     window.getSelection().removeAllRanges();
                 }
             },
@@ -1466,6 +2003,11 @@
             });
             UIElements.colorCheckerIcon.addEventListener('click', () => UI.showModule('color-checker'));
             UIElements.foodTimerIcon.addEventListener('click', () => UI.showModule('food-timer'));
+            UIElements.colorPickerIcon.addEventListener('click', () => UI.showModule('color-picker'));
+
+            UIElements.mainLogo.addEventListener('click', () => UI.toggleDonateOverlay(true));
+            UIElements.closeDonateBtn.addEventListener('click', () => UI.toggleDonateOverlay(false));
+
             UIElements.notepadIcon.addEventListener('click', () => {
                 const isNotepadVisible = UIElements.notepadPanel.classList.toggle('visible');
                 const anyPanelVisible = isNotepadVisible || UIElements.calcPanel.classList.contains('visible') || UIElements.camelotPanel.classList.contains('visible');
@@ -1479,17 +2021,13 @@
                 if (AppState.isMetronomePlaying) Metronome.stop();
                 UI.showModule('timer');
             });
-            UIElements.backToTimerFromChecker.addEventListener('click', () => {
-                UI.showModule('timer');
-            });
-            UIElements.backToTimerFromFood.addEventListener('click', () => {
-                UI.showModule('timer');
-            });
+            UIElements.backToTimerFromChecker.addEventListener('click', () => UI.showModule('timer'));
+            UIElements.backToTimerFromFood.addEventListener('click', () => UI.showModule('timer'));
+            UIElements.backToTimerFromPicker.addEventListener('click', () => UI.showModule('timer'));
 
             UIElements.openCalcBtn.addEventListener('click', () => {
                 const isCalcVisible = UIElements.calcPanel.classList.toggle('visible');
                 const anyPanelVisible = isCalcVisible || UIElements.camelotPanel.classList.contains('visible') || UIElements.notepadPanel.classList.contains('visible');
-                
                 UIElements.appWrapper.classList.toggle('is-panel-open', anyPanelVisible);
                 UIElements.openCalcBtn.textContent = isCalcVisible ? "Close" : "Calculators";
                 toggleMainOptions(anyPanelVisible);
@@ -1498,7 +2036,6 @@
             UIElements.openCamelotBtn.addEventListener('click', () => {
                 const isCamelotVisible = UIElements.camelotPanel.classList.toggle('visible');
                 const anyPanelVisible = isCamelotVisible || UIElements.calcPanel.classList.contains('visible') || UIElements.notepadPanel.classList.contains('visible');
-
                 UIElements.appWrapper.classList.toggle('is-panel-open', anyPanelVisible);
                 UIElements.openCamelotBtn.textContent = isCamelotVisible ? "Close" : "Camelot";
                 toggleMainOptions(anyPanelVisible);
@@ -1576,19 +2113,29 @@
             UIElements.fullscreenBtn.addEventListener('click', () => {
                 try {
                     const elementToFullscreen = document.getElementById('color-checker-container');
-                    if (document.fullscreenElement) {
-                        document.exitFullscreen();
-                    } else {
-                        elementToFullscreen.requestFullscreen();
-                    }
-                } catch (error) {
-                    console.error("Fullscreen API error:", error);
-                }
+                    if (document.fullscreenElement) { document.exitFullscreen(); } 
+                    else { elementToFullscreen.requestFullscreen(); }
+                } catch (error) { console.error("Fullscreen API error:", error); }
             });
 
             // Snack Time listeners
             UIElements.generateMealBtn.addEventListener('click', () => SnackTime.generateRandom('meals'));
             UIElements.generateSnackBtn.addEventListener('click', () => SnackTime.generateRandom('snacks'));
+
+            // Color Palette Tool Listeners
+            UIElements.eyedropperBtn.addEventListener('click', () => ColorPaletteTool.openEyeDropper());
+            UIElements.paletteCopyAllBtn.addEventListener('click', () => ColorPaletteTool.copyAllSwatches());
+            UIElements.paletteClearBtn.addEventListener('click', () => ColorPaletteTool.clearAllSwatches());
+            UIElements.paletteRatioPresetSelect.addEventListener('change', () => ColorPaletteTool.applyRatioPreset());
+            UIElements.paletteRandomizeBtn.addEventListener('click', () => ColorPaletteTool.randomizeRatios());
+            UIElements.paletteRandomContrastBtn.addEventListener('click', () => ColorPaletteTool.randomizeContrast());
+            UIElements.paletteExportBtn.addEventListener('click', () => ColorPaletteTool.exportToNotepad());
+            UIElements.paletteSwatchesContainer.addEventListener('change', (e) => {
+                if(e.target.classList.contains('swatch-ratio-input')) {
+                    ColorPaletteTool.saveSwatchesToStorage();
+                }
+            });
+
         }
 
         function initializeApp() {
@@ -1613,6 +2160,7 @@
             ColorChecker.init();
             SnackTime.init();
             Notepad.init();
+            ColorPaletteTool.init();
             setupEventListeners();
             UI.showModule('timer');
             Timer.resetAll();
