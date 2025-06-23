@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EYIGOTYOU LABS</title>
+    <link rel="icon" type="image/jpeg" href="https://www.dropbox.com/scl/fi/n2ez50rho6xydpma93sq2/500.jpeg?rlkey=8omntfna9sqvagk8p6cs7gjwh&raw=1" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>E</text></svg>'">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background-color: #0A0A0A;
+            --primary-color: #FFFFFF;
+            --secondary-color: #888888;
+            --accent-color: #1E8449;
+            --warning-color: #EF4444;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: var(--background-color);
+            color: var(--secondary-color);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            overflow: hidden; 
+            overflow-x: hidden; 
+        }
+
+        #app-wrapper {
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             width: 100%;
+             height: 100%;
+             max-height: 100%;
+             overflow-y: hidden;
+             box-sizing: border-box;
+        }
+
+        #app-wrapper.is-panel-open {
+            overflow-y: auto;
+        }
+        
+        /* --- Corner Icons --- */
+        #logo-container {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .site-logo-img {
+            width: 45px;
+            height: auto;
+            transition: transform 0.2s ease;
+        }
+
+        #logo-container:hover .site-logo-img {
+            transform: scale(1.1);
+        }
+        
+        #labs-indicator {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 0.6rem;
+            color: var(--secondary-color);
+            margin-top: 4px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .site-icon-left {
+            position: fixed;
+            width: 32px;
+            height: auto;
+            z-index: 100;
+            filter: invert(1) opacity(0.6);
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .site-icon-left:hover {
+            transform: scale(1.1);
+            filter: invert(1) opacity(1);
+        }
+        
+        #menu-icon { 
+            top: 15px; 
+            left: 15px; 
+            z-index: 101; 
+            fill: #888888;
+        }
+        #menu-icon:hover {
+            fill: #FFFFFF;
+        }
+        
+        /* Horizontal utility icons */
+        #bell-icon { top: 15px; left: 60px; }
+        #notepad-icon { top: 15px; left: 105px; width: 38px; }
+
+        #left-icon-menu .site-icon-left:not(#menu-icon) {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(-20px);
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+        }
+        #left-icon-menu.menu-open .site-icon-left:not(#menu-icon) {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+        
+        #left-icon-menu .site-icon-left:nth-child(2) { transition-delay: 0.05s; }
+        #left-icon-menu .site-icon-left:nth-child(3) { transition-delay: 0.1s; }
+        
+        /* --- Layout Structure --- */
+        .sticky-wrapper {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: var(--background-color);
+            padding-top: 5vh; 
+            padding-bottom: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .scrollable-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding: 0 20px 20px 20px;
+            box-sizing: border-box;
+        }
+
+        .module-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .sticky-display {
+            display: flex;
+            height: 100%;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        /* --- Donate Overlay --- */
+        #donate-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(10, 10, 10, 0.95);
+            z-index: 200;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        #donate-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        #donate-content {
+            color: var(--primary-color);
+            max-width: 420px;
+            width: 100%;
+            text-align: left;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        #donate-intro-text p {
+            margin: 0 0 1em 0;
+            color: var(--secondary-color);
+            min-height: 1.6em; /* Reserve space to prevent layout shift */
+        }
+        .typing-cursor {
+            border-right: .15em solid var(--accent-color);
+            animation: blink-caret .75s step-end infinite;
+        }
+        @keyframes blink-caret {
+          from, to { border-color: transparent }
+          50% { border-color: var(--accent-color); }
+        }
+
+        #kofi-container {
+            border: 2px solid #2a2a2a;
+            padding: 4px;
+            background: #121212;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        #close-donate-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            color: var(--secondary-color);
+            background: none;
+            border: none;
+            cursor: pointer;
+            line-height: 1;
+        }
+        #close-donate-btn:hover {
+            color: var(--primary-color);
+        }
+
+        /* --- Timer Specific --- */
+        .timer-container {
+            position: relative;
+            width: 65vw; 
+            height: 65vw;
+            max-width: 240px; 
+            max-height: 240px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: default;
+        }
+
+        .timer-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .timer-circle {
+            fill: none;
+            stroke-width: 4; 
+        }
+        
+        #timer-track { stroke: var(--secondary-color); opacity: 0.1; }
+
+        #timer-progress {
+            stroke: var(--primary-color);
+            stroke-linecap: round;
+            transition: stroke 0.5s ease-in-out, stroke-dashoffset 0.2s linear;
+        }
+        
+        #progress-dot {
+            fill: var(--primary-color);
+            transition: fill 0.5s ease-in-out;
+            animation: pulsate 1.5s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulsate {
+            from { r: 1; }
+            to { r: 3; }
+        }
+
+        #time-left {
+            z-index: 1; 
+            font-size: clamp(2rem, 10vw, 3rem); 
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: var(--primary-color);
+        }
+        
+        #mode-display, #notepad-title {
+            z-index: 2;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--secondary-color);
+            transition: color 0.5s ease-in-out;
+            text-align: center;
+            height: 1em; /* Reserve space */
+            margin-bottom: 15px;
+        }
+        
+        #mode-display {
+            cursor: pointer;
+        }
+        
+        /* --- Notepad Specific --- */
+        #notepad-panel {
+            width: 100%;
+            max-width: 300px;
+        }
+        #notepad-panel .control-panel {
+            max-width: 100%;
+        }
+        #notepad-textarea {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid var(--secondary-color);
+            color: var(--primary-color);
+            border-radius: 0;
+            padding: 8px;
+            font-family: 'Inter', sans-serif;
+            resize: vertical;
+            min-height: 120px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+        #notepad-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        /* --- Generic Controls --- */
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-width: 240px;
+        }
+
+        .control-group {
+            display: flex;
+            border: 2px solid var(--secondary-color);
+            overflow: hidden;
+        }
+        
+        .control-btn, .setting-item {
+            background-color: transparent;
+            border: none;
+            color: var(--secondary-color);
+            padding: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: all 0.2s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center; 
+            gap: 8px;
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        .control-group > *:not(:last-child) {
+             border-right: 2px solid var(--secondary-color);
+        }
+
+        .control-btn:hover {
+            color: var(--primary-color);
+        }
+
+        #start-pause-btn, .setting-item.label { 
+            flex-grow: 2;
+            justify-content: flex-start;
+            padding-left: 15px;
+        }
+        
+        .setting-item.label {
+            cursor: pointer;
+        }
+
+        #settings-container { 
+            position: relative; 
+            height: 80px; /* Adjusted for fewer settings */
+        }
+        
+        .options-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, gap 0.5s ease-in-out;
+        }
+        
+        .options-wrapper.hidden {
+            max-height: 0;
+            gap: 0;
+        }
+
+        .settings-panel {
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .setting-item.label span { font-size: 0.7rem; font-weight: 400; opacity: 0.7; margin-left: 5px; }
+        
+        .settings-panel input[type="number"] {
+            background-color: transparent; border: none; color: var(--primary-color);
+            padding: 0; width: 40px; text-align: center;
+            font-family: inherit; font-size: 0.8rem; font-weight: 500; outline: none;
+        }
+        input[type=number] { -moz-appearance: textfield; }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+        .collapsible-panel {
+            width: 100%; max-width: 300px;
+            margin-top: 15px; max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, margin-top 0.5s ease-in-out;
+        }
+        .collapsible-panel.visible { 
+            max-height: 1000px; 
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    
+    <div id="app-wrapper">
+        <div id="left-icon-menu">
+            <svg id="menu-icon" class="site-icon-left" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 6h16M4 12h16M4 18h16" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--secondary-color); transition: stroke 0.2s ease-in-out;"></path>
+            </svg>
+            <img src="https://www.dropbox.com/scl/fi/1m4jb4opjgtxoy6yz2yf0/bell-svgrepo-com.svg?rlkey=8po6w24uqopz056gd5vwk42o2&raw=1" alt="Bell Icon" class="site-icon-left" id="bell-icon">
+            <img src="https://www.dropbox.com/scl/fi/1uvselpcovxwl1ahvdhjz/notes-svgrepo-com.svg?rlkey=eidktq0vfjc2ss4kuw2252hl1&raw=1" alt="Notepad Icon" class="site-icon-left" id="notepad-icon" style="width: 38px;">
+        </div>
+
+        <div id="logo-container">
+            <img src="https://www.dropbox.com/scl/fi/y2i8ul09le7i5v03lehma/500.png?rlkey=rbh2kx5rbcgmgowl49ceb9tpv&raw=1" alt="Logo" class="site-logo-img" onerror="this.style.display='none'">
+            <div id="labs-indicator">[LABS]</div>
+        </div>
+
+
+        <div id="donate-overlay">
+            <div id="donate-content">
+                <button id="close-donate-btn">&times;</button>
+                <div id="donate-intro-text">
+                    <p id="donate-line-1"></p>
+                    <p id="donate-line-2"></p>
+                </div>
+                 <div id="kofi-container">
+                    <iframe id='kofiframe' src='https://ko-fi.com/konstantinsonnenkind/?hidefeed=true&widget=true&embed=true&preview=true&theme=dark' style='border:none;width:100%;' height='712' title='konstantinsonnenkind'></iframe>
+                </div>
+            </div>
+        </div>
+
+        <div class="sticky-wrapper">
+            <div id="timer-display-sticky" class="sticky-display">
+                <div class="timer-container">
+                    <svg class="timer-svg" viewBox="0 0 100 100">
+                        <circle class="timer-circle" id="timer-track" cx="50" cy="50" r="45"></circle>
+                        <circle class="timer-circle" id="timer-progress" cx="50" cy="50" r="45"></circle>
+                        <g transform="rotate(90, 50, 50)">
+                            <circle id="progress-dot" cx="50" cy="5" r="2"></circle>
+                        </g>
+                    </svg>
+                    <div id="time-left" role="timer" aria-live="polite">25:00</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="scrollable-content">
+            <div id="timer-controls" class="module-controls">
+                <div id="mode-display">Work</div>
+                <div class="control-panel">
+                    <div id="timer-options-wrapper" class="options-wrapper">
+                        <div id="settings-container">
+                            <div id="pomodoro-settings" class="settings-panel">
+                                <div class="control-group"><div class="setting-item label" data-start-mode="work">WORK <span>(MIN)</span></div><div class="setting-item"><input type="number" id="work-time" value="25" min="1"></div></div>
+                                <div class="control-group"><div class="setting-item label" data-start-mode="break">BREAK <span>(MIN)</span></div><div class="setting-item"><input type="number" id="break-time" value="5" min="1"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="control-group"><button class="control-btn" id="start-pause-btn">Start</button><button class="control-btn" id="reset-btn">Reset</button></div>
+                </div>
+            </div>
+            
+            <div id="notepad-panel" class="collapsible-panel">
+                <div id="notepad-title">Notepad</div>
+                 <div class="control-panel" style="max-width: 100%;">
+                    <textarea id="notepad-textarea" placeholder="Add and save your notes here..."></textarea>
+                    <div class="control-group">
+                        <button class="control-btn" id="copy-notes-btn">Copy</button>
+                        <button class="control-btn" id="clear-notes-btn">Clear</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- DOM Elements ---
+        const UIElements = {
+            appWrapper: document.getElementById('app-wrapper'),
+            leftIconMenu: document.getElementById('left-icon-menu'),
+            menuIcon: document.getElementById('menu-icon'),
+            bellIcon: document.getElementById('bell-icon'),
+            notepadIcon: document.getElementById('notepad-icon'),
+            logoContainer: document.getElementById('logo-container'),
+            donateOverlay: document.getElementById('donate-overlay'),
+            closeDonateBtn: document.getElementById('close-donate-btn'),
+            donateLine1: document.getElementById('donate-line-1'),
+            donateLine2: document.getElementById('donate-line-2'),
+            timeLeftDisplay: document.getElementById('time-left'),
+            startPauseBtn: document.getElementById('start-pause-btn'),
+            resetBtn: document.getElementById('reset-btn'),
+            progressCircle: document.getElementById('timer-progress'),
+            progressDot: document.getElementById('progress-dot'),
+            modeDisplay: document.getElementById('mode-display'),
+            pomodoroSettings: document.getElementById('pomodoro-settings'),
+            workTimeInput: document.getElementById('work-time'),
+            breakTimeInput: document.getElementById('break-time'),
+            timerOptionsWrapper: document.getElementById('timer-options-wrapper'), 
+            notepadPanel: document.getElementById('notepad-panel'),
+            notepadTextarea: document.getElementById('notepad-textarea'),
+            copyNotesBtn: document.getElementById('copy-notes-btn'),
+            clearNotesBtn: document.getElementById('clear-notes-btn'),
+        };
+
+        // --- App State ---
+        const AppState = {
+            mainTimerId: null, isPaused: true, hasStarted: false, 
+            targetTime: null, 
+            pomodoro: {},
+            audioContext: null, isSoundEnabled: true,
+            pomodoroInitialState: 'work',
+            bellEnabledSrc: "https://www.dropbox.com/scl/fi/1m4jb4opjgtxoy6yz2yf0/bell-svgrepo-com.svg?rlkey=8po6w24uqopz056gd5vwk42o2&raw=1",
+            bellDisabledSrc: "https://www.dropbox.com/scl/fi/syg6jjwvngtxl1mwk0hdv/bell-disabled-svgrepo-com.svg?rlkey=lrawxg597knm9h8jifkw21ngj&raw=1",
+            typewriterTimeout: null,
+        };
+
+        const radius = UIElements.progressCircle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+        UIElements.progressCircle.style.strokeDasharray = circumference;
+
+        // --- Local Storage Helper ---
+        const Storage = {
+            save: (key, value) => localStorage.setItem(`eyigotyou_labs_${key}`, JSON.stringify(value)),
+            get: (key, defaultValue) => {
+                const storedValue = localStorage.getItem(`eyigotyou_labs_${key}`);
+                return storedValue ? JSON.parse(storedValue) : defaultValue;
+            }
+        };
+
+        // --- Web Audio Helper ---
+        const Audio = {
+            initContext: function() {
+                if (!AppState.audioContext) { 
+                    try { 
+                        AppState.audioContext = new (window.AudioContext || window.webkitAudioContext)(); 
+                    } catch(e) { 
+                        console.error("Web Audio API is not supported"); 
+                    } 
+                }
+            },
+            playSound: function(frequency, duration = 1.0) {
+                if (!AppState.isSoundEnabled || !AppState.audioContext) return;
+                const osc = AppState.audioContext.createOscillator();
+                const gain = AppState.audioContext.createGain();
+                osc.frequency.value = frequency; 
+                osc.type = 'sine';
+                gain.gain.setValueAtTime(0.5, AppState.audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, AppState.audioContext.currentTime + duration);
+                osc.connect(gain); 
+                gain.connect(AppState.audioContext.destination);
+                osc.start(AppState.audioContext.currentTime); 
+                osc.stop(AppState.audioContext.currentTime + duration);
+            }
+        };
+
+        // --- UI Updates ---
+        const UI = {
+            updateTimerDisplay: function(timeLeft, totalDuration) {
+                if (totalDuration <= 0) totalDuration = 1;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                UIElements.timeLeftDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                const progress = (totalDuration - timeLeft) / totalDuration;
+                const isBreak = AppState.pomodoro.mode === 'break';
+                
+                let strokeColor = isBreak ? 'var(--accent-color)' : 'var(--primary-color)';
+                if (!isBreak && progress >= 0.95) { 
+                    strokeColor = 'var(--warning-color)'; 
+                }
+                
+                UIElements.progressCircle.style.stroke = strokeColor;
+                const offset = circumference * (1 - progress);
+                UIElements.progressCircle.style.strokeDashoffset = offset;
+                
+                const angle = progress * 360;
+                UIElements.progressDot.parentElement.style.transform = `rotate(${angle-90}deg)`;
+            },
+            typewriter: function(element, text, speed, onComplete = () => {}) {
+                let i = 0;
+                element.innerHTML = ''; 
+                
+                function type() {
+                    if (i < text.length) {
+                        element.innerHTML = text.substring(0, i + 1) + '<span class="typing-cursor"></span>';
+                        i++;
+                        AppState.typewriterTimeout = setTimeout(type, speed);
+                    } else {
+                        element.innerHTML = text; 
+                        onComplete();
+                    }
+                }
+                type();
+            },
+            toggleDonateOverlay: function(show) {
+                 UIElements.donateOverlay.classList.toggle('active', show);
+                 const line1 = UIElements.donateLine1;
+                 const line2 = UIElements.donateLine2;
+                 
+                 clearTimeout(AppState.typewriterTimeout);
+                 line1.innerHTML = '';
+                 line2.innerHTML = '';
+
+                 if(show) {
+                    UIElements.logoContainer.classList.add('hidden');
+                    const text1 = "Dear Supporters,";
+                    const text2 = "This app was built with love to keep things simple, focused, and free. If you find it useful and want to help keep it alive, please consider a small donation.";
+                    this.typewriter(line1, text1, 50, () => {
+                        this.typewriter(line2, text2, 30);
+                    });
+
+                 } else {
+                    UIElements.logoContainer.classList.remove('hidden');
+                 }
+            },
+        };
+
+        // --- Pomodoro Timer Logic ---
+        const Timer = {
+            resetAll: function() {
+                clearInterval(AppState.mainTimerId); AppState.mainTimerId = null;
+                AppState.targetTime = null; AppState.isPaused = true; AppState.hasStarted = false;
+                UIElements.startPauseBtn.textContent = 'Start';
+                UIElements.progressCircle.style.strokeDashoffset = circumference;
+                UIElements.progressDot.style.display = 'block';
+                AppState.pomodoroInitialState = 'work';
+                this.pomodoroReset();
+            },
+            start: function() {
+                AppState.isPaused = false; 
+                AppState.hasStarted = true; 
+                UIElements.startPauseBtn.textContent = 'Pause';
+                UIElements.progressDot.style.display = 'none';
+                AppState.targetTime = Date.now() + AppState.pomodoro.timeLeft * 1000;
+                AppState.mainTimerId = setInterval(Timer.pomodoroTick, 1000);
+            },
+            pause: function() {
+                 AppState.isPaused = true; 
+                 UIElements.startPauseBtn.textContent = 'Continue'; 
+                 clearInterval(AppState.mainTimerId); 
+                 AppState.mainTimerId = null;
+                 UIElements.progressDot.style.display = 'block';
+                 if(AppState.targetTime) {
+                    const timeLeftOnPause = Math.round((AppState.targetTime - Date.now()) / 1000);
+                    AppState.pomodoro.timeLeft = timeLeftOnPause > 0 ? timeLeftOnPause : 0;
+                 }
+                 AppState.targetTime = null;
+            },
+            pomodoroReset: function() {
+                AppState.pomodoro = { 
+                    workSec: parseInt(UIElements.workTimeInput.value, 10) * 60, 
+                    breakSec: parseInt(UIElements.breakTimeInput.value, 10) * 60, 
+                    mode: AppState.pomodoroInitialState
+                };
+                AppState.pomodoro.timeLeft = AppState.pomodoro.mode === 'work' ? AppState.pomodoro.workSec : AppState.pomodoro.breakSec;
+                AppState.pomodoro.totalDuration = AppState.pomodoro.timeLeft;
+                UIElements.modeDisplay.textContent = AppState.pomodoro.mode.charAt(0).toUpperCase() + AppState.pomodoro.mode.slice(1);
+                UI.updateTimerDisplay(AppState.pomodoro.timeLeft, AppState.pomodoro.totalDuration);
+            },
+            pomodoroSwitch: function() {
+                if (AppState.pomodoro.mode === 'work') { Audio.playSound(523.25); } else { Audio.playSound(783.99); }
+                AppState.pomodoro.mode = AppState.pomodoro.mode === 'work' ? 'break' : 'work';
+                AppState.pomodoro.timeLeft = AppState.pomodoro.mode === 'work' ? AppState.pomodoro.workSec : AppState.pomodoro.breakSec;
+                AppState.pomodoro.totalDuration = AppState.pomodoro.timeLeft;
+                UIElements.modeDisplay.textContent = AppState.pomodoro.mode.charAt(0).toUpperCase() + AppState.pomodoro.mode.slice(1);
+                AppState.pomodoroInitialState = AppState.pomodoro.mode;
+                AppState.targetTime = Date.now() + AppState.pomodoro.timeLeft * 1000;
+                UI.updateTimerDisplay(AppState.pomodoro.timeLeft, AppState.pomodoro.totalDuration);
+            },
+            pomodoroTick: function() {
+                let timeLeft = Math.round((AppState.targetTime - Date.now()) / 1000);
+                if (timeLeft <= 0) { 
+                    timeLeft = 0; 
+                    Timer.pomodoroSwitch(); 
+                } else { 
+                    AppState.pomodoro.timeLeft = timeLeft; 
+                    UI.updateTimerDisplay(timeLeft, AppState.pomodoro.totalDuration); 
+                }
+            },
+        };
+
+        // --- Notepad Logic ---
+        const Notepad = {
+            init: function() {
+                this.loadNote();
+                UIElements.copyNotesBtn.addEventListener('click', this.copyNote.bind(this));
+                UIElements.clearNotesBtn.addEventListener('click', this.clearNote.bind(this));
+            },
+            saveNote: function() {
+                Storage.save('notepadContent', UIElements.notepadTextarea.value);
+            },
+            loadNote: function() {
+                UIElements.notepadTextarea.value = Storage.get('notepadContent', '');
+            },
+            copyNote: function() {
+                const textarea = UIElements.notepadTextarea;
+                if (textarea.value) {
+                    textarea.select();
+                    textarea.setSelectionRange(0, 99999); 
+                    try {
+                        document.execCommand('copy');
+                        UIElements.copyNotesBtn.textContent = 'Copied!';
+                        setTimeout(() => { UIElements.copyNotesBtn.textContent = 'Copy'; }, 1500);
+                    } catch (err) { console.error('Fallback: Oops, unable to copy', err); }
+                    window.getSelection().removeAllRanges();
+                }
+            },
+            clearNote: function() {
+                UIElements.notepadTextarea.value = '';
+                this.saveNote();
+            }
+        };
+
+        // --- Event Listeners & Initializer ---
+        function setupEventListeners() {
+            // --- Menu toggle ---
+            UIElements.menuIcon.addEventListener('click', () => {
+                UIElements.leftIconMenu.classList.toggle('menu-open');
+            });
+            
+            // --- Audio toggle ---
+            UIElements.bellIcon.addEventListener('click', () => {
+                AppState.isSoundEnabled = !AppState.isSoundEnabled;
+                UIElements.bellIcon.src = AppState.isSoundEnabled ? AppState.bellEnabledSrc : AppState.bellDisabledSrc;
+                Storage.save('soundEnabled', AppState.isSoundEnabled);
+            });
+            
+            // --- Notepad toggle ---
+            UIElements.notepadIcon.addEventListener('click', () => {
+                const isNotepadVisible = UIElements.notepadPanel.classList.toggle('visible');
+                UIElements.appWrapper.classList.toggle('is-panel-open', isNotepadVisible);
+                UIElements.timerOptionsWrapper.classList.toggle('hidden', isNotepadVisible);
+            });
+
+            // --- Timer Controls ---
+            UIElements.startPauseBtn.addEventListener('click', () => {
+                Audio.initContext();
+                if (AppState.isPaused) {
+                    if (!AppState.hasStarted) { Timer.pomodoroReset(); }
+                    Timer.start(); 
+                } else { 
+                    Timer.pause(); 
+                }
+            });
+
+            UIElements.resetBtn.addEventListener('click', () => Timer.resetAll());
+            
+            // --- Settings Listeners ---
+            document.querySelectorAll('#pomodoro-settings .setting-item.label').forEach(el => {
+                el.addEventListener('click', () => {
+                    if (!AppState.hasStarted) {
+                        AppState.pomodoroInitialState = el.dataset.startMode;
+                        Timer.pomodoroReset();
+                    }
+                });
+            });
+
+            [UIElements.workTimeInput, UIElements.breakTimeInput].forEach(input => {
+                input.addEventListener('change', () => {
+                    if(!AppState.hasStarted) {
+                         Timer.pomodoroReset();
+                    }
+                    Storage.save('pomodoroWork', UIElements.workTimeInput.value);
+                    Storage.save('pomodoroBreak', UIElements.breakTimeInput.value);
+                });
+            });
+
+            // --- Notepad Listener ---
+            UIElements.notepadTextarea.addEventListener('input', () => Notepad.saveNote());
+
+            // --- Donate Overlay Listeners ---
+            UIElements.logoContainer.addEventListener('click', () => UI.toggleDonateOverlay(true));
+            UIElements.closeDonateBtn.addEventListener('click', () => UI.toggleDonateOverlay(false));
+        }
+
+        // --- App Initialization ---
+        function initializeApp() {
+            UIElements.workTimeInput.value = Storage.get('pomodoroWork', 25);
+            UIElements.breakTimeInput.value = Storage.get('pomodoroBreak', 5);
+            
+            AppState.isSoundEnabled = Storage.get('soundEnabled', true);
+            UIElements.bellIcon.src = AppState.isSoundEnabled ? AppState.bellEnabledSrc : AppState.bellDisabledSrc;
+
+            Notepad.init();
+            setupEventListeners();
+            Timer.resetAll();
+        }
+
+        initializeApp();
+    });
+    </script>
+</body>
+</html>
