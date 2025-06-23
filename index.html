@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.8.0/suncalc.min.js"></script>
     <style>
         :root {
             --background-color: #0A0A0A;
@@ -24,6 +25,9 @@
             --protein-color: #8ac926; 
             --fats-color: #ff595e;
             --water-color: #1982c4;
+            --golden-hour-color: #FFC300;
+            --blue-hour-color: #4169E1;
+            --daylight-color: #FFC300; 
         }
 
         html, body {
@@ -94,6 +98,7 @@
         #metronome-icon { top: 65px; left: 15px; }
         #color-checker-icon { top: 115px; left: 15px; }
         #color-picker-icon { top: 165px; left: 15px; }
+        #golden-hour-icon { top: 215px; left: 15px; }
 
 
         #left-icon-menu .site-icon-left:not(#menu-icon) {
@@ -115,6 +120,7 @@
         #left-icon-menu .site-icon-left:nth-child(5) { transition-delay: 0.2s; }
         #left-icon-menu .site-icon-left:nth-child(6) { transition-delay: 0.25s; }
         #left-icon-menu .site-icon-left:nth-child(7) { transition-delay: 0.3s; }
+        #left-icon-menu .site-icon-left:nth-child(8) { transition-delay: 0.35s; }
         
 
         /* --- Layout Structure --- */
@@ -288,7 +294,7 @@
             color: var(--primary-color);
         }
         
-        #mode-display, #calc-view-title, #camelot-view-title, #color-checker-title, #metronome-view-title, #food-timer-title, #notepad-title, #color-picker-title {
+        #mode-display, #calc-view-title, #camelot-view-title, #color-checker-title, #metronome-view-title, #food-timer-title, #notepad-title, #color-picker-title, #golden-hour-title {
             z-index: 2;
             font-size: 0.7rem;
             font-weight: 700;
@@ -416,6 +422,93 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+        
+        /* --- Golden Hour Specific --- */
+        #golden-hour-container {
+            position: relative;
+            width: 70vw;
+            height: 70vw;
+            max-width: 260px;
+            max-height: 260px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #time-circle-svg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        
+        #time-circle-bg, .time-circle-arc {
+            fill: none;
+            stroke-width: 4px; 
+            stroke-linecap: round;
+        }
+
+        #time-circle-bg {
+            stroke: var(--blue-hour-color);
+            opacity: 0.1;
+        }
+
+        #daylight-arc {
+            stroke: var(--daylight-color);
+            opacity: 0.7;
+        }
+        
+        #golden-hour-arc, #blue-hour-arc {
+            animation: pulse-glow 2s infinite alternate ease-in-out;
+        }
+        
+        @keyframes pulse-glow {
+            from { opacity: 0.6; }
+            to { opacity: 1; }
+        }
+
+        #current-time-indicator {
+            fill: var(--primary-color);
+            animation: pulsate-indicator 1.5s infinite alternate ease-in-out;
+        }
+        
+        #golden-hour-center-display {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+        }
+        .hour-span {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+        #morning-hours-container, #evening-hours-container {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        #main-countdown {
+            font-size: clamp(2rem, 9vw, 2.5rem);
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            margin: 8px 0;
+            font-variant-numeric: tabular-nums;
+        }
+        .countdown-golden { color: var(--golden-hour-color); }
+        .countdown-blue { color: var(--blue-hour-color); }
+        .countdown-day { color: var(--primary-color); }
+
+        #golden-hour-location-info {
+            text-align: center;
+            font-size: 0.8rem;
+            max-width: 220px;
+            margin-top: 15px;
         }
 
         @keyframes pulsate-bright {
@@ -856,6 +949,7 @@
             <img src="https://www.dropbox.com/scl/fi/5b4motyxla5bkgbk1c3d0/metronome-svgrepo-com.svg?rlkey=w161g2mtryo635255gqooha7z&raw=1" alt="Metronome Icon" class="site-icon-left" id="metronome-icon">
             <svg id="color-checker-icon" viewBox="0 0 24 24" class="site-icon-left" xmlns="http://www.w3.org/2000/svg"><path d="M2 2v20h20V2H2zm2 2h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zm-6 6h4v4h-4v-4zm-6 0h4v4H4v-4zm12 0h4v4h-4v-4zm-6 6h4v4h-4v-4zm-6 0h4v4H4v-4zm12 0h4v4h-4v-4z"/></svg>
             <img src="https://www.dropbox.com/scl/fi/fsnyl0iyxkbo28hcvmiee/pipette-svgrepo-com.svg?rlkey=c3ehuk0e6z7ex6u02fb6t6rbr&raw=1" alt="Color Picker Icon" class="site-icon-left" id="color-picker-icon">
+            <img src="https://www.dropbox.com/scl/fi/u2e2ehet504bqo2uq5wax/eclipse-svgrepo-com.svg?rlkey=cce37owt31iuutkvkycy9y5cg&raw=1" alt="Golden Hour Icon" class="site-icon-left" id="golden-hour-icon">
         </div>
 
         <img src="https://www.dropbox.com/scl/fi/y2i8ul09le7i5v03lehma/500.png?rlkey=rbh2kx5rbcgmgowl49ceb9tpv&raw=1" alt="Logo" class="site-logo" id="main-logo" onerror="this.style.display='none'">
@@ -922,6 +1016,28 @@
                     <div id="palette-swatches-container"></div>
                     <div id="palette-ratio-chart"></div>
                     <div id="palette-contrast-display">Contrast: <span id="palette-contrast-value">N/A</span></div>
+                </div>
+            </div>
+            <div id="golden-hour-display-sticky" class="sticky-display">
+                <div id="golden-hour-container">
+                    <svg id="time-circle-svg" viewBox="0 0 100 100">
+                        <circle id="time-circle-bg" cx="50" cy="50" r="44"></circle>
+                        <path id="daylight-arc" class="time-circle-arc"></path>
+                        <path id="blue-hour-arc" class="time-circle-arc" stroke="var(--blue-hour-color)"></path>
+                        <path id="golden-hour-arc" class="time-circle-arc" stroke="var(--golden-hour-color)"></path>
+                         <circle id="current-time-indicator" r="4" fill="var(--primary-color)"></circle>
+                    </svg>
+                    <div id="golden-hour-center-display">
+                        <div id="morning-hours-container">
+                            <div id="morning-blue-hour-span" class="hour-span" style="color: var(--blue-hour-color);"></div>
+                            <div id="morning-golden-hour-span" class="hour-span" style="color: var(--golden-hour-color);"></div>
+                        </div>
+                        <div id="main-countdown">00:00:00</div>
+                        <div id="evening-hours-container">
+                            <div id="evening-golden-hour-span" class="hour-span" style="color: var(--golden-hour-color);"></div>
+                            <div id="evening-blue-hour-span" class="hour-span" style="color: var(--blue-hour-color);"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1022,6 +1138,13 @@
                     </div>
                 </div>
             </div>
+
+             <div id="golden-hour-controls" class="module-controls">
+                <div id="golden-hour-title">Golden Hour</div>
+                <div id="golden-hour-location-info">
+                    <p>Loading location data...</p>
+                </div>
+            </div>
             
             <div id="notepad-panel" class="collapsible-panel">
                 <div id="notepad-title">Notepad</div>
@@ -1103,11 +1226,13 @@
             colorCheckerDisplaySticky: document.getElementById('color-checker-display-sticky'),
             foodTimerDisplaySticky: document.getElementById('food-timer-display-sticky'),
             colorPickerDisplaySticky: document.getElementById('color-picker-display-sticky'),
+            goldenHourDisplaySticky: document.getElementById('golden-hour-display-sticky'),
             timerControls: document.getElementById('timer-controls'),
             metronomeControls: document.getElementById('metronome-controls'),
             colorCheckerControls: document.getElementById('color-checker-controls'),
             foodTimerControls: document.getElementById('food-timer-controls'),
             colorPickerControls: document.getElementById('color-picker-controls'),
+            goldenHourControls: document.getElementById('golden-hour-controls'),
             leftIconMenu: document.getElementById('left-icon-menu'),
             menuIcon: document.getElementById('menu-icon'),
             metronomeIcon: document.getElementById('metronome-icon'),
@@ -1116,6 +1241,7 @@
             foodTimerIcon: document.getElementById('food-timer-icon'),
             notepadIcon: document.getElementById('notepad-icon'),
             colorPickerIcon: document.getElementById('color-picker-icon'),
+            goldenHourIcon: document.getElementById('golden-hour-icon'),
             mainLogo: document.getElementById('main-logo'),
             donateOverlay: document.getElementById('donate-overlay'),
             closeDonateBtn: document.getElementById('close-donate-btn'),
@@ -1159,6 +1285,17 @@
             foodPercentagesDisplay: document.getElementById('food-percentages-display'),
             generateMealBtn: document.getElementById('generate-meal-btn'),
             generateSnackBtn: document.getElementById('generate-snack-btn'),
+            // Golden Hour elements
+            daylightArc: document.getElementById('daylight-arc'),
+            goldenHourArc: document.getElementById('golden-hour-arc'),
+            blueHourArc: document.getElementById('blue-hour-arc'),
+            currentTimeIndicator: document.getElementById('current-time-indicator'),
+            mainCountdown: document.getElementById('main-countdown'),
+            morningGoldenHourSpan: document.getElementById('morning-golden-hour-span'),
+            morningBlueHourSpan: document.getElementById('morning-blue-hour-span'),
+            eveningGoldenHourSpan: document.getElementById('evening-golden-hour-span'),
+            eveningBlueHourSpan: document.getElementById('evening-blue-hour-span'),
+            goldenHourLocationInfo: document.getElementById('golden-hour-location-info'),
             // Notepad elements
             notepadPanel: document.getElementById('notepad-panel'),
             notepadTextarea: document.getElementById('notepad-textarea'),
@@ -1192,6 +1329,8 @@
                 lastUsedRatios: []
             },
             typewriterTimeout: null,
+            goldenHourInterval: null,
+            sunTimes: null,
         };
 
         const radius = UIElements.progressCircle.r.baseVal.value;
@@ -1225,7 +1364,7 @@
         const UI = {
             showModule: function(mode) {
                 AppState.currentAppMode = mode;
-                const modules = ['timer', 'metronome', 'color-checker', 'food-timer', 'color-picker'];
+                const modules = ['timer', 'metronome', 'color-checker', 'food-timer', 'color-picker', 'golden-hour'];
                 
                 const toCamelCase = str => str.replace(/-./g, x => x[1].toUpperCase());
 
@@ -1998,6 +2137,148 @@
             }
         };
 
+        const GoldenHour = {
+            init: function() {
+                this.getLocation();
+                AppState.goldenHourInterval = setInterval(() => {
+                    this.updateIndicatorPosition();
+                    this.updateEventCountdown();
+                }, 1000); 
+            },
+
+            getLocation: function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            this.calculateAndDrawTimes(position.coords.latitude, position.coords.longitude);
+                        },
+                        () => {
+                            UIElements.goldenHourLocationInfo.innerHTML = `<p>Location denied. Showing times for Amsterdam.</p>`;
+                            this.calculateAndDrawTimes(52.37, 4.89); 
+                        }
+                    );
+                } else {
+                     UIElements.goldenHourLocationInfo.innerHTML = `<p>Geolocation not supported. Showing times for Amsterdam.</p>`;
+                    this.calculateAndDrawTimes(52.37, 4.89);
+                }
+            },
+            
+            calculateAndDrawTimes: function(lat, lon) {
+                const today = new Date();
+                AppState.sunTimes = SunCalc.getTimes(today, lat, lon);
+                const format = { hour: '2-digit', minute: '2-digit', hour12: false };
+
+                UIElements.morningBlueHourSpan.textContent = `${AppState.sunTimes.nauticalDawn.toLocaleTimeString([], format)} - ${AppState.sunTimes.dawn.toLocaleTimeString([], format)}`;
+                UIElements.morningGoldenHourSpan.textContent = `${AppState.sunTimes.sunrise.toLocaleTimeString([], format)} - ${AppState.sunTimes.goldenHourEnd.toLocaleTimeString([], format)}`;
+                UIElements.eveningGoldenHourSpan.textContent = `${AppState.sunTimes.goldenHour.toLocaleTimeString([], format)} - ${AppState.sunTimes.sunset.toLocaleTimeString([], format)}`;
+                UIElements.eveningBlueHourSpan.textContent = `${AppState.sunTimes.dusk.toLocaleTimeString([], format)} - ${AppState.sunTimes.nauticalDusk.toLocaleTimeString([], format)}`;
+                
+                // Clear and Draw Arcs
+                UIElements.daylightArc.setAttribute("d", "");
+                UIElements.goldenHourArc.setAttribute("d", "");
+                UIElements.blueHourArc.setAttribute("d", "");
+
+                this.drawArc(UIElements.daylightArc, AppState.sunTimes.nauticalDawn, AppState.sunTimes.nauticalDusk, false);
+                
+                this.drawArc(UIElements.goldenHourArc, AppState.sunTimes.sunrise, AppState.sunTimes.goldenHourEnd, false);
+                this.drawArc(UIElements.goldenHourArc, AppState.sunTimes.goldenHour, AppState.sunTimes.sunset, true);
+                this.drawArc(UIElements.blueHourArc, AppState.sunTimes.nauticalDawn, AppState.sunTimes.dawn, false);
+                this.drawArc(UIElements.blueHourArc, AppState.sunTimes.dusk, AppState.sunTimes.nauticalDusk, true);
+                
+                UIElements.goldenHourLocationInfo.innerHTML = `<p>Displaying times for your current location.</p>`;
+            },
+            
+            timeToAngle: function(date) {
+                if (!isValidDate(date)) return 0;
+                const totalMinutesInDay = 24 * 60;
+                const currentMinutes = date.getHours() * 60 + date.getMinutes();
+                return (currentMinutes / totalMinutesInDay) * 360;
+            },
+
+            polarToCartesian: function(centerX, centerY, radius, angleInDegrees) {
+                var angleInRadians = (angleInDegrees) * Math.PI / 180.0;
+                return {
+                    x: centerX + (radius * Math.cos(angleInRadians)),
+                    y: centerY + (radius * Math.sin(angleInRadians))
+                };
+            },
+
+            drawArc: function(element, startTime, endTime, append = false) {
+                if (!isValidDate(startTime) || !isValidDate(endTime)) return;
+
+                const startAngle = this.timeToAngle(startTime);
+                const endAngle = this.timeToAngle(endTime);
+
+                if (Math.abs(startAngle - endAngle) < 0.01) return;
+
+                const radius = 44;
+                const center = 50;
+                
+                const startPoint = this.polarToCartesian(center, center, radius, startAngle);
+                const endPoint = this.polarToCartesian(center, center, radius, endAngle);
+
+                let angleDiff = endAngle - startAngle;
+                if (angleDiff < 0) {
+                    angleDiff += 360;
+                }
+                const largeArcFlag = angleDiff > 180 ? '1' : '0';
+                
+                const d = [
+                    "M", startPoint.x, startPoint.y, 
+                    "A", radius, radius, 0, largeArcFlag, 1, endPoint.x, endPoint.y
+                ].join(" ");
+                
+                if(append) {
+                    const existingD = element.getAttribute('d') || "";
+                    element.setAttribute("d", existingD + " " + d);
+                } else {
+                     element.setAttribute("d", d);
+                }
+            },
+            
+            updateEventCountdown: function() {
+                if (!AppState.sunTimes) return;
+                const now = new Date();
+                const tomorrow = new Date();
+                tomorrow.setDate(now.getDate() + 1);
+                const tomorrowTimes = SunCalc.getTimes(tomorrow, 0, 0);
+
+                const events = [
+                    { name: 'Morning Blue Hour', time: AppState.sunTimes.nauticalDawn, type: 'blue' },
+                    { name: 'Morning Golden Hour', time: AppState.sunTimes.sunrise, type: 'golden' },
+                    { name: 'Evening Golden Hour', time: AppState.sunTimes.goldenHour, type: 'golden' },
+                    { name: 'Evening Blue Hour', time: AppState.sunTimes.dusk, type: 'blue' },
+                    { name: 'Next Day Morning Blue', time: tomorrowTimes.nauticalDawn, type: 'blue' },
+                ].filter(e => isValidDate(e.time) && e.time > now).sort((a, b) => a.time - b.time);
+
+                if (events.length === 0) {
+                    UIElements.mainCountdown.textContent = "00:00:00";
+                    return;
+                }
+                
+                const nextEvent = events[0];
+                const diff = nextEvent.time - now;
+
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff / (1000 * 60)) % 60);
+                const seconds = Math.floor((diff / 1000) % 60);
+
+                UIElements.mainCountdown.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                UIElements.mainCountdown.className = `countdown-${nextEvent.type}`;
+            },
+
+            updateIndicatorPosition: function() {
+                const now = new Date();
+                const angle = this.timeToAngle(now);
+                const pos = this.polarToCartesian(50, 50, 44, angle);
+                UIElements.currentTimeIndicator.setAttribute('cx', pos.x);
+                UIElements.currentTimeIndicator.setAttribute('cy', pos.y);
+            }
+        };
+        
+        const isValidDate = (d) => d && d instanceof Date && !isNaN(d);
+
         const Notepad = {
             init: function() {
                 this.loadNote();
@@ -2059,6 +2340,7 @@
             setupModuleToggle(UIElements.colorCheckerIcon, 'color-checker');
             setupModuleToggle(UIElements.foodTimerIcon, 'food-timer');
             setupModuleToggle(UIElements.colorPickerIcon, 'color-picker');
+            setupModuleToggle(UIElements.goldenHourIcon, 'golden-hour');
 
 
             UIElements.bellIcon.addEventListener('click', () => {
@@ -2197,11 +2479,11 @@
                 }
             });
 
-            // *** FIX STARTS HERE ***
+            
             // Snack Time Listeners
             UIElements.generateMealBtn.addEventListener('click', () => SnackTime.generateRandom('meals'));
             UIElements.generateSnackBtn.addEventListener('click', () => SnackTime.generateRandom('snacks'));
-            // *** FIX ENDS HERE ***
+            
         }
 
         function initializeApp() {
@@ -2227,6 +2509,7 @@
             SnackTime.init();
             Notepad.init();
             ColorPaletteTool.init();
+            GoldenHour.init();
             setupEventListeners();
             UI.showModule('timer');
             Timer.resetAll();
