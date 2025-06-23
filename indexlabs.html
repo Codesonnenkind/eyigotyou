@@ -150,6 +150,7 @@
             align-items: center;
             gap: 10px;
             width: 100%;
+            max-width: 300px;
         }
 
         .sticky-display {
@@ -229,10 +230,13 @@
             color: var(--primary-color);
         }
         
-        #exit-labs-btn {
+        #exit-labs-btn-container {
             margin-top: 20px;
             width: 100%;
-            text-align: center;
+        }
+
+        #exit-labs-btn-container .control-btn {
+             justify-content: center;
         }
 
         /* --- Timer Specific --- */
@@ -240,8 +244,8 @@
             position: relative;
             width: 65vw; 
             height: 65vw;
-            max-width: 300px; /* Increased from 240px */
-            max-height: 300px; /* Increased from 240px */
+            max-width: 300px;
+            max-height: 300px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -309,7 +313,6 @@
         /* --- Notepad Specific --- */
         #notepad-panel {
             width: 100%;
-            max-width: 300px;
         }
         #notepad-panel .control-panel {
             max-width: 100%;
@@ -338,7 +341,6 @@
             flex-direction: column;
             gap: 10px;
             width: 100%;
-            max-width: 300px; /* Increased from 240px */
         }
 
         .control-group {
@@ -417,7 +419,7 @@
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 
         .collapsible-panel {
-            width: 100%; max-width: 300px;
+            width: 100%;
             margin-top: 15px; max-height: 0;
             overflow: hidden;
             transition: max-height 0.5s ease-in-out, margin-top 0.5s ease-in-out;
@@ -493,9 +495,9 @@
                 </div>
             </div>
             
-            <div id="notepad-panel" class="collapsible-panel">
+            <div id="notepad-panel" class="collapsible-panel module-controls">
                 <div id="notepad-title">Notepad</div>
-                 <div class="control-panel" style="max-width: 100%;">
+                 <div class="control-panel">
                     <textarea id="notepad-textarea" placeholder="Add and save your notes here..."></textarea>
                     <div class="control-group">
                         <button class="control-btn" id="copy-notes-btn">Copy</button>
