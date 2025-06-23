@@ -228,14 +228,20 @@
         #close-donate-btn:hover {
             color: var(--primary-color);
         }
+        
+        #exit-labs-btn {
+            margin-top: 20px;
+            width: 100%;
+            text-align: center;
+        }
 
         /* --- Timer Specific --- */
         .timer-container {
             position: relative;
             width: 65vw; 
             height: 65vw;
-            max-width: 240px; 
-            max-height: 240px;
+            max-width: 300px; /* Increased from 240px */
+            max-height: 300px; /* Increased from 240px */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -332,7 +338,7 @@
             flex-direction: column;
             gap: 10px;
             width: 100%;
-            max-width: 240px;
+            max-width: 300px; /* Increased from 240px */
         }
 
         .control-group {
@@ -450,6 +456,9 @@
                  <div id="kofi-container">
                     <iframe id='kofiframe' src='https://ko-fi.com/konstantinsonnenkind/?hidefeed=true&widget=true&embed=true&preview=true&theme=dark' style='border:none;width:100%;' height='712' title='konstantinsonnenkind'></iframe>
                 </div>
+                <div id="exit-labs-btn-container">
+                    <button class="control-btn" id="exit-labs-btn">[EXIT LABS]</button>
+                </div>
             </div>
         </div>
 
@@ -511,6 +520,7 @@
             closeDonateBtn: document.getElementById('close-donate-btn'),
             donateLine1: document.getElementById('donate-line-1'),
             donateLine2: document.getElementById('donate-line-2'),
+            exitLabsBtn: document.getElementById('exit-labs-btn'),
             timeLeftDisplay: document.getElementById('time-left'),
             startPauseBtn: document.getElementById('start-pause-btn'),
             resetBtn: document.getElementById('reset-btn'),
@@ -796,6 +806,9 @@
             // --- Donate Overlay Listeners ---
             UIElements.logoContainer.addEventListener('click', () => UI.toggleDonateOverlay(true));
             UIElements.closeDonateBtn.addEventListener('click', () => UI.toggleDonateOverlay(false));
+            UIElements.exitLabsBtn.addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
         }
 
         // --- App Initialization ---
