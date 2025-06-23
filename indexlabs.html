@@ -13,8 +13,8 @@
             --background-color: #0A0A0A;
             --primary-color: #FFFFFF;
             --secondary-color: #888888;
-            --accent-color: #1E8449;
-            --warning-color: #EF4444;
+            --accent-color: #1E8449; /* Green for activated */
+            --warning-color: #EF4444; /* Red for deactivated */
         }
 
         html, body {
@@ -101,10 +101,13 @@
             fill: #FFFFFF;
         }
         
-        /* Horizontal utility icons */
+        /* Icon Positioning */
         #bell-icon { top: 15px; left: 60px; }
-        #notepad-icon { top: 15px; left: 105px; width: 38px; }
+        #notepad-icon { top: 15px; left: 105px; width: 38px;}
+        #gps-icon { top: 65px; left: 15px; } /* Vertical Position */
 
+
+        /* Flyout Menu Logic */
         #left-icon-menu .site-icon-left:not(#menu-icon) {
             opacity: 0;
             visibility: hidden;
@@ -116,9 +119,10 @@
             visibility: visible;
             transform: translateX(0);
         }
-        
-        #left-icon-menu .site-icon-left:nth-child(2) { transition-delay: 0.05s; }
-        #left-icon-menu .site-icon-left:nth-child(3) { transition-delay: 0.1s; }
+
+        #left-icon-menu.menu-open .site-icon-left:nth-child(2) { transition-delay: 0.05s; }
+        #left-icon-menu.menu-open .site-icon-left:nth-child(3) { transition-delay: 0.1s; }
+        #left-icon-menu.menu-open .site-icon-left:nth-child(4) { transition-delay: 0.15s; }
         
         /* --- Layout Structure --- */
         .sticky-wrapper {
@@ -162,40 +166,40 @@
             flex-direction: column;
         }
         
-        /* --- Donate Overlay --- */
-        #donate-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(10, 10, 10, 0.95);
-            z-index: 200;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            box-sizing: border-box;
-            overflow-y: auto;
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
+        /* --- Generic Modal Styles --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 10, 10, 0.95); z-index: 200;
+            display: none; justify-content: center; align-items: center;
+            padding: 20px; box-sizing: border-box;
+            opacity: 0; transition: opacity 0.3s ease-in-out;
         }
-        #donate-overlay.active {
-            display: flex;
-            opacity: 1;
+        .modal-overlay.active, .modal-overlay.visible {
+            display: flex; opacity: 1;
         }
-        #donate-content {
+        .modal-content {
+            position: relative;
             color: var(--primary-color);
             max-width: 420px;
             width: 100%;
             text-align: left;
-            font-size: 0.9rem;
-            line-height: 1.6;
         }
+        .close-modal-btn {
+            position: absolute; top: 5px; right: 10px;
+            font-size: 1.75rem; color: var(--secondary-color);
+            background: none; border: none; cursor: pointer; line-height: 1;
+        }
+        .close-modal-btn:hover { color: var(--primary-color); }
+
+        #donate-content {
+             font-size: 0.9rem;
+             line-height: 1.6;
+        }
+
         #donate-intro-text p {
             margin: 0 0 1em 0;
             color: var(--secondary-color);
-            min-height: 1.6em; /* Reserve space to prevent layout shift */
+            min-height: 1.6em;
         }
         .typing-cursor {
             border-right: .15em solid var(--accent-color);
@@ -207,225 +211,151 @@
         }
 
         #kofi-container {
-            border: 2px solid #2a2a2a;
-            padding: 4px;
-            background: #121212;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-top: 20px;
+            border: 2px solid #2a2a2a; padding: 4px;
+            background: #121212; border-radius: 8px;
+            overflow: hidden; margin-top: 20px;
         }
 
-        #close-donate-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 2rem;
-            color: var(--secondary-color);
-            background: none;
-            border: none;
-            cursor: pointer;
-            line-height: 1;
-        }
-        #close-donate-btn:hover {
-            color: var(--primary-color);
-        }
-        
-        #exit-labs-btn-container {
-            margin-top: 20px;
-            width: 100%;
-        }
-
-        #exit-labs-btn-container .control-btn {
-             justify-content: center;
-        }
+        #exit-labs-btn-container { margin-top: 20px; width: 100%; }
+        #exit-labs-btn-container .control-btn { justify-content: center; }
 
         /* --- Timer Specific --- */
         .timer-container {
             position: relative;
-            width: 65vw; 
-            height: 65vw;
-            max-width: 240px;
-            max-height: 240px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            width: 65vw; height: 65vw;
+            max-width: 240px; max-height: 240px;
+            display: flex; justify-content: center; align-items: center;
             cursor: default;
         }
 
         .timer-svg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            transform: rotate(-90deg);
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; transform: rotate(-90deg);
         }
 
-        .timer-circle {
-            fill: none;
-            stroke-width: 4; 
-        }
-        
+        .timer-circle { fill: none; stroke-width: 4; }
         #timer-track { stroke: var(--secondary-color); opacity: 0.1; }
-
         #timer-progress {
-            stroke: var(--primary-color);
-            stroke-linecap: round;
+            stroke: var(--primary-color); stroke-linecap: round;
             transition: stroke 0.5s ease-in-out, stroke-dashoffset 0.2s linear;
         }
-        
         #progress-dot {
-            fill: var(--primary-color);
-            transition: fill 0.5s ease-in-out;
+            fill: var(--primary-color); transition: fill 0.5s ease-in-out;
             animation: pulsate 1.5s infinite alternate ease-in-out;
         }
-
-        @keyframes pulsate {
-            from { r: 1; }
-            to { r: 3; }
-        }
+        @keyframes pulsate { from { r: 1; } to { r: 3; } }
 
         #time-left {
-            z-index: 1; 
-            font-size: clamp(2rem, 10vw, 3rem); 
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            color: var(--primary-color);
+            z-index: 1; font-size: clamp(2rem, 10vw, 3rem); 
+            font-weight: 700; letter-spacing: 0.1em; color: var(--primary-color);
         }
         
-        #mode-display, #notepad-title {
-            z-index: 2;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: var(--secondary-color);
-            transition: color 0.5s ease-in-out;
-            text-align: center;
-            height: 1em; /* Reserve space */
-            margin-bottom: 15px;
+        #mode-display, #notepad-title, #soft-tracking-title, #todo-title, #active-session-title {
+            z-index: 2; font-size: 0.7rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.2em;
+            color: var(--secondary-color); text-align: center;
+            height: 1em; margin-bottom: 15px;
         }
         
-        #mode-display {
-            cursor: pointer;
-        }
+        #mode-display { cursor: pointer; transition: color 0.5s ease-in-out; }
         
-        /* --- Notepad Specific --- */
-        #notepad-panel {
-            width: 100%;
-        }
-        #notepad-panel .control-panel {
-            max-width: 100%;
-        }
+        @keyframes blink-green { 50% { color: var(--accent-color); } }
+        @keyframes blink-red { 50% { color: var(--warning-color); } }
+
+        .tracking-activated-animation { color: var(--secondary-color); animation: blink-green 0.5s linear 5; }
+        .tracking-deactivated-animation { color: var(--secondary-color); animation: blink-red 0.5s linear 5; }
+
+        /* --- Notepad & Soft Tracking Panels --- */
+        #notepad-panel, #soft-tracking-panel { width: 100%; }
+        #notepad-panel .control-panel, #soft-tracking-panel .control-panel { max-width: 100%; }
         #notepad-textarea {
-            width: 100%;
-            background: rgba(255,255,255,0.05);
-            border: 2px solid var(--secondary-color);
-            color: var(--primary-color);
-            border-radius: 0;
-            padding: 8px;
-            font-family: 'Inter', sans-serif;
-            resize: vertical;
-            min-height: 120px;
-            box-sizing: border-box;
-            margin-bottom: 10px;
+            width: 100%; background: rgba(255,255,255,0.05);
+            border: 2px solid var(--secondary-color); color: var(--primary-color);
+            border-radius: 0; padding: 8px; font-family: 'Inter', sans-serif;
+            resize: vertical; min-height: 120px; box-sizing: border-box; margin-bottom: 10px;
         }
-        #notepad-textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
+        #notepad-textarea:focus { outline: none; border-color: var(--primary-color); }
 
         /* --- Generic Controls --- */
-        .control-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 100%;
-        }
-
-        .control-group {
-            display: flex;
-            border: 2px solid var(--secondary-color);
-            overflow: hidden;
-        }
-        
+        .control-panel { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+        .control-group { display: flex; border: 2px solid var(--secondary-color); overflow: hidden; }
         .control-btn, .setting-item {
-            background-color: transparent;
-            border: none;
-            color: var(--secondary-color);
-            padding: 8px;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            transition: all 0.2s ease-in-out;
-            display: flex;
-            align-items: center;
-            justify-content: center; 
-            gap: 8px;
-            cursor: pointer;
-            flex: 1;
+            background-color: transparent; border: none; color: var(--secondary-color); padding: 8px;
+            font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 600;
+            text-transform: uppercase; transition: all 0.2s ease-in-out;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            cursor: pointer; flex: 1;
         }
-        
-        .control-group > *:not(:last-child) {
-             border-right: 2px solid var(--secondary-color);
-        }
-
-        .control-btn:hover {
-            color: var(--primary-color);
-        }
-
-        #start-pause-btn, .setting-item.label { 
-            flex-grow: 2;
-            justify-content: flex-start;
-            padding-left: 15px;
-        }
-        
-        .setting-item.label {
-            cursor: pointer;
-        }
-
-        #settings-container { 
-            position: relative; 
-            height: 80px; /* Adjusted for fewer settings */
-        }
-        
+        .control-group > *:not(:last-child) { border-right: 2px solid var(--secondary-color); }
+        .control-btn:hover { color: var(--primary-color); }
+        #start-pause-btn, .setting-item.label { flex-grow: 1.5; justify-content: flex-start; padding-left: 15px; }
+        #options-btn { flex-grow: 1; }
+        .setting-item.label { cursor: pointer; }
+        #settings-container { position: relative; height: 80px; }
         .options-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 100%;
-            overflow: hidden;
-            transition: max-height 0.5s ease-in-out, gap 0.5s ease-in-out;
+            display: flex; flex-direction: column; gap: 10px; width: 100%;
+            overflow: hidden; transition: max-height 0.5s ease-in-out, gap 0.5s ease-in-out;
         }
-        
-        .options-wrapper.hidden {
-            max-height: 0;
-            gap: 0;
-        }
-
-        .settings-panel {
-            display: flex; flex-direction: column; gap: 10px;
-        }
+        .options-wrapper.hidden { max-height: 0; gap: 0; }
+        .settings-panel { display: flex; flex-direction: column; gap: 10px; }
         .setting-item.label span { font-size: 0.7rem; font-weight: 400; opacity: 0.7; margin-left: 5px; }
-        
         .settings-panel input[type="number"] {
             background-color: transparent; border: none; color: var(--primary-color);
-            padding: 0; width: 40px; text-align: center;
-            font-family: inherit; font-size: 0.8rem; font-weight: 500; outline: none;
+            padding: 0; width: 40px; text-align: center; font-family: inherit;
+            font-size: 0.8rem; font-weight: 500; outline: none;
         }
         input[type=number] { -moz-appearance: textfield; }
-        input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 
         .collapsible-panel {
-            width: 100%;
-            margin-top: 15px; max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-in-out, margin-top 0.5s ease-in-out;
+            width: 100%; margin-top: 15px; max-height: 0;
+            overflow: hidden; transition: max-height 0.5s ease-in-out, margin-top 0.5s ease-in-out;
         }
-        .collapsible-panel.visible { 
-            max-height: 1000px; 
+        .collapsible-panel.visible { max-height: 1000px; }
+        
+        /* --- Task & Session Modals --- */
+        .task-modal-content {
+            background: var(--background-color); border: 2px solid var(--secondary-color);
+            padding: 20px; width: 90%; max-width: 350px;
+            display: flex; flex-direction: column; gap: 15px;
+        }
+        .task-modal-content h3 {
+            margin: 0; font-size: 1rem; color: var(--primary-color); text-align: center;
+            text-transform: uppercase; letter-spacing: 0.1em; padding-top: 5px;
+        }
+        .modal-input {
+            width: 100%; background: rgba(255,255,255,0.05);
+            border: 2px solid var(--secondary-color); color: var(--primary-color);
+            padding: 8px; font-family: 'Inter', sans-serif; box-sizing: border-box;
+        }
+        .modal-input:focus { outline: none; border-color: var(--primary-color); }
+        #task-modal-list, #task-modal-end-session-list, #session-list { max-height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; }
+        .task-modal-item, .session-list-item {
+            padding: 8px; border: 1px solid var(--secondary-color); cursor: pointer;
+            font-size: 0.8rem; transition: background-color 0.2s, border-color 0.2s;
+        }
+        .task-modal-item:hover, .session-list-item:hover { background-color: rgba(255,255,255,0.1); }
+        .session-list-item.active { border-color: var(--accent-color); color: var(--accent-color); }
+        .end-session-item { display: flex; align-items: center; gap: 10px; font-size: 0.9rem;}
+        .end-session-item input[type="checkbox"] { width: 18px; height: 18px; }
+
+        /* --- Soft Tracking Panel --- */
+        #todo-list, #session-log-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+        .task-list-item { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
+        .task-list-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+        .task-list-item label.completed { text-decoration: line-through; color: var(--secondary-color); }
+        #session-log-list li { color: var(--accent-color); font-size: 0.8rem; padding: 4px; border-left: 2px solid var(--accent-color); }
+        #session-log-list li.incomplete { color: var(--warning-color); border-left-color: var(--warning-color); }
+        
+        #active-session-display {
+            font-size: 0.8rem;
+            color: var(--primary-color);
+            background: rgba(255,255,255,0.05);
+            padding: 5px 10px;
+            margin-bottom: 10px;
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
         }
 
         .hidden { display: none !important; }
@@ -439,7 +369,8 @@
                 <path d="M4 6h16M4 12h16M4 18h16" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--secondary-color); transition: stroke 0.2s ease-in-out;"></path>
             </svg>
             <img src="https://www.dropbox.com/scl/fi/1m4jb4opjgtxoy6yz2yf0/bell-svgrepo-com.svg?rlkey=8po6w24uqopz056gd5vwk42o2&raw=1" alt="Bell Icon" class="site-icon-left" id="bell-icon">
-            <img src="https://www.dropbox.com/scl/fi/1uvselpcovxwl1ahvdhjz/notes-svgrepo-com.svg?rlkey=eidktq0vfjc2ss4kuw2252hl1&raw=1" alt="Notepad Icon" class="site-icon-left" id="notepad-icon" style="width: 38px;">
+            <img src="https://www.dropbox.com/scl/fi/1uvselpcovxwl1ahvdhjz/notes-svgrepo-com.svg?rlkey=eidktq0vfjc2ss4kuw2252hl1&raw=1" alt="Notepad Icon" class="site-icon-left" id="notepad-icon">
+            <img src="https://www.dropbox.com/scl/fi/08zzq0ooqehz59j45phq1/gps-location-svgrepo-com.svg?rlkey=fr4muh7spzzjrjfe0dm2eo7i8&raw=1" alt="GPS Icon" class="site-icon-left" id="gps-icon">
         </div>
 
         <div id="logo-container">
@@ -448,9 +379,9 @@
         </div>
 
 
-        <div id="donate-overlay">
-            <div id="donate-content">
-                <button id="close-donate-btn">&times;</button>
+        <div id="donate-overlay" class="modal-overlay">
+            <div id="donate-content" class="modal-content">
+                <button class="close-modal-btn">&times;</button>
                 <div id="donate-intro-text">
                     <p id="donate-line-1"></p>
                     <p id="donate-line-2"></p>
@@ -461,6 +392,73 @@
                 <div id="exit-labs-btn-container">
                     <button class="control-btn" id="exit-labs-btn">[EXIT LABS]</button>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Main Task Modal -->
+        <div id="task-modal-overlay" class="modal-overlay">
+            <div id="task-modal" class="task-modal-content modal-content">
+                <button class="close-modal-btn">&times;</button>
+                <div id="task-modal-new-task-view">
+                    <h3>What will you work on?</h3>
+                    <input type="text" id="task-modal-input" class="modal-input" placeholder="Enter a new task...">
+                    <div id="task-modal-list"></div>
+                    <div class="control-group">
+                         <button class="control-btn" id="task-modal-start-btn">Start Session</button>
+                    </div>
+                </div>
+                <div id="task-modal-end-session-view" class="hidden">
+                    <h3>What did you finish?</h3>
+                    <div id="task-modal-end-session-list"></div>
+                     <div class="control-group">
+                        <button class="control-btn" id="task-modal-confirm-btn">Confirm & Continue</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Task Modal -->
+        <div id="add-task-prompt-overlay" class="modal-overlay">
+            <div id="add-task-prompt" class="task-modal-content modal-content">
+                 <button class="close-modal-btn">&times;</button>
+                 <h3>Add New Task</h3>
+                 <input type="text" id="add-task-prompt-input" class="modal-input" placeholder="Task description...">
+                 <div class="control-group">
+                    <button class="control-btn" id="add-task-prompt-confirm-btn">Add Task</button>
+                 </div>
+            </div>
+        </div>
+
+        <!-- Session Management Modal -->
+        <div id="session-management-overlay" class="modal-overlay">
+            <div id="session-management-content" class="task-modal-content modal-content">
+                 <button class="close-modal-btn">&times;</button>
+                 <h3>Session Management</h3>
+                 <input type="text" id="session-name-input" class="modal-input" placeholder="New session name...">
+                 <div class="control-group">
+                    <button class="control-btn" id="create-session-btn">Create & Switch</button>
+                 </div>
+                 <hr style="width:100%; border-color:var(--secondary-color); margin: 5px 0;">
+                 <h4 style="text-align: center; margin: 0;">Open Sessions</h4>
+                 <div id="session-list"></div>
+                 <hr style="width:100%; border-color:var(--secondary-color); margin: 5px 0;">
+                 <div class="control-group">
+                    <button class="control-btn" id="end-session-btn">End Current Session</button>
+                 </div>
+            </div>
+        </div>
+        
+        <!-- Export Session Modal -->
+        <div id="export-session-overlay" class="modal-overlay">
+            <div id="export-session-content" class="task-modal-content modal-content">
+                 <button class="close-modal-btn">&times;</button>
+                 <h3>End Session?</h3>
+                 <p style="text-align: center; font-size: 0.9rem; line-height: 1.5;">Would you like to save this session log before ending it?</p>
+                 <div class="control-group">
+                    <button class="control-btn" id="save-session-txt-btn">Save as .txt</button>
+                    <button class="control-btn" id="copy-session-notepad-btn">Copy to Notepad</button>
+                 </div>
+                 <button class="control-btn" id="end-session-anyway-btn" style="border: 2px solid var(--secondary-color); margin-top: 5px;">Just End Session</button>
             </div>
         </div>
 
@@ -482,19 +480,37 @@
         <div class="scrollable-content">
             <div id="timer-controls" class="module-controls">
                 <div id="mode-display">Work</div>
+                <div id="active-session-display" class="hidden"></div>
                 <div class="control-panel">
                     <div id="timer-options-wrapper" class="options-wrapper">
                         <div id="settings-container">
                             <div id="pomodoro-settings" class="settings-panel">
-                                <div class="control-group"><div class="setting-item label" data-start-mode="work">WORK <span>(MIN)</span></div><div class="setting-item"><input type="number" id="work-time" value="25" min="1"></div></div>
-                                <div class="control-group"><div class="setting-item label" data-start-mode="break">BREAK <span>(MIN)</span></div><div class="setting-item"><input type="number" id="break-time" value="5" min="1"></div></div>
+                                <div class="control-group"><div class="setting-item label" data-start-mode="work">WORK <span>(SEC)</span></div><div class="setting-item"><input type="number" id="work-time" value="25" min="1"></div></div>
+                                <div class="control-group"><div class="setting-item label" data-start-mode="break">BREAK <span>(SEC)</span></div><div class="setting-item"><input type="number" id="break-time" value="5" min="1"></div></div>
                             </div>
                         </div>
                     </div>
-                    <div class="control-group"><button class="control-btn" id="start-pause-btn">Start</button><button class="control-btn" id="reset-btn">Reset</button></div>
+                    <div class="control-group">
+                        <button class="control-btn" id="start-pause-btn">Start</button>
+                        <button class="control-btn" id="options-btn" >Options</button>
+                        <button class="control-btn" id="reset-btn">Reset</button>
+                    </div>
                 </div>
             </div>
             
+            <div id="soft-tracking-panel" class="collapsible-panel module-controls">
+                <div id="soft-tracking-title">Session Log</div>
+                <div class="control-panel">
+                    <ul id="session-log-list"></ul>
+                    <hr style="width:100%; border-color:var(--secondary-color); margin: 10px 0;">
+                    <div id="todo-title">To Do</div>
+                    <ul id="todo-list"></ul>
+                    <div class="control-group">
+                        <button class="control-btn" id="add-task-btn">Add Task</button>
+                    </div>
+                </div>
+            </div>
+
             <div id="notepad-panel" class="collapsible-panel module-controls">
                 <div id="notepad-title">Notepad</div>
                  <div class="control-panel">
@@ -517,19 +533,17 @@
             menuIcon: document.getElementById('menu-icon'),
             bellIcon: document.getElementById('bell-icon'),
             notepadIcon: document.getElementById('notepad-icon'),
+            gpsIcon: document.getElementById('gps-icon'),
             logoContainer: document.getElementById('logo-container'),
             donateOverlay: document.getElementById('donate-overlay'),
-            closeDonateBtn: document.getElementById('close-donate-btn'),
-            donateLine1: document.getElementById('donate-line-1'),
-            donateLine2: document.getElementById('donate-line-2'),
             exitLabsBtn: document.getElementById('exit-labs-btn'),
             timeLeftDisplay: document.getElementById('time-left'),
             startPauseBtn: document.getElementById('start-pause-btn'),
+            optionsBtn: document.getElementById('options-btn'),
             resetBtn: document.getElementById('reset-btn'),
             progressCircle: document.getElementById('timer-progress'),
             progressDot: document.getElementById('progress-dot'),
             modeDisplay: document.getElementById('mode-display'),
-            pomodoroSettings: document.getElementById('pomodoro-settings'),
             workTimeInput: document.getElementById('work-time'),
             breakTimeInput: document.getElementById('break-time'),
             timerOptionsWrapper: document.getElementById('timer-options-wrapper'), 
@@ -537,6 +551,32 @@
             notepadTextarea: document.getElementById('notepad-textarea'),
             copyNotesBtn: document.getElementById('copy-notes-btn'),
             clearNotesBtn: document.getElementById('clear-notes-btn'),
+            softTrackingPanel: document.getElementById('soft-tracking-panel'),
+            activeSessionDisplay: document.getElementById('active-session-display'),
+            taskModalOverlay: document.getElementById('task-modal-overlay'),
+            taskModalNewTaskView: document.getElementById('task-modal-new-task-view'),
+            taskModalEndSessionView: document.getElementById('task-modal-end-session-view'),
+            taskModalInput: document.getElementById('task-modal-input'),
+            taskModalList: document.getElementById('task-modal-list'),
+            taskModalEndSessionList: document.getElementById('task-modal-end-session-list'),
+            taskModalStartBtn: document.getElementById('task-modal-start-btn'),
+            taskModalConfirmBtn: document.getElementById('task-modal-confirm-btn'),
+            todoList: document.getElementById('todo-list'),
+            sessionLogList: document.getElementById('session-log-list'),
+            addTaskBtn: document.getElementById('add-task-btn'),
+            addTaskPromptOverlay: document.getElementById('add-task-prompt-overlay'),
+            addTaskPromptInput: document.getElementById('add-task-prompt-input'),
+            addTaskPromptConfirmBtn: document.getElementById('add-task-prompt-confirm-btn'),
+            closeModalBtns: document.querySelectorAll('.close-modal-btn'),
+            sessionManagementOverlay: document.getElementById('session-management-overlay'),
+            sessionNameInput: document.getElementById('session-name-input'),
+            createSessionBtn: document.getElementById('create-session-btn'),
+            sessionList: document.getElementById('session-list'),
+            endSessionBtn: document.getElementById('end-session-btn'),
+            exportSessionOverlay: document.getElementById('export-session-overlay'),
+            saveSessionTxtBtn: document.getElementById('save-session-txt-btn'),
+            copySessionToNotepadBtn: document.getElementById('copy-session-notepad-btn'),
+            endSessionAnywayBtn: document.getElementById('end-session-anyway-btn'),
         };
 
         // --- App State ---
@@ -545,114 +585,319 @@
             targetTime: null, 
             pomodoro: {},
             audioContext: null, isSoundEnabled: true,
+            isSoftTrackingActive: false,
             pomodoroInitialState: 'work',
             bellEnabledSrc: "https://www.dropbox.com/scl/fi/1m4jb4opjgtxoy6yz2yf0/bell-svgrepo-com.svg?rlkey=8po6w24uqopz056gd5vwk42o2&raw=1",
             bellDisabledSrc: "https://www.dropbox.com/scl/fi/syg6jjwvngtxl1mwk0hdv/bell-disabled-svgrepo-com.svg?rlkey=lrawxg597knm9h8jifkw21ngj&raw=1",
             typewriterTimeout: null,
+            // UPDATED: Session management state
+            sessions: {},
+            activeSessionId: null,
+            currentTask: null,
+            newlyCompletedTasks: new Set(),
         };
 
         const radius = UIElements.progressCircle.r.baseVal.value;
         const circumference = 2 * Math.PI * radius;
         UIElements.progressCircle.style.strokeDasharray = circumference;
 
-        // --- Local Storage Helper ---
         const Storage = {
-            save: (key, value) => localStorage.setItem(`eyigotyou_labs_${key}`, JSON.stringify(value)),
+            save: (key, value) => {
+                if (value instanceof Set) { value = Array.from(value); }
+                localStorage.setItem(`eyigotyou_labs_${key}`, JSON.stringify(value));
+            },
             get: (key, defaultValue) => {
                 const storedValue = localStorage.getItem(`eyigotyou_labs_${key}`);
                 return storedValue ? JSON.parse(storedValue) : defaultValue;
             }
         };
 
-        // --- Web Audio Helper ---
         const Audio = {
-            initContext: function() {
-                if (!AppState.audioContext) { 
-                    try { 
-                        AppState.audioContext = new (window.AudioContext || window.webkitAudioContext)(); 
-                    } catch(e) { 
-                        console.error("Web Audio API is not supported"); 
-                    } 
-                }
-            },
+            initContext: function() { if (!AppState.audioContext) { try { AppState.audioContext = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { console.error("Web Audio API is not supported"); } } },
             playSound: function(frequency, duration = 1.0) {
                 if (!AppState.isSoundEnabled || !AppState.audioContext) return;
-                const osc = AppState.audioContext.createOscillator();
-                const gain = AppState.audioContext.createGain();
-                osc.frequency.value = frequency; 
-                osc.type = 'sine';
+                const osc = AppState.audioContext.createOscillator(); const gain = AppState.audioContext.createGain();
+                osc.frequency.value = frequency; osc.type = 'sine';
                 gain.gain.setValueAtTime(0.5, AppState.audioContext.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, AppState.audioContext.currentTime + duration);
-                osc.connect(gain); 
-                gain.connect(AppState.audioContext.destination);
-                osc.start(AppState.audioContext.currentTime); 
-                osc.stop(AppState.audioContext.currentTime + duration);
+                osc.connect(gain); gain.connect(AppState.audioContext.destination);
+                osc.start(AppState.audioContext.currentTime); osc.stop(AppState.audioContext.currentTime + duration);
             }
         };
 
-        // --- UI Updates ---
         const UI = {
             updateTimerDisplay: function(timeLeft, totalDuration) {
                 if (totalDuration <= 0) totalDuration = 1;
-                const minutes = Math.floor(timeLeft / 60);
-                const seconds = timeLeft % 60;
+                const minutes = Math.floor(timeLeft / 60); const seconds = timeLeft % 60;
                 UIElements.timeLeftDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                
                 const progress = (totalDuration - timeLeft) / totalDuration;
                 const isBreak = AppState.pomodoro.mode === 'break';
-                
                 let strokeColor = isBreak ? 'var(--accent-color)' : 'var(--primary-color)';
-                if (!isBreak && progress >= 0.95) { 
-                    strokeColor = 'var(--warning-color)'; 
-                }
-                
+                if (!isBreak && progress >= 0.95) { strokeColor = 'var(--warning-color)'; }
                 UIElements.progressCircle.style.stroke = strokeColor;
                 const offset = circumference * (1 - progress);
                 UIElements.progressCircle.style.strokeDashoffset = offset;
-                
                 const angle = progress * 360;
                 UIElements.progressDot.parentElement.style.transform = `rotate(${angle-90}deg)`;
             },
             typewriter: function(element, text, speed, onComplete = () => {}) {
-                let i = 0;
-                element.innerHTML = ''; 
-                
+                let i = 0; element.innerHTML = ''; 
                 function type() {
                     if (i < text.length) {
                         element.innerHTML = text.substring(0, i + 1) + '<span class="typing-cursor"></span>';
-                        i++;
-                        AppState.typewriterTimeout = setTimeout(type, speed);
-                    } else {
-                        element.innerHTML = text; 
-                        onComplete();
-                    }
+                        i++; AppState.typewriterTimeout = setTimeout(type, speed);
+                    } else { element.innerHTML = text; onComplete(); }
                 }
                 type();
             },
             toggleDonateOverlay: function(show) {
                  UIElements.donateOverlay.classList.toggle('active', show);
-                 const line1 = UIElements.donateLine1;
-                 const line2 = UIElements.donateLine2;
-                 
-                 clearTimeout(AppState.typewriterTimeout);
-                 line1.innerHTML = '';
-                 line2.innerHTML = '';
-
+                 const line1 = document.getElementById('donate-line-1');
+                 const line2 = document.getElementById('donate-line-2');
+                 clearTimeout(AppState.typewriterTimeout); line1.innerHTML = ''; line2.innerHTML = '';
                  if(show) {
                     UIElements.logoContainer.classList.add('hidden');
                     const text1 = "Dear Supporters,";
                     const text2 = "This app was built with love to keep things simple, focused, and free. If you find it useful and want to help keep it alive, please consider a small donation.";
-                    this.typewriter(line1, text1, 50, () => {
-                        this.typewriter(line2, text2, 30);
-                    });
-
-                 } else {
-                    UIElements.logoContainer.classList.remove('hidden');
-                 }
+                    this.typewriter(line1, text1, 50, () => { this.typewriter(line2, text2, 30); });
+                 } else { UIElements.logoContainer.classList.remove('hidden'); }
             },
+            // UPDATED to render data from the active session
+            renderActiveSessionData: function() {
+                if (!AppState.activeSessionId || !AppState.sessions[AppState.activeSessionId]) {
+                    UIElements.todoList.innerHTML = '';
+                    UIElements.sessionLogList.innerHTML = '';
+                    UIElements.activeSessionDisplay.classList.add('hidden');
+                    return;
+                }
+                const activeSession = AppState.sessions[AppState.activeSessionId];
+                UIElements.todoList.innerHTML = '';
+                activeSession.todoTasks.forEach((task, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'task-list-item';
+                    li.innerHTML = `<input type="checkbox" id="task-${index}" ${task.completed ? 'checked' : ''} data-index="${index}"><label for="task-${index}" class="${task.completed ? 'completed' : ''}">${task.text}</label>`;
+                    UIElements.todoList.appendChild(li);
+                });
+
+                UIElements.sessionLogList.innerHTML = '';
+                activeSession.sessionLog.forEach(log => {
+                    const li = document.createElement('li');
+                    li.textContent = `"${log.task}" - ${log.duration}s`;
+                    li.className = log.completed ? 'complete' : 'incomplete';
+                    UIElements.sessionLogList.appendChild(li);
+                });
+                
+                UIElements.activeSessionDisplay.textContent = `Active Session: ${activeSession.name}`;
+                UIElements.activeSessionDisplay.classList.remove('hidden');
+            },
+             // NEW: Render the list of switchable sessions
+            renderSessionList: function() {
+                UIElements.sessionList.innerHTML = '';
+                Object.keys(AppState.sessions).forEach(sessionId => {
+                    const session = AppState.sessions[sessionId];
+                    const item = document.createElement('div');
+                    item.className = `session-list-item ${sessionId === AppState.activeSessionId ? 'active' : ''}`;
+                    item.textContent = session.name;
+                    item.dataset.sessionId = sessionId;
+                    item.onclick = () => SessionManager.switchSession(sessionId);
+                    UIElements.sessionList.appendChild(item);
+                });
+            }
+        };
+        
+        // ALL NEW: Session Manager object
+        const SessionManager = {
+             initialize: function() {
+                AppState.sessions = Storage.get('sessions', {});
+                AppState.activeSessionId = Storage.get('activeSessionId', null);
+
+                if (Object.keys(AppState.sessions).length === 0) {
+                    this.createSession('Default Session', false); // Create first session if none exist
+                } else if (!AppState.sessions[AppState.activeSessionId]) {
+                     // If activeId is invalid, set to the first available session
+                    AppState.activeSessionId = Object.keys(AppState.sessions)[0];
+                    Storage.save('activeSessionId', AppState.activeSessionId);
+                }
+                
+                UI.renderActiveSessionData();
+            },
+            createSession: function(name, shouldSwitch = true) {
+                if (!name || !name.trim()) return;
+                const newSessionId = `session_${Date.now()}`;
+                AppState.sessions[newSessionId] = {
+                    id: newSessionId,
+                    name: name.trim(),
+                    todoTasks: [],
+                    sessionLog: [],
+                    createdAt: Date.now()
+                };
+                if (shouldSwitch) {
+                   this.switchSession(newSessionId);
+                }
+                UIElements.sessionNameInput.value = '';
+                Storage.save('sessions', AppState.sessions);
+            },
+            switchSession: function(sessionId) {
+                if (!sessionId || !AppState.sessions[sessionId]) return;
+                Timer.resetAll(); // Reset timer when switching
+                AppState.activeSessionId = sessionId;
+                Storage.save('activeSessionId', AppState.activeSessionId);
+                UI.renderActiveSessionData();
+                UI.renderSessionList(); // Re-render to update active highlight
+                UIElements.sessionManagementOverlay.classList.remove('visible');
+            },
+            endSession: function() {
+                if (!AppState.activeSessionId) return;
+                UIElements.exportSessionOverlay.classList.add('visible');
+            },
+            confirmEndSession: function(exportAction = null) {
+                if (!AppState.activeSessionId) return;
+                
+                if (exportAction === 'txt') {
+                    const logString = this.getSessionLogAsString();
+                    const blob = new Blob([logString], { type: 'text/plain' });
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = `session-log-${AppState.sessions[AppState.activeSessionId].name.replace(/\s+/g, '_')}-${Date.now()}.txt`;
+                    a.click();
+                    URL.revokeObjectURL(a.href);
+                } else if (exportAction === 'notepad') {
+                    const logString = this.getSessionLogAsString();
+                    const currentNotepadContent = UIElements.notepadTextarea.value;
+                    UIElements.notepadTextarea.value = currentNotepadContent ? `${currentNotepadContent}\n\n---\n\n${logString}` : logString;
+                    Notepad.saveNote();
+                }
+
+                delete AppState.sessions[AppState.activeSessionId];
+                
+                const remainingIds = Object.keys(AppState.sessions);
+                if (remainingIds.length > 0) {
+                    this.switchSession(remainingIds[0]);
+                } else {
+                    // No sessions left, create a new default one
+                    this.createSession('Default Session');
+                }
+                
+                Storage.save('sessions', AppState.sessions);
+                UIElements.exportSessionOverlay.classList.remove('visible');
+            },
+            getSessionLogAsString: function() {
+                 if (!AppState.activeSessionId) return "";
+                 const session = AppState.sessions[AppState.activeSessionId];
+                 let logString = `Session Log: ${session.name}\nStarted: ${new Date(session.createdAt).toLocaleString()}\nEnded: ${new Date().toLocaleString()}\n\n`;
+                 let totalDuration = 0;
+                 session.sessionLog.forEach(log => {
+                     const status = log.completed ? "Completed" : "Incomplete";
+                     logString += ` - ${log.task} (${log.duration}s) - ${status}\n`;
+                     if (log.completed) {
+                         totalDuration += log.duration;
+                     }
+                 });
+                 logString += `\nTotal Completed Time: ${totalDuration}s`;
+                 return logString;
+            }
         };
 
-        // --- Pomodoro Timer Logic ---
+        const Tracker = {
+            togglePanel: function(isActive) {
+                const isPanelVisible = UIElements.softTrackingPanel.classList.toggle('visible', isActive);
+                UIElements.appWrapper.classList.toggle('is-panel-open', isPanelVisible || UIElements.notepadPanel.classList.contains('visible'));
+            },
+            showTaskModal: function(view) {
+                if (!AppState.activeSessionId) return;
+                UIElements.taskModalOverlay.classList.add('visible');
+                if (view === 'new') {
+                    UIElements.taskModalNewTaskView.classList.remove('hidden');
+                    UIElements.taskModalEndSessionView.classList.add('hidden');
+                    UIElements.taskModalInput.value = '';
+                    UIElements.taskModalList.innerHTML = '';
+                    AppState.sessions[AppState.activeSessionId].todoTasks.filter(t => !t.completed).forEach(task => {
+                        const item = document.createElement('div');
+                        item.className = 'task-modal-item';
+                        item.textContent = task.text;
+                        item.onclick = () => { UIElements.taskModalInput.value = task.text; };
+                        UIElements.taskModalList.appendChild(item);
+                    });
+                } else { 
+                    UIElements.taskModalNewTaskView.classList.add('hidden');
+                    UIElements.taskModalEndSessionView.classList.remove('hidden');
+                    UIElements.taskModalEndSessionList.innerHTML = '';
+                    
+                    const tasksForReview = new Set(AppState.newlyCompletedTasks);
+                    if (AppState.currentTask) {
+                        tasksForReview.add(AppState.currentTask);
+                    }
+
+                    if (tasksForReview.size === 0) {
+                         const item = document.createElement('div');
+                         item.className = 'end-session-item';
+                         item.innerHTML = `<span>No tasks were marked as completed.</span>`;
+                         UIElements.taskModalEndSessionList.appendChild(item);
+                    } else {
+                        tasksForReview.forEach(taskText => {
+                            const item = document.createElement('div');
+                            item.className = 'end-session-item';
+                            item.innerHTML = `<input type="checkbox" id="end-session-${taskText.replace(/\s+/g, '-')}" data-task-text="${taskText}" checked><label for="end-session-${taskText.replace(/\s+/g, '-')}">${taskText}</label>`;
+                            UIElements.taskModalEndSessionList.appendChild(item);
+                        });
+                    }
+                }
+            },
+            hideTaskModal: function() { UIElements.taskModalOverlay.classList.remove('visible'); },
+            startSession: function() {
+                const taskText = UIElements.taskModalInput.value.trim();
+                if (!taskText) return;
+                AppState.currentTask = taskText;
+                AppState.newlyCompletedTasks.clear();
+                this.hideTaskModal();
+                if (AppState.isPaused) {
+                    if (!AppState.hasStarted) { Timer.pomodoroReset(); }
+                    Timer.start();
+                }
+            },
+            endSession: function() {
+                const activeSession = AppState.sessions[AppState.activeSessionId];
+                if (!activeSession) return;
+                
+                const tasksInModal = UIElements.taskModalEndSessionList.querySelectorAll('input[type="checkbox"]');
+                tasksInModal.forEach(checkbox => {
+                    const taskText = checkbox.dataset.taskText;
+                    const isCompletedNow = checkbox.checked;
+
+                    if (taskText) {
+                        const existingLogIndex = activeSession.sessionLog.findIndex(log => log.task === taskText);
+                        if (existingLogIndex > -1) {
+                            activeSession.sessionLog[existingLogIndex].duration += AppState.pomodoro.workSec;
+                            activeSession.sessionLog[existingLogIndex].completed = isCompletedNow;
+                        } else {
+                            activeSession.sessionLog.push({task: taskText, completed: isCompletedNow, duration: AppState.pomodoro.workSec});
+                        }
+                        const todoTask = activeSession.todoTasks.find(t => t.text === taskText);
+                        if (todoTask) { todoTask.completed = isCompletedNow; }
+                    }
+                });
+
+                UI.renderActiveSessionData();
+                Storage.save('sessions', AppState.sessions);
+
+                AppState.currentTask = null;
+                AppState.newlyCompletedTasks.clear();
+                this.hideTaskModal(); this.showTaskModal('new');
+            },
+            showAddTaskPrompt: function() { UIElements.addTaskPromptOverlay.classList.add('visible'); UIElements.addTaskPromptInput.focus(); },
+            hideAddTaskPrompt: function() { UIElements.addTaskPromptOverlay.classList.remove('visible'); UIElements.addTaskPromptInput.value = ''; },
+            confirmAddTask: function() {
+                if (!AppState.activeSessionId) return;
+                const text = UIElements.addTaskPromptInput.value.trim();
+                if(text) {
+                    AppState.sessions[AppState.activeSessionId].todoTasks.push({text: text, completed: false});
+                    Storage.save('sessions', AppState.sessions);
+                    UI.renderActiveSessionData();
+                    this.hideAddTaskPrompt();
+                }
+            }
+        };
+
         const Timer = {
             resetAll: function() {
                 clearInterval(AppState.mainTimerId); AppState.mainTimerId = null;
@@ -660,22 +905,18 @@
                 UIElements.startPauseBtn.textContent = 'Start';
                 UIElements.progressCircle.style.strokeDashoffset = circumference;
                 UIElements.progressDot.style.display = 'block';
-                AppState.pomodoroInitialState = 'work';
-                this.pomodoroReset();
+                AppState.pomodoroInitialState = 'work'; this.pomodoroReset();
             },
             start: function() {
-                AppState.isPaused = false; 
-                AppState.hasStarted = true; 
+                AppState.isPaused = false; AppState.hasStarted = true; 
                 UIElements.startPauseBtn.textContent = 'Pause';
                 UIElements.progressDot.style.display = 'none';
                 AppState.targetTime = Date.now() + AppState.pomodoro.timeLeft * 1000;
-                AppState.mainTimerId = setInterval(Timer.pomodoroTick, 1000);
+                AppState.mainTimerId = setInterval(this.pomodoroTick.bind(this), 1000);
             },
             pause: function() {
-                 AppState.isPaused = true; 
-                 UIElements.startPauseBtn.textContent = 'Continue'; 
-                 clearInterval(AppState.mainTimerId); 
-                 AppState.mainTimerId = null;
+                 AppState.isPaused = true; UIElements.startPauseBtn.textContent = 'Continue'; 
+                 clearInterval(AppState.mainTimerId); AppState.mainTimerId = null;
                  UIElements.progressDot.style.display = 'block';
                  if(AppState.targetTime) {
                     const timeLeftOnPause = Math.round((AppState.targetTime - Date.now()) / 1000);
@@ -685,8 +926,8 @@
             },
             pomodoroReset: function() {
                 AppState.pomodoro = { 
-                    workSec: parseInt(UIElements.workTimeInput.value, 10) * 60, 
-                    breakSec: parseInt(UIElements.breakTimeInput.value, 10) * 60, 
+                    workSec: parseInt(UIElements.workTimeInput.value, 10),
+                    breakSec: parseInt(UIElements.breakTimeInput.value, 10),
                     mode: AppState.pomodoroInitialState
                 };
                 AppState.pomodoro.timeLeft = AppState.pomodoro.mode === 'work' ? AppState.pomodoro.workSec : AppState.pomodoro.breakSec;
@@ -695,20 +936,36 @@
                 UI.updateTimerDisplay(AppState.pomodoro.timeLeft, AppState.pomodoro.totalDuration);
             },
             pomodoroSwitch: function() {
-                if (AppState.pomodoro.mode === 'work') { Audio.playSound(523.25); } else { Audio.playSound(783.99); }
-                AppState.pomodoro.mode = AppState.pomodoro.mode === 'work' ? 'break' : 'work';
+                const wasWorkSession = AppState.pomodoro.mode === 'work';
+                if (wasWorkSession) { Audio.playSound(523.25); } else { Audio.playSound(783.99); }
+
+                AppState.pomodoro.mode = wasWorkSession ? 'break' : 'work';
                 AppState.pomodoro.timeLeft = AppState.pomodoro.mode === 'work' ? AppState.pomodoro.workSec : AppState.pomodoro.breakSec;
                 AppState.pomodoro.totalDuration = AppState.pomodoro.timeLeft;
                 UIElements.modeDisplay.textContent = AppState.pomodoro.mode.charAt(0).toUpperCase() + AppState.pomodoro.mode.slice(1);
                 AppState.pomodoroInitialState = AppState.pomodoro.mode;
-                AppState.targetTime = Date.now() + AppState.pomodoro.timeLeft * 1000;
-                UI.updateTimerDisplay(AppState.pomodoro.timeLeft, AppState.pomodoro.totalDuration);
+
+                const justFinishedBreakInTrackingMode = !wasWorkSession && AppState.isSoftTrackingActive;
+
+                if (justFinishedBreakInTrackingMode) {
+                    AppState.isPaused = true;
+                    AppState.hasStarted = false;
+                    UIElements.startPauseBtn.textContent = 'Start';
+                    UI.updateTimerDisplay(AppState.pomodoro.timeLeft, AppState.pomodoro.totalDuration); 
+                    Tracker.showTaskModal('end');
+                } else {
+                    AppState.isPaused = false;
+                    AppState.hasStarted = true;
+                    this.start();
+                }
             },
             pomodoroTick: function() {
+                if (AppState.isPaused) return;
                 let timeLeft = Math.round((AppState.targetTime - Date.now()) / 1000);
                 if (timeLeft <= 0) { 
                     timeLeft = 0; 
-                    Timer.pomodoroSwitch(); 
+                    clearInterval(AppState.mainTimerId);
+                    this.pomodoroSwitch(); 
                 } else { 
                     AppState.pomodoro.timeLeft = timeLeft; 
                     UI.updateTimerDisplay(timeLeft, AppState.pomodoro.totalDuration); 
@@ -716,111 +973,134 @@
             },
         };
 
-        // --- Notepad Logic ---
         const Notepad = {
-            init: function() {
-                this.loadNote();
+            init: function() { this.loadNote();
                 UIElements.copyNotesBtn.addEventListener('click', this.copyNote.bind(this));
                 UIElements.clearNotesBtn.addEventListener('click', this.clearNote.bind(this));
             },
-            saveNote: function() {
-                Storage.save('notepadContent', UIElements.notepadTextarea.value);
-            },
-            loadNote: function() {
-                UIElements.notepadTextarea.value = Storage.get('notepadContent', '');
-            },
+            saveNote: function() { Storage.save('notepadContent', UIElements.notepadTextarea.value); },
+            loadNote: function() { UIElements.notepadTextarea.value = Storage.get('notepadContent', ''); },
             copyNote: function() {
-                const textarea = UIElements.notepadTextarea;
-                if (textarea.value) {
-                    textarea.select();
-                    textarea.setSelectionRange(0, 99999); 
-                    try {
-                        document.execCommand('copy');
-                        UIElements.copyNotesBtn.textContent = 'Copied!';
+                if (UIElements.notepadTextarea.value) {
+                    UIElements.notepadTextarea.select(); UIElements.notepadTextarea.setSelectionRange(0, 99999); 
+                    try { document.execCommand('copy'); UIElements.copyNotesBtn.textContent = 'Copied!';
                         setTimeout(() => { UIElements.copyNotesBtn.textContent = 'Copy'; }, 1500);
                     } catch (err) { console.error('Fallback: Oops, unable to copy', err); }
                     window.getSelection().removeAllRanges();
                 }
             },
-            clearNote: function() {
-                UIElements.notepadTextarea.value = '';
-                this.saveNote();
-            }
+            clearNote: function() { UIElements.notepadTextarea.value = ''; this.saveNote(); }
         };
 
-        // --- Event Listeners & Initializer ---
         function setupEventListeners() {
-            // --- Menu toggle ---
-            UIElements.menuIcon.addEventListener('click', () => {
-                UIElements.leftIconMenu.classList.toggle('menu-open');
-            });
-            
-            // --- Audio toggle ---
+            UIElements.menuIcon.addEventListener('click', () => UIElements.leftIconMenu.classList.toggle('menu-open'));
             UIElements.bellIcon.addEventListener('click', () => {
                 AppState.isSoundEnabled = !AppState.isSoundEnabled;
                 UIElements.bellIcon.src = AppState.isSoundEnabled ? AppState.bellEnabledSrc : AppState.bellDisabledSrc;
                 Storage.save('soundEnabled', AppState.isSoundEnabled);
             });
             
-            // --- Notepad toggle ---
             UIElements.notepadIcon.addEventListener('click', () => {
                 const isNotepadVisible = UIElements.notepadPanel.classList.toggle('visible');
-                UIElements.appWrapper.classList.toggle('is-panel-open', isNotepadVisible);
+                const isTrackingVisible = UIElements.softTrackingPanel.classList.contains('visible');
+                UIElements.appWrapper.classList.toggle('is-panel-open', isNotepadVisible || isTrackingVisible);
                 UIElements.timerOptionsWrapper.classList.toggle('hidden', isNotepadVisible);
             });
 
-            // --- Timer Controls ---
+            UIElements.gpsIcon.addEventListener('click', () => {
+                AppState.isSoftTrackingActive = !AppState.isSoftTrackingActive;
+                const isTrackingVisible = AppState.isSoftTrackingActive;
+                Tracker.togglePanel(isTrackingVisible);
+                UIElements.activeSessionDisplay.classList.toggle('hidden', !isTrackingVisible);
+                const isNotepadVisible = UIElements.notepadPanel.classList.contains('visible');
+                UIElements.appWrapper.classList.toggle('is-panel-open', isNotepadVisible || isTrackingVisible);
+                UIElements.timerOptionsWrapper.classList.toggle('hidden', isNotepadVisible);
+
+                const originalText = AppState.pomodoro.mode.charAt(0).toUpperCase() + AppState.pomodoro.mode.slice(1);
+                const statusText = 'SOFT TRACKING';
+                UIElements.modeDisplay.classList.remove('tracking-activated-animation', 'tracking-deactivated-animation');
+                void UIElements.modeDisplay.offsetWidth;
+                UIElements.modeDisplay.textContent = statusText;
+                UIElements.modeDisplay.classList.add(AppState.isSoftTrackingActive ? 'tracking-activated-animation' : 'tracking-deactivated-animation');
+                setTimeout(() => {
+                    UIElements.modeDisplay.classList.remove('tracking-activated-animation', 'tracking-deactivated-animation');
+                    UIElements.modeDisplay.textContent = originalText;
+                }, 2500);
+            });
+
             UIElements.startPauseBtn.addEventListener('click', () => {
                 Audio.initContext();
-                if (AppState.isPaused) {
-                    if (!AppState.hasStarted) { Timer.pomodoroReset(); }
-                    Timer.start(); 
-                } else { 
-                    Timer.pause(); 
-                }
+                if (AppState.isSoftTrackingActive && AppState.isPaused && AppState.pomodoro.mode === 'work') { Tracker.showTaskModal('new'); } 
+                else if (AppState.isPaused) { if (!AppState.hasStarted) { Timer.pomodoroReset(); } Timer.start(); } 
+                else { Timer.pause(); }
+            });
+            
+            UIElements.optionsBtn.addEventListener('click', () => {
+                UI.renderSessionList();
+                UIElements.sessionManagementOverlay.classList.add('visible');
             });
 
             UIElements.resetBtn.addEventListener('click', () => Timer.resetAll());
             
-            // --- Settings Listeners ---
             document.querySelectorAll('#pomodoro-settings .setting-item.label').forEach(el => {
-                el.addEventListener('click', () => {
-                    if (!AppState.hasStarted) {
-                        AppState.pomodoroInitialState = el.dataset.startMode;
-                        Timer.pomodoroReset();
-                    }
-                });
+                el.addEventListener('click', () => { if (!AppState.hasStarted) { AppState.pomodoroInitialState = el.dataset.startMode; Timer.pomodoroReset(); } });
             });
 
             [UIElements.workTimeInput, UIElements.breakTimeInput].forEach(input => {
                 input.addEventListener('change', () => {
-                    if(!AppState.hasStarted) {
-                         Timer.pomodoroReset();
-                    }
+                    if(!AppState.hasStarted) { Timer.pomodoroReset(); }
                     Storage.save('pomodoroWork', UIElements.workTimeInput.value);
                     Storage.save('pomodoroBreak', UIElements.breakTimeInput.value);
                 });
             });
-
-            // --- Notepad Listener ---
+            
             UIElements.notepadTextarea.addEventListener('input', () => Notepad.saveNote());
-
-            // --- Donate Overlay Listeners ---
             UIElements.logoContainer.addEventListener('click', () => UI.toggleDonateOverlay(true));
-            UIElements.closeDonateBtn.addEventListener('click', () => UI.toggleDonateOverlay(false));
-            UIElements.exitLabsBtn.addEventListener('click', () => {
-                window.location.href = 'index.html';
+            document.getElementById('exit-labs-btn').addEventListener('click', () => { window.location.href = 'index.html'; });
+
+            UIElements.closeModalBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => { e.target.closest('.modal-overlay').classList.remove('visible', 'active'); });
             });
+
+            UIElements.addTaskBtn.addEventListener('click', Tracker.showAddTaskPrompt);
+            UIElements.addTaskPromptConfirmBtn.addEventListener('click', () => Tracker.confirmAddTask());
+            UIElements.addTaskPromptInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') Tracker.confirmAddTask(); });
+
+            UIElements.todoList.addEventListener('change', (e) => {
+                if (e.target.matches('input[type="checkbox"]')) {
+                    if (!AppState.activeSessionId) return;
+                    const index = parseInt(e.target.dataset.index, 10);
+                    const task = AppState.sessions[AppState.activeSessionId].todoTasks[index];
+                    if (task) {
+                        task.completed = e.target.checked;
+                        if (task.completed && !AppState.isPaused) {
+                           AppState.newlyCompletedTasks.add(task.text);
+                        } else {
+                           AppState.newlyCompletedTasks.delete(task.text);
+                        }
+                        UI.renderActiveSessionData(); 
+                        Storage.save('sessions', AppState.sessions);
+                    }
+                }
+            });
+            UIElements.taskModalStartBtn.addEventListener('click', () => Tracker.startSession());
+            UIElements.taskModalConfirmBtn.addEventListener('click', () => Tracker.endSession());
+            
+            // Session Management Listeners
+            UIElements.createSessionBtn.addEventListener('click', () => SessionManager.createSession(UIElements.sessionNameInput.value));
+            UIElements.endSessionBtn.addEventListener('click', () => SessionManager.endSession());
+            UIElements.saveSessionTxtBtn.addEventListener('click', () => SessionManager.confirmEndSession('txt'));
+            UIElements.copySessionToNotepadBtn.addEventListener('click', () => SessionManager.confirmEndSession('notepad'));
+            UIElements.endSessionAnywayBtn.addEventListener('click', () => SessionManager.confirmEndSession(null));
         }
 
-        // --- App Initialization ---
         function initializeApp() {
             UIElements.workTimeInput.value = Storage.get('pomodoroWork', 25);
             UIElements.breakTimeInput.value = Storage.get('pomodoroBreak', 5);
-            
             AppState.isSoundEnabled = Storage.get('soundEnabled', true);
             UIElements.bellIcon.src = AppState.isSoundEnabled ? AppState.bellEnabledSrc : AppState.bellDisabledSrc;
-
+            
+            SessionManager.initialize();
             Notepad.init();
             setupEventListeners();
             Timer.resetAll();
