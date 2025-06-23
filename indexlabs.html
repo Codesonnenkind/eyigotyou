@@ -14,9 +14,10 @@
             --primary-color: #FFFFFF;
             --secondary-color: #888888;
             --accent-color: #1E8449; /* Green for activated */
-            --warning-color: #EF4444; /* Red for deactivated */
+            --warning-color: #EF4444; /* Red for deactivated/overtime */
             --sidequest-color: #F54291; /* Pink */
             --personal-color: #4A90E2; /* Blue */
+            --break-color: #1E8449; /* Green for breaks */
         }
 
         html, body {
@@ -271,6 +272,34 @@
         
         #mode-display { cursor: pointer; transition: color 0.5s ease-in-out; }
         
+        /* New Inline Controls for Overtime */
+        #inline-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+            width: 100%;
+            max-width: 240px;
+        }
+
+        .inline-btn {
+             background-color: transparent;
+             border: 2px solid var(--secondary-color);
+             color: var(--secondary-color);
+             padding: 6px 12px;
+             font-family: 'Inter', sans-serif;
+             font-size: 0.7rem;
+             font-weight: 600;
+             text-transform: uppercase;
+             cursor: pointer;
+             transition: all 0.2s ease-in-out;
+        }
+        .inline-btn:hover {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+
         @keyframes blink-green { 50% { color: var(--accent-color); } }
         @keyframes blink-red { 50% { color: var(--warning-color); } }
 
@@ -302,8 +331,8 @@
         .control-btn:hover { color: var(--primary-color); }
         .control-btn.sidequest-btn:hover { color: var(--sidequest-color); }
         .control-btn.personal-btn:hover { color: var(--personal-color); }
-        #start-pause-btn, .setting-item.label { flex-grow: 1.5; justify-content: flex-start; padding-left: 15px; }
-        #options-btn, #stop-btn { flex-grow: 1; }
+        #start-stop-btn, .setting-item.label { flex-grow: 1.5; justify-content: flex-start; padding-left: 15px; }
+        #options-btn, #reset-btn { flex-grow: 1; }
         .setting-item.label { cursor: pointer; }
         #settings-container { position: relative; height: 80px; }
         .options-wrapper {
@@ -364,9 +393,12 @@
         .delete-task-btn:hover { color: var(--warning-color); }
         .session-log-entry { margin-bottom: 10px; font-size: 0.8rem; }
         .session-log-entry .log-header { font-weight: 600; color: var(--accent-color); }
+        .session-log-entry .log-header.break { color: var(--break-color); }
         .session-log-entry .log-header.sidequest { color: var(--sidequest-color); }
         .session-log-entry .log-header.personal { color: var(--personal-color); }
+        .session-log-entry .log-header.overtime { color: var(--warning-color); } /* Red for Overtime */
         .session-log-entry .log-task-list { list-style-type: ' - '; padding-left: 20px; color: var(--primary-color); }
+        .session-log-entry .log-task-list .task-status { color: var(--secondary-color); font-style: italic; margin-left: 5px;}
         
         #active-session-display {
             font-size: 0.8rem;
@@ -432,7 +464,7 @@
                     <h3>What did you finish?</h3>
                     <div id="task-modal-end-session-list"></div>
                      <div class="control-group">
-                        <button class="control-btn" id="task-modal-confirm-btn">Confirm & Continue</button>
+                        <button class="control-btn" id="task-modal-confirm-btn">Confirm & Finish</button>
                     </div>
                 </div>
             </div>
@@ -510,21 +542,25 @@
             <div id="timer-controls" class="module-controls">
                 <div id="mode-display">Work</div>
                 <div id="active-session-display" class="hidden"></div>
+                 <div id="inline-controls" class="hidden">
+                    <button class="inline-btn" id="extend-time-btn">+5 Min</button>
+                    <button class="inline-btn" id="start-break-btn">Start Break</button>
+                </div>
                 <div class="control-panel">
                     <div id="timer-options-wrapper" class="options-wrapper">
                         <div id="settings-container">
                             <div id="pomodoro-settings" class="settings-panel">
-                                <div class="control-group"><div class="setting-item label" data-start-mode="work">WORK <span>(MIN)</span></div><div class="setting-item"><input type="number" id="work-time" value="25" min="1"></div></div>
-                                <div class="control-group"><div class="setting-item label" data-start-mode="break">BREAK <span>(MIN)</span></div><div class="setting-item"><input type="number" id="break-time" value="5" min="1"></div></div>
+                                <div class="control-group"><div class="setting-item label" data-start-mode="work">WORK <span>(SEC)</span></div><div class="setting-item"><input type="number" id="work-time" value="25" min="1"></div></div>
+                                <div class="control-group"><div class="setting-item label" data-start-mode="break">BREAK <span>(SEC)</span></div><div class="setting-item"><input type="number" id="break-time" value="5" min="1"></div></div>
                             </div>
                         </div>
                     </div>
                     <div class="control-group">
-                        <button class="control-btn" id="start-pause-btn">Start</button>
-                        <button class="control-btn" id="stop-btn" >Stop</button>
-                        <button class="control-btn" id="options-btn" >Options</button>
+                        <button class="control-btn" id="start-stop-btn">Start</button>
+                        <button class="control-btn hidden" id="options-btn">Options</button>
+                        <button class="control-btn" id="reset-btn">Reset</button>
                     </div>
-                    <div class="control-group">
+                    <div id="special-pause-controls" class="control-group hidden">
                         <button class="control-btn sidequest-btn" id="sidequest-btn">SIDEQUEST</button>
                         <button class="control-btn personal-btn" id="personal-btn">PERSONAL</button>
                     </div>
@@ -571,10 +607,10 @@
             donateOverlay: document.getElementById('donate-overlay'),
             exitLabsBtn: document.getElementById('exit-labs-btn'),
             timeLeftDisplay: document.getElementById('time-left'),
-            startPauseBtn: document.getElementById('start-pause-btn'),
-            stopBtn: document.getElementById('stop-btn'),
+            startStopBtn: document.getElementById('start-stop-btn'),
             optionsBtn: document.getElementById('options-btn'),
             resetBtn: document.getElementById('reset-btn'),
+            specialPauseControls: document.getElementById('special-pause-controls'),
             sidequestBtn: document.getElementById('sidequest-btn'),
             personalBtn: document.getElementById('personal-btn'),
             progressCircle: document.getElementById('timer-progress'),
@@ -615,16 +651,23 @@
             endSessionAnywayBtn: document.getElementById('end-session-anyway-btn'),
             includeSidequestTime: document.getElementById('include-sidequest-time'),
             includePersonalTime: document.getElementById('include-personal-time'),
+            inlineControls: document.getElementById('inline-controls'),
+            extendTimeBtn: document.getElementById('extend-time-btn'),
+            startBreakBtn: document.getElementById('start-break-btn'),
         };
 
         // --- App State ---
         const AppState = {
-            mainTimerId: null, isPaused: true, hasStarted: false, 
-            targetTime: null, 
-            pomodoro: {},
+            mainTimerId: null, 
+            workFinishedTimeoutId: null,
+            timeLeft: 0,
+            totalDuration: 0,
+            targetTime: 0,
+            timerPhase: 'IDLE', // IDLE, WORK_RUNNING, WORK_FINISHED, WORK_OVERTIME, BREAK_RUNNING, BREAK_FINISHED, LOGGING_EARLY
+            preLogPhase: null, // Stores the phase before showing the log modal early
             audioContext: null, isSoundEnabled: true,
             isSoftTrackingActive: false,
-            pomodoroInitialState: 'work',
+            initialMode: 'work',
             bellEnabledSrc: "https://www.dropbox.com/scl/fi/1m4jb4opjgtxoy6yz2yf0/bell-svgrepo-com.svg?rlkey=8po6w24uqopz056gd5vwk42o2&raw=1",
             bellDisabledSrc: "https://www.dropbox.com/scl/fi/syg6jjwvngtxl1mwk0hdv/bell-disabled-svgrepo-com.svg?rlkey=lrawxg597knm9h8jifkw21ngj&raw=1",
             typewriterTimeout: null,
@@ -637,7 +680,9 @@
                 timerId: null,
                 overallStartTime: null,
                 currentModeStartTime: null
-            }
+            },
+            completedWorkDuration: 0,
+            overtimeDuration: 0 
         };
 
         const radius = UIElements.progressCircle.r.baseVal.value;
@@ -656,16 +701,17 @@
         };
         
         const formatDuration = (seconds) => {
-            if (seconds < 60) {
-                return `${seconds}s`;
+            const roundedSeconds = Math.round(seconds);
+            if (roundedSeconds < 60) {
+                return `${roundedSeconds}s`;
             }
-            if (seconds < 3600) {
-                const minutes = Math.floor(seconds / 60);
-                const secs = seconds % 60;
+            if (roundedSeconds < 3600) {
+                const minutes = Math.floor(roundedSeconds / 60);
+                const secs = roundedSeconds % 60;
                 return `${minutes}m ${secs}s`;
             }
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
+            const hours = Math.floor(roundedSeconds / 3600);
+            const minutes = Math.floor((roundedSeconds % 3600) / 60);
             return `${hours}h ${minutes.toString().padStart(2, '0')}m`;
         };
 
@@ -685,7 +731,8 @@
         const UI = {
             updateTimerDisplay: function(timeLeft, totalDuration) {
                 if (totalDuration <= 0) totalDuration = 1;
-                const minutes = Math.floor(timeLeft / 60); const seconds = timeLeft % 60;
+                 const roundedTimeLeft = Math.max(0, Math.round(timeLeft));
+                const minutes = Math.floor(roundedTimeLeft / 60); const seconds = roundedTimeLeft % 60;
                 UIElements.timeLeftDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
                 
                 UIElements.progressCircle.classList.remove('sidequest', 'personal');
@@ -702,9 +749,16 @@
                     UIElements.progressDot.style.display = 'none';
                 } else {
                     const progress = (totalDuration - timeLeft) / totalDuration;
-                    const isBreak = AppState.pomodoro.mode === 'break';
-                    let strokeColor = isBreak ? 'var(--accent-color)' : 'var(--primary-color)';
-                    if (!isBreak && progress >= 0.95) { strokeColor = 'var(--warning-color)'; }
+                    const isBreak = AppState.timerPhase.includes('BREAK');
+                    const isOvertime = AppState.timerPhase === 'WORK_OVERTIME';
+
+                    let strokeColor;
+                    if (isOvertime) {
+                        strokeColor = 'var(--warning-color)'; // Force red for overtime
+                    } else {
+                        strokeColor = isBreak ? 'var(--break-color)' : 'var(--primary-color)';
+                        if (!isBreak && progress >= 0.95) { strokeColor = 'var(--warning-color)'; }
+                    }
                     UIElements.progressCircle.style.stroke = strokeColor;
 
                     const offset = circumference * (1 - progress);
@@ -712,7 +766,7 @@
                     
                     const angle = progress * 360;
                     UIElements.progressDot.parentElement.style.transform = `rotate(${angle-90}deg)`;
-                    if(AppState.isPaused) {
+                    if(AppState.timerPhase.includes('PAUSED') || AppState.timerPhase === 'IDLE' || AppState.timerPhase === 'WORK_FINISHED') {
                          UIElements.progressDot.style.display = 'block';
                     } else {
                          UIElements.progressDot.style.display = 'none';
@@ -767,15 +821,24 @@
                 activeSession.sessionLog.forEach(log => {
                     const li = document.createElement('li');
                     li.className = 'session-log-entry';
-                    
-                    const taskList = log.tasks.map(task => `<li>${task}</li>`).join('');
-                    
-                    li.innerHTML = `
-                        <div class="log-header">WORK SESSION - ${formatDuration(log.duration)}</div>
-                        <ul class="log-task-list">${taskList}</ul>
-                    `;
+                    if (log.type === 'work') {
+                        const taskList = log.tasks.map(task => `<li>${task.text} <span class="task-status">(${task.completed ? 'Completed' : 'Worked On'})</span></li>`).join('');
+                        li.innerHTML = `
+                            <div class="log-header">WORK SESSION - ${formatDuration(log.duration)}</div>
+                            <ul class="log-task-list">${taskList}</ul>
+                        `;
+                    } else if (log.type === 'overtime') {
+                        li.innerHTML = `<div class="log-header overtime">OVERTIME - ${formatDuration(log.duration)}</div>`;
+                    }
                     UIElements.sessionLogList.appendChild(li);
                 });
+
+                if(activeSession.totalBreakDuration > 0) {
+                    const li = document.createElement('li');
+                    li.className = 'session-log-entry';
+                    li.innerHTML = `<div class="log-header break">TOTAL BREAK - ${formatDuration(activeSession.totalBreakDuration)}</div>`;
+                    UIElements.sessionLogList.appendChild(li);
+                }
 
                 if (activeSession.sidequestTime > 0) {
                      const li = document.createElement('li');
@@ -831,6 +894,7 @@
                     sessionLog: [],
                     sidequestTime: 0,
                     personalTime: 0,
+                    totalBreakDuration: 0,
                     createdAt: Date.now()
                 };
                 if (shouldSwitch) {
@@ -888,15 +952,25 @@
                  let logString = `Session Log: ${session.name}\nStarted: ${new Date(session.createdAt).toLocaleString()}\nEnded: ${new Date().toLocaleString()}\n\n`;
                  let totalWorkDuration = 0;
                  
-                 logString += "--- WORK LOG ---\n";
+                 logString += "--- ACTIVITY LOG ---\n";
                  session.sessionLog.forEach(log => {
-                     logString += `WORK SESSION (${formatDuration(log.duration)}):\n`;
-                     log.tasks.forEach(task => {
-                         logString += `  - ${task}\n`;
-                     });
-                     logString += '\n';
-                     totalWorkDuration += log.duration;
+                     if (log.type === 'work' || log.type === 'overtime') {
+                        if (log.type === 'work') {
+                            logString += `WORK SESSION (${formatDuration(log.duration)}):\n`;
+                            log.tasks.forEach(task => {
+                                logString += `  - ${task.text} (${task.completed ? 'Completed' : 'Worked On'})\n`;
+                            });
+                        } else {
+                             logString += `OVERTIME (${formatDuration(log.duration)})\n`;
+                        }
+                        totalWorkDuration += log.duration;
+                     }
                  });
+
+                if (session.totalBreakDuration > 0) {
+                     logString += `\nTOTAL BREAK TIME: ${formatDuration(session.totalBreakDuration)}\n`;
+                }
+
                  logString += `\nTotal Work Time: ${formatDuration(totalWorkDuration)}\n`;
 
                  if (UIElements.includeSidequestTime.checked && session.sidequestTime > 0) {
@@ -904,7 +978,7 @@
                     logString += `Total Sidequest Time: ${formatDuration(session.sidequestTime)}\n`;
                  }
                   if (UIElements.includePersonalTime.checked && session.personalTime > 0) {
-                    logString += `\n--- BREAKS ---\n`;
+                    logString += `\n--- PERSONAL BREAKS ---\n`;
                     logString += `Total Personal Time: ${formatDuration(session.personalTime)}\n`;
                  }
                  return logString;
@@ -915,45 +989,48 @@
             togglePanel: function(isActive) {
                 const isPanelVisible = UIElements.softTrackingPanel.classList.toggle('visible', isActive);
                 UIElements.appWrapper.classList.toggle('is-panel-open', isPanelVisible || UIElements.notepadPanel.classList.contains('visible'));
+                UIElements.specialPauseControls.classList.toggle('hidden', !isActive);
+                UIElements.optionsBtn.classList.toggle('hidden', !isActive);
+                UIElements.resetBtn.classList.toggle('hidden', isActive);
             },
-            showTaskModal: function(view, duration = AppState.pomodoro.workSec) {
+            showTaskModal: function(view) {
                 if (!AppState.activeSessionId) return;
                 UIElements.taskModalOverlay.classList.add('visible');
-
-                UIElements.taskModalConfirmBtn.dataset.duration = duration;
 
                 if (view === 'new') {
                     UIElements.taskModalNewTaskView.classList.remove('hidden');
                     UIElements.taskModalEndSessionView.classList.add('hidden');
                     UIElements.taskModalInput.value = '';
                     UIElements.taskModalList.innerHTML = '';
-                    AppState.sessions[AppState.activeSessionId].todoTasks.filter(t => !t.completed).forEach(task => {
-                        const item = document.createElement('div');
-                        item.className = 'task-modal-item';
-                        item.textContent = task.text;
-                        item.onclick = () => { UIElements.taskModalInput.value = task.text; };
-                        UIElements.taskModalList.appendChild(item);
-                    });
-                } else { 
+                    const activeSession = AppState.sessions[AppState.activeSessionId];
+                    if (activeSession) {
+                        activeSession.todoTasks.filter(t => !t.completed).forEach(task => {
+                            const item = document.createElement('div');
+                            item.className = 'task-modal-item';
+                            item.textContent = task.text;
+                            item.onclick = () => { UIElements.taskModalInput.value = task.text; };
+                            UIElements.taskModalList.appendChild(item);
+                        });
+                    }
+                } else { // 'end' view
                     UIElements.taskModalNewTaskView.classList.add('hidden');
                     UIElements.taskModalEndSessionView.classList.remove('hidden');
                     UIElements.taskModalEndSessionList.innerHTML = '';
                     
-                    const tasksForReview = new Set(AppState.newlyCompletedTasks);
-                    if (AppState.currentTask) {
-                        tasksForReview.add(AppState.currentTask);
-                    }
+                    const activeSession = AppState.sessions[AppState.activeSessionId];
+                    const tasksForReview = activeSession ? activeSession.todoTasks : [];
 
-                    if (tasksForReview.size === 0) {
+                    if (tasksForReview.length === 0) {
                          const item = document.createElement('div');
                          item.className = 'end-session-item';
-                         item.innerHTML = `<span>No tasks were marked as completed.</span>`;
+                         item.innerHTML = `<span>No tasks to log for this session.</span>`;
                          UIElements.taskModalEndSessionList.appendChild(item);
                     } else {
-                        tasksForReview.forEach(taskText => {
+                        tasksForReview.forEach(task => {
                             const item = document.createElement('div');
                             item.className = 'end-session-item';
-                            item.innerHTML = `<input type="checkbox" id="end-session-${taskText.replace(/\s+/g, '-')}" data-task-text="${taskText}" checked><label for="end-session-${taskText.replace(/\s+/g, '-')}">${taskText}</label>`;
+                            const isChecked = (task.text === AppState.currentTask) || AppState.newlyCompletedTasks.has(task.text);
+                            item.innerHTML = `<input type="checkbox" id="end-session-${task.text.replace(/\s+/g, '-')}" data-task-text="${task.text}" ${isChecked ? 'checked' : ''}><label for="end-session-${task.text.replace(/\s+/g, '-')}">${task.text}</label>`;
                             UIElements.taskModalEndSessionList.appendChild(item);
                         });
                     }
@@ -963,40 +1040,77 @@
             startSession: function() {
                 const taskText = UIElements.taskModalInput.value.trim();
                 if (!taskText) return;
+                
+                const activeSession = AppState.sessions[AppState.activeSessionId];
+                if (activeSession && !activeSession.todoTasks.some(t => t.text === taskText)) {
+                    activeSession.todoTasks.push({ text: taskText, completed: false });
+                    Storage.save('sessions', AppState.sessions);
+                    UI.renderActiveSessionData();
+                }
+
                 AppState.currentTask = taskText;
                 AppState.newlyCompletedTasks.clear();
                 this.hideTaskModal();
-                if (AppState.isPaused) {
-                    if (!AppState.hasStarted) { Timer.pomodoroReset(); }
-                    Timer.start();
-                }
+                Timer.startWork();
             },
-            endSession: function(duration) {
+            logSessionAndFinish: function() {
                 const activeSession = AppState.sessions[AppState.activeSessionId];
-                if (!activeSession) return;
+                if (!activeSession) {
+                    Timer.resetAll();
+                    return;
+                }
                 
-                const completedTasksCheckboxes = UIElements.taskModalEndSessionList.querySelectorAll('input[type="checkbox"]:checked');
-                const completedTaskTexts = Array.from(completedTasksCheckboxes).map(cb => cb.dataset.taskText);
-                
-                if (completedTaskTexts.length > 0) {
-                    activeSession.sessionLog.push({
-                        duration: duration,
-                        tasks: completedTaskTexts,
-                    });
+                const wasCutShort = AppState.timerPhase === 'LOGGING_EARLY';
+                if (wasCutShort) {
+                    const elapsed = AppState.totalDuration - AppState.timeLeft;
+                    if (AppState.preLogPhase === 'WORK_OVERTIME') {
+                        AppState.overtimeDuration += elapsed;
+                    } else {
+                        AppState.completedWorkDuration = elapsed;
+                    }
+                }
 
-                    completedTaskTexts.forEach(taskText => {
-                        const todoTask = activeSession.todoTasks.find(t => t.text === taskText);
-                        if (todoTask) { todoTask.completed = true; }
+                const tasksInModal = UIElements.taskModalEndSessionList.querySelectorAll('.end-session-item input');
+                const loggedTasks = Array.from(tasksInModal).map(cb => ({
+                    text: cb.dataset.taskText,
+                    completed: cb.checked
+                }));
+
+                // Log the main work session
+                if (AppState.completedWorkDuration > 0) {
+                    const tasksToLog = loggedTasks.length > 0 ? loggedTasks.filter(t => t.completed) : (AppState.currentTask ? [{text: AppState.currentTask, completed: false}] : []);
+                    activeSession.sessionLog.push({
+                        type: 'work',
+                        duration: AppState.completedWorkDuration,
+                        tasks: tasksToLog,
                     });
+                }
+                
+                // Log any overtime
+                if (AppState.overtimeDuration > 0) {
+                    activeSession.sessionLog.push({
+                        type: 'overtime',
+                        duration: AppState.overtimeDuration,
+                        tasks: []
+                    });
+                }
+                
+                if (AppState.timerPhase !== 'LOGGING_EARLY') {
+                    const breakTime = parseInt(UIElements.breakTimeInput.value, 10);
+                    activeSession.totalBreakDuration = (activeSession.totalBreakDuration || 0) + breakTime;
+                }
+
+                // Remove completed tasks from the main to-do list
+                const completedTaskTexts = loggedTasks.filter(task => task.completed).map(task => task.text);
+                if (completedTaskTexts.length > 0) {
+                    activeSession.todoTasks = activeSession.todoTasks.filter(task => !completedTaskTexts.includes(task.text));
                 }
 
                 UI.renderActiveSessionData();
                 Storage.save('sessions', AppState.sessions);
-
-                AppState.currentTask = null;
-                AppState.newlyCompletedTasks.clear();
-                this.hideTaskModal(); 
-                this.showTaskModal('new');
+                
+                this.hideTaskModal();
+                Timer.resetAll();
             },
             showAddTaskPrompt: function() { UIElements.addTaskPromptOverlay.classList.add('visible'); UIElements.addTaskPromptInput.focus(); },
             hideAddTaskPrompt: function() { UIElements.addTaskPromptOverlay.classList.remove('visible'); UIElements.addTaskPromptInput.value = ''; },
@@ -1004,7 +1118,14 @@
                 if (!AppState.activeSessionId) return;
                 const text = UIElements.addTaskPromptInput.value.trim();
                 if(text) {
-                    AppState.sessions[AppState.activeSessionId].todoTasks.push({text: text, completed: false});
+                    const activeSession = AppState.sessions[AppState.activeSessionId];
+                    if (!activeSession.todoTasks.some(task => task.text === text)) {
+                        activeSession.todoTasks.push({text: text, completed: false});
+                    }
+                    if (AppState.timerPhase !== 'IDLE') {
+                        AppState.newlyCompletedTasks.add(text);
+                    }
+                    
                     Storage.save('sessions', AppState.sessions);
                     UI.renderActiveSessionData();
                     this.hideAddTaskPrompt();
@@ -1021,108 +1142,155 @@
 
         const Timer = {
             resetAll: function() {
-                clearInterval(AppState.mainTimerId); AppState.mainTimerId = null;
-                AppState.targetTime = null; AppState.isPaused = true; AppState.hasStarted = false;
-                this.stopSpecialPause(false); 
-                UIElements.startPauseBtn.textContent = 'Start';
-                UIElements.progressCircle.style.animation = 'none';
-                UIElements.progressCircle.classList.remove('sidequest', 'personal');
-                AppState.pomodoroInitialState = 'work'; this.pomodoroReset();
+                clearInterval(AppState.mainTimerId); 
+                clearTimeout(AppState.workFinishedTimeoutId);
+                AppState.mainTimerId = null;
+                AppState.workFinishedTimeoutId = null;
+                AppState.timerPhase = 'IDLE';
+                const workTime = parseInt(UIElements.workTimeInput.value, 10) || 25;
+                AppState.timeLeft = workTime;
+                AppState.totalDuration = workTime;
+                AppState.overtimeDuration = 0;
+                AppState.completedWorkDuration = 0;
+                AppState.currentTask = null;
+                AppState.preLogPhase = null;
+
+                this.stopSpecialPause(false, false); 
+                UIElements.startStopBtn.textContent = 'Start';
+                UIElements.modeDisplay.textContent = 'Work';
+                UIElements.inlineControls.classList.add('hidden');
+                UI.updateTimerDisplay(AppState.timeLeft, AppState.totalDuration);
             },
-            start: function() {
-                AppState.isPaused = false; AppState.hasStarted = true; 
-                UIElements.startPauseBtn.textContent = 'Pause';
-                AppState.targetTime = Date.now() + AppState.pomodoro.timeLeft * 1000;
-                AppState.mainTimerId = setInterval(this.pomodoroTick.bind(this), 1000);
-                 UI.updateTimerDisplay(AppState.pomodoro.timeLeft, AppState.pomodoro.totalDuration);
-            },
-            pause: function() {
-                 AppState.isPaused = true; 
-                 if (AppState.specialPause.mode) {
-                     UIElements.startPauseBtn.textContent = 'Resume';
-                 } else {
-                     UIElements.startPauseBtn.textContent = 'Continue';
-                 }
-                 clearInterval(AppState.mainTimerId); AppState.mainTimerId = null;
-                 if(AppState.targetTime) {
-                    const timeLeftOnPause = Math.round((AppState.targetTime - Date.now()) / 1000);
-                    AppState.pomodoro.timeLeft = timeLeftOnPause > 0 ? timeLeftOnPause : 0;
-                 }
-                 AppState.targetTime = null;
-                 UI.updateTimerDisplay(AppState.pomodoro.timeLeft, AppState.pomodoro.totalDuration);
-            },
-             stop: function() {
-                if (!AppState.hasStarted || AppState.pomodoro.mode !== 'work' || AppState.isPaused) return;
+            
+            tick: function() {
+                if (AppState.timerPhase.includes('PAUSED')) return;
                 
-                const timeWorked = AppState.pomodoro.totalDuration - AppState.pomodoro.timeLeft;
-                this.pause();
-                Tracker.showTaskModal('end', timeWorked);
-                this.resetAll();
-            },
-            pomodoroReset: function() {
-                AppState.pomodoro = { 
-                    workSec: parseInt(UIElements.workTimeInput.value, 10) * 60,
-                    breakSec: parseInt(UIElements.breakTimeInput.value, 10) * 60,
-                    mode: AppState.pomodoroInitialState
-                };
-                AppState.pomodoro.timeLeft = AppState.pomodoro.mode === 'work' ? AppState.pomodoro.workSec : AppState.pomodoro.breakSec;
-                AppState.pomodoro.totalDuration = AppState.pomodoro.timeLeft;
-                UIElements.modeDisplay.textContent = AppState.pomodoro.mode.charAt(0).toUpperCase() + AppState.pomodoro.mode.slice(1);
-                UI.updateTimerDisplay(AppState.pomodoro.timeLeft, AppState.pomodoro.totalDuration);
-            },
-            pomodoroSwitch: function() {
-                const wasWorkSession = AppState.pomodoro.mode === 'work';
-                if (wasWorkSession) { Audio.playSound(523.25); } else { Audio.playSound(783.99); }
+                AppState.timeLeft -= 1;
 
-                AppState.pomodoro.mode = wasWorkSession ? 'break' : 'work';
-                AppState.pomodoro.timeLeft = AppState.pomodoro.mode === 'work' ? AppState.pomodoro.workSec : AppState.pomodoro.breakSec;
-                AppState.pomodoro.totalDuration = AppState.pomodoro.timeLeft;
-                UIElements.modeDisplay.textContent = AppState.pomodoro.mode.charAt(0).toUpperCase() + AppState.pomodoro.mode.slice(1);
-                AppState.pomodoroInitialState = AppState.pomodoro.mode;
-
-                const justFinishedBreakInTrackingMode = !wasWorkSession && AppState.isSoftTrackingActive;
-
-                if (wasWorkSession && AppState.isSoftTrackingActive) {
-                    this.pause();
-                    Tracker.showTaskModal('end', AppState.pomodoro.workSec);
-                }
-                else if (justFinishedBreakInTrackingMode) {
-                    this.pause();
-                    Tracker.showTaskModal('new');
+                if (AppState.timeLeft <= 0) {
+                    this.handlePhaseEnd();
                 } else {
-                    this.start();
+                    UI.updateTimerDisplay(AppState.timeLeft, AppState.totalDuration);
                 }
             },
-            pomodoroTick: function() {
-                if (AppState.isPaused) return;
-                let timeLeft = Math.round((AppState.targetTime - Date.now()) / 1000);
-                if (timeLeft <= 0) { 
-                    timeLeft = 0; 
+
+            handlePhaseEnd: function() {
+                 clearInterval(AppState.mainTimerId);
+                 AppState.mainTimerId = null;
+                 Audio.playSound(AppState.timerPhase.includes('WORK') || AppState.timerPhase.includes('OVERTIME') ? 523.25 : 783.99);
+
+                 switch(AppState.timerPhase) {
+                    case 'WORK_RUNNING':
+                        AppState.timerPhase = 'WORK_FINISHED';
+                        AppState.completedWorkDuration = AppState.totalDuration;
+                        UIElements.modeDisplay.textContent = 'Finished';
+                        UIElements.startStopBtn.textContent = 'Log';
+                        UIElements.inlineControls.classList.remove('hidden');
+                        UIElements.extendTimeBtn.classList.remove('hidden');
+                        UIElements.startBreakBtn.classList.remove('hidden');
+                        AppState.workFinishedTimeoutId = setTimeout(() => this.startBreak(), 10000);
+                        break;
+                    case 'WORK_OVERTIME':
+                        AppState.overtimeDuration += AppState.totalDuration;
+                        AppState.timerPhase = 'WORK_FINISHED';
+                        UIElements.modeDisplay.textContent = 'Finished';
+                        UIElements.startStopBtn.textContent = 'Log';
+                        UIElements.inlineControls.classList.remove('hidden');
+                        UIElements.extendTimeBtn.classList.remove('hidden');
+                        UIElements.startBreakBtn.classList.remove('hidden');
+                        AppState.workFinishedTimeoutId = setTimeout(() => this.startBreak(), 10000);
+                        break;
+                    case 'BREAK_RUNNING':
+                        AppState.timerPhase = 'BREAK_FINISHED';
+                        UIElements.modeDisplay.textContent = 'Break Over';
+                        UIElements.startStopBtn.textContent = 'Log';
+                        if (AppState.isSoftTrackingActive) {
+                            Tracker.showTaskModal('end');
+                        } else {
+                            this.resetAll();
+                        }
+                        break;
+                 }
+                 UI.updateTimerDisplay(0, AppState.totalDuration);
+            },
+            
+            startWork: function() {
+                const workTime = parseInt(UIElements.workTimeInput.value, 10);
+                AppState.timerPhase = 'WORK_RUNNING';
+                AppState.timeLeft = workTime;
+                AppState.totalDuration = workTime;
+                AppState.mainTimerId = setInterval(() => this.tick(), 1000);
+                UIElements.modeDisplay.textContent = 'Work';
+                UIElements.startStopBtn.textContent = 'Stop';
+                UIElements.inlineControls.classList.add('hidden');
+            },
+
+            startBreak: function() {
+                clearTimeout(AppState.workFinishedTimeoutId);
+
+                if (AppState.timerPhase === 'WORK_OVERTIME') {
                     clearInterval(AppState.mainTimerId);
-                    this.pomodoroSwitch(); 
-                } else { 
-                    AppState.pomodoro.timeLeft = timeLeft; 
-                    UI.updateTimerDisplay(timeLeft, AppState.pomodoro.totalDuration); 
+                    const elapsedOvertime = AppState.totalDuration - AppState.timeLeft;
+                    AppState.overtimeDuration += elapsedOvertime;
                 }
+
+                const breakTime = parseInt(UIElements.breakTimeInput.value, 10);
+                AppState.timerPhase = 'BREAK_RUNNING';
+                AppState.timeLeft = breakTime;
+                AppState.totalDuration = breakTime;
+                AppState.mainTimerId = setInterval(() => this.tick(), 1000);
+                UIElements.modeDisplay.textContent = 'Break';
+                UIElements.startStopBtn.textContent = 'Stop';
+                UIElements.inlineControls.classList.add('hidden');
             },
+            
+            addOvertime: function() {
+                clearTimeout(AppState.workFinishedTimeoutId);
+                const overtime = 5;
+                AppState.timerPhase = 'WORK_OVERTIME';
+                AppState.timeLeft = overtime;
+                AppState.totalDuration = overtime;
+                AppState.mainTimerId = setInterval(() => this.tick(), 1000);
+                UIElements.modeDisplay.textContent = 'Overtime';
+                UIElements.startStopBtn.textContent = 'Stop';
+                UIElements.inlineControls.classList.remove('hidden');
+                UIElements.extendTimeBtn.classList.add('hidden');
+                UIElements.startBreakBtn.classList.remove('hidden');
+            },
+            
+            stopEarly: function() {
+                clearInterval(AppState.mainTimerId);
+                clearTimeout(AppState.workFinishedTimeoutId);
+                AppState.mainTimerId = null;
+
+                AppState.preLogPhase = AppState.timerPhase;
+                AppState.timerPhase = 'LOGGING_EARLY';
+                
+                Tracker.showTaskModal('end');
+            },
+            
             startSpecialPause: function(mode) {
                 if (!AppState.isSoftTrackingActive) return;
-                if (AppState.specialPause.mode === mode) return; 
-
-                if (AppState.specialPause.mode) {
-                    this.stopSpecialPause(true, false); 
-                } else if (!AppState.isPaused) {
-                    this.pause();
+                // Cannot start special pause if timer isn't running
+                if (!AppState.timerPhase.includes('RUNNING') && AppState.timerPhase !== 'WORK_OVERTIME') return;
+                
+                const now = Date.now();
+                
+                if (AppState.specialPause.mode && AppState.specialPause.mode !== mode) {
+                    this.stopSpecialPause(true, false);
+                } else if (AppState.specialPause.mode === mode) {
+                    return; 
                 }
                 
-                if (!AppState.specialPause.overallStartTime) {
-                    AppState.specialPause.overallStartTime = Date.now();
-                }
+                // Pause the main timer
+                clearInterval(AppState.mainTimerId);
+                clearTimeout(AppState.workFinishedTimeoutId);
+                AppState.mainTimerId = null;
+                UIElements.startStopBtn.textContent = 'Resume';
                 
                 AppState.specialPause.mode = mode;
-                AppState.specialPause.currentModeStartTime = Date.now();
+                AppState.specialPause.currentModeStartTime = now;
                 UIElements.modeDisplay.textContent = mode.toUpperCase();
-                UIElements.startPauseBtn.textContent = 'Resume';
                 
                 if (!AppState.specialPause.timerId) {
                     AppState.specialPause.timerId = setInterval(this.specialPauseTick.bind(this), 1000);
@@ -1136,7 +1304,7 @@
                 AppState.specialPause.timerId = null;
 
                 const elapsed = Math.round((Date.now() - AppState.specialPause.currentModeStartTime) / 1000);
-
+                
                 if (shouldSave && AppState.activeSessionId) {
                     const activeSession = AppState.sessions[AppState.activeSessionId];
                     if (AppState.specialPause.mode === 'sidequest') {
@@ -1148,20 +1316,18 @@
                     UI.renderActiveSessionData();
                 }
                 
+                if (!resumeMain) return;
+
                 AppState.specialPause.mode = null;
                 AppState.specialPause.currentModeStartTime = null;
-                AppState.specialPause.overallStartTime = null;
                 
-                UIElements.modeDisplay.textContent = AppState.pomodoro.mode.charAt(0).toUpperCase() + AppState.pomodoro.mode.slice(1);
-                
-                if (resumeMain && AppState.hasStarted) {
-                    this.start();
-                } else {
-                    UI.updateTimerDisplay(AppState.pomodoro.timeLeft, AppState.pomodoro.totalDuration);
-                }
+                // Resume the main timer
+                UIElements.startStopBtn.textContent = 'Stop';
+                UIElements.modeDisplay.textContent = AppState.timerPhase.replace('_PAUSED', '').replace('_RUNNING', '').replace('_', ' ');
+                AppState.mainTimerId = setInterval(() => this.tick(), 1000);
             },
             specialPauseTick: function() {
-                const elapsed = Math.floor((Date.now() - AppState.specialPause.overallStartTime) / 1000);
+                const elapsed = Math.floor((Date.now() - AppState.specialPause.currentModeStartTime) / 1000);
                 UI.updateTimerDisplay(elapsed, 1);
             }
         };
@@ -1202,6 +1368,7 @@
 
             UIElements.gpsIcon.addEventListener('click', () => {
                 AppState.isSoftTrackingActive = !AppState.isSoftTrackingActive;
+                Timer.resetAll(); 
                 const isTrackingVisible = AppState.isSoftTrackingActive;
                 Tracker.togglePanel(isTrackingVisible);
                 UIElements.activeSessionDisplay.classList.toggle('hidden', !isTrackingVisible);
@@ -1209,7 +1376,7 @@
                 UIElements.appWrapper.classList.toggle('is-panel-open', isNotepadVisible || isTrackingVisible);
                 UIElements.timerOptionsWrapper.classList.toggle('hidden', isNotepadVisible);
 
-                const originalText = AppState.pomodoro.mode.charAt(0).toUpperCase() + AppState.pomodoro.mode.slice(1);
+                const originalText = 'Work';
                 const statusText = 'SOFT TRACKING';
                 UIElements.modeDisplay.classList.remove('tracking-activated-animation', 'tracking-deactivated-animation');
                 void UIElements.modeDisplay.offsetWidth;
@@ -1221,37 +1388,45 @@
                 }, 2500);
             });
 
-            UIElements.startPauseBtn.addEventListener('click', () => {
+            UIElements.startStopBtn.addEventListener('click', () => {
                 Audio.initContext();
+
                 if (AppState.specialPause.mode) {
-                    Timer.stopSpecialPause();
-                } else if (AppState.isSoftTrackingActive && AppState.isPaused && AppState.pomodoro.mode === 'work') { 
-                    Tracker.showTaskModal('new'); 
-                } else if (AppState.isPaused) { 
-                    if (!AppState.hasStarted) { Timer.pomodoroReset(); } 
-                    Timer.start(); 
-                } else { 
-                    Timer.pause(); 
+                    Timer.stopSpecialPause(true, true);
+                    return;
+                }
+
+                if (AppState.timerPhase === 'IDLE') {
+                    if (AppState.isSoftTrackingActive) {
+                        Tracker.showTaskModal('new');
+                    } else {
+                        Timer.startWork();
+                    }
+                } else if (AppState.timerPhase.includes('RUNNING') || AppState.timerPhase === 'WORK_OVERTIME') {
+                     Timer.stopEarly();
+                } else if (AppState.timerPhase === 'WORK_FINISHED' || AppState.timerPhase === 'BREAK_FINISHED') {
+                    clearTimeout(AppState.workFinishedTimeoutId);
+                    Tracker.showTaskModal('end');
                 }
             });
             
-            UIElements.stopBtn.addEventListener('click', () => Timer.stop());
-
             UIElements.optionsBtn.addEventListener('click', () => {
                 UI.renderSessionList();
                 UIElements.sessionManagementOverlay.classList.add('visible');
             });
             
+            UIElements.resetBtn.addEventListener('click', () => Timer.resetAll());
+            
             UIElements.sidequestBtn.addEventListener('click', () => Timer.startSpecialPause('sidequest'));
             UIElements.personalBtn.addEventListener('click', () => Timer.startSpecialPause('personal'));
 
             document.querySelectorAll('#pomodoro-settings .setting-item.label').forEach(el => {
-                el.addEventListener('click', () => { if (!AppState.hasStarted) { AppState.pomodoroInitialState = el.dataset.startMode; Timer.pomodoroReset(); } });
+                el.addEventListener('click', () => { if (AppState.timerPhase === 'IDLE') { AppState.initialMode = el.dataset.startMode; Timer.resetAll(); } });
             });
 
             [UIElements.workTimeInput, UIElements.breakTimeInput].forEach(input => {
                 input.addEventListener('change', () => {
-                    if(!AppState.hasStarted) { Timer.pomodoroReset(); }
+                    if(AppState.timerPhase === 'IDLE') { Timer.resetAll(); }
                     Storage.save('pomodoroWork', UIElements.workTimeInput.value);
                     Storage.save('pomodoroBreak', UIElements.breakTimeInput.value);
                 });
@@ -1262,8 +1437,25 @@
             document.getElementById('exit-labs-btn').addEventListener('click', () => { window.location.href = 'index.html'; });
 
             UIElements.closeModalBtns.forEach(btn => {
-                btn.addEventListener('click', (e) => { e.target.closest('.modal-overlay').classList.remove('visible', 'active'); });
+                btn.addEventListener('click', (e) => {
+                     const modal = e.target.closest('.modal-overlay');
+                     modal.classList.remove('visible', 'active');
+                     
+                     if (modal.id === 'task-modal-overlay') {
+                        if (AppState.timerPhase === 'LOGGING_EARLY') {
+                            // User cancelled logging, so resume the previous session
+                            AppState.timerPhase = AppState.preLogPhase;
+                            AppState.preLogPhase = null;
+                            AppState.mainTimerId = setInterval(() => Timer.tick(), 1000);
+                        } else {
+                            Timer.resetAll();
+                        }
+                     }
+                });
             });
+            
+            UIElements.extendTimeBtn.addEventListener('click', () => Timer.addOvertime());
+            UIElements.startBreakBtn.addEventListener('click', () => Timer.startBreak());
 
             UIElements.addTaskBtn.addEventListener('click', Tracker.showAddTaskPrompt);
             UIElements.addTaskPromptConfirmBtn.addEventListener('click', () => Tracker.confirmAddTask());
@@ -1292,8 +1484,7 @@
             });
             UIElements.taskModalStartBtn.addEventListener('click', () => Tracker.startSession());
             UIElements.taskModalConfirmBtn.addEventListener('click', (e) => {
-                const duration = parseInt(e.target.dataset.duration, 10);
-                Tracker.endSession(duration);
+                Tracker.logSessionAndFinish();
             });
             
             // Session Management Listeners
