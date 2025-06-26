@@ -329,12 +329,13 @@
         }
         .control-group > *:not(:last-child) { border-right: 2px solid var(--secondary-color); }
         .control-btn:hover { color: var(--primary-color); }
+        .control-btn:disabled { color: var(--secondary-color); opacity: 0.5; cursor: not-allowed; }
         .control-btn.sidequest-btn:hover { color: var(--sidequest-color); }
         .control-btn.personal-btn:hover { color: var(--personal-color); }
         #start-stop-btn, .setting-item.label { flex-grow: 1.5; justify-content: flex-start; padding-left: 15px; }
         #options-btn, #reset-btn { flex-grow: 1; }
         .setting-item.label { cursor: pointer; }
-        #settings-container { position: relative; height: 80px; }
+        #settings-container { position: relative; }
         .options-wrapper {
             display: flex; flex-direction: column; gap: 10px; width: 100%;
             overflow: hidden; transition: max-height 0.5s ease-in-out, gap 0.5s ease-in-out;
@@ -349,6 +350,27 @@
         }
         input[type=number] { -moz-appearance: textfield; }
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        
+        .settings-panel select {
+            background-color: transparent;
+            border: none;
+            color: var(--primary-color);
+            padding: 0;
+            width: 100%;
+            text-align: right; 
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 500;
+            outline: none;
+            -webkit-appearance: none; 
+            -moz-appearance: none; 
+            appearance: none;
+            cursor: pointer;
+        }
+        .setting-item .select-wrapper {
+            width: 60px; /* Adjust width as needed */
+        }
+
 
         .collapsible-panel {
             width: 100%; margin-top: 15px; max-height: 0;
@@ -359,7 +381,7 @@
         /* --- Task & Session Modals --- */
         .task-modal-content {
             background: var(--background-color); border: 2px solid var(--secondary-color);
-            padding: 20px; width: 90%; max-width: 350px;
+            padding: 20px; width: 90%; max-width: 380px;
             display: flex; flex-direction: column; gap: 15px;
         }
         .task-modal-content h3 {
@@ -372,31 +394,81 @@
             padding: 8px; font-family: 'Inter', sans-serif; box-sizing: border-box;
         }
         .modal-input:focus { outline: none; border-color: var(--primary-color); }
-        #task-modal-list, #task-modal-end-session-list, #session-list { max-height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; }
+        #task-modal-list, #task-modal-end-session-list, #session-list, #preset-task-list { max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
         .task-modal-item, .session-list-item {
             padding: 8px; border: 1px solid var(--secondary-color); cursor: pointer;
             font-size: 0.8rem; transition: background-color 0.2s, border-color 0.2s;
         }
         .task-modal-item:hover, .session-list-item:hover { background-color: rgba(255,255,255,0.1); }
         .session-list-item.active { border-color: var(--accent-color); color: var(--accent-color); }
-        .end-session-item, .export-option-item { display: flex; align-items: center; gap: 10px; font-size: 0.9rem;}
-        .end-session-item input[type="checkbox"], .export-option-item input[type="checkbox"] { width: 18px; height: 18px; }
+        
+        .export-option-item { display: flex; align-items: center; gap: 10px; font-size: 0.9rem;}
+        .export-option-item input[type="checkbox"] { width: 18px; height: 18px; }
+
+        /* --- STYLES for "What did you finish?" modal --- */
+        .end-session-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid var(--secondary-color);
+            padding: 10px;
+            gap: 15px;
+            font-size: 0.9rem;
+        }
+        .end-session-item .task-name {
+            font-weight: 600;
+            color: var(--primary-color);
+            flex-grow: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .status-select, .preset-select {
+            background-color: var(--background-color);
+            color: var(--secondary-color);
+            border: 1px solid var(--secondary-color);
+            padding: 5px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+        .status-select:focus, .preset-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
 
         /* --- Soft Tracking Panel --- */
         #todo-list, #session-log-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
         .task-list-item { display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; }
         .task-list-item .task-content { display: flex; align-items: center; gap: 10px; overflow: hidden; }
         .task-list-item label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .task-list-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; flex-shrink: 0; }
+        .task-list-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; flex-shrink: 0; accent-color: var(--accent-color);}
         .task-list-item label.completed { text-decoration: line-through; color: var(--secondary-color); }
         .delete-task-btn { background: none; border: none; color: var(--secondary-color); font-size: 1.2rem; cursor: pointer; padding: 0 5px; line-height: 1; flex-shrink: 0;}
         .delete-task-btn:hover { color: var(--warning-color); }
-        .session-log-entry { margin-bottom: 10px; font-size: 0.8rem; }
+        .todo-category-header {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            border-bottom: 1px solid var(--secondary-color);
+            padding-bottom: 3px;
+        }
+        .todo-category-header:first-child {
+            margin-top: 0;
+        }
+        
+        .session-log-entry { margin-bottom: 10px; font-size: 0.75rem; }
+        
         .session-log-entry .log-header { font-weight: 600; color: var(--accent-color); }
         .session-log-entry .log-header.break { color: var(--break-color); }
         .session-log-entry .log-header.sidequest { color: var(--sidequest-color); }
         .session-log-entry .log-header.personal { color: var(--personal-color); }
-        .session-log-entry .log-header.overtime { color: var(--warning-color); } /* Red for Overtime */
+        .session-log-entry .log-header.overtime { color: var(--warning-color); }
         .session-log-entry .log-task-list { list-style-type: ' - '; padding-left: 20px; color: var(--primary-color); }
         .session-log-entry .log-task-list .task-status { color: var(--secondary-color); font-style: italic; margin-left: 5px;}
         
@@ -404,11 +476,49 @@
             font-size: 0.8rem;
             color: var(--primary-color);
             background: rgba(255,255,255,0.05);
-            padding: 5px 10px;
+            padding: 8px 10px;
             margin-bottom: 10px;
             width: 100%;
             text-align: center;
             box-sizing: border-box;
+            border: 1px dashed var(--secondary-color);
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        #active-session-display:hover {
+            border-color: var(--primary-color);
+            color: var(--accent-color);
+        }
+
+        /* --- PRESET MODAL STYLES --- */
+        #preset-task-list {
+            padding: 10px;
+            border: 1px dashed var(--secondary-color);
+            margin: 10px 0;
+            background: rgba(255,255,255,0.03);
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+        #preset-task-list li {
+            list-style-position: inside;
+            list-style-type: '» ';
+            margin-bottom: 5px;
+        }
+        #preset-task-list .category-header {
+            list-style: none;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+
+        .modal-section-divider {
+            border-color: var(--secondary-color);
+            margin: 20px 0;
+        }
+        #custom-preset-tasks-input {
+            min-height: 80px;
+            resize: vertical;
         }
 
         .hidden { display: none !important; }
@@ -523,6 +633,32 @@
             </div>
         </div>
 
+        <!-- PRESET MODAL -->
+        <div id="preset-modal-overlay" class="modal-overlay">
+            <div id="preset-modal" class="task-modal-content modal-content">
+                <button class="close-modal-btn">&times;</button>
+                <h3>To-Do Presets</h3>
+                
+                <div id="apply-preset-section">
+                    <select id="preset-select" class="preset-select" style="width: 100%;"></select>
+                    <ul id="preset-task-list"></ul>
+                     <div class="control-group">
+                        <button class="control-btn" id="apply-preset-btn">Apply to To-Do</button>
+                        <button class="control-btn" id="delete-preset-btn" style="color:var(--warning-color); flex-grow:0.5;">Delete</button>
+                    </div>
+                </div>
+
+                <hr class="modal-section-divider">
+
+                <h3>Create Custom Preset</h3>
+                <input type="text" id="custom-preset-name-input" class="modal-input" placeholder="Preset Name...">
+                <textarea id="custom-preset-tasks-input" class="modal-input" placeholder="Enter one task per line..."></textarea>
+                <div class="control-group">
+                    <button class="control-btn" id="save-custom-preset-btn">Save New Preset</button>
+                </div>
+            </div>
+        </div>
+
         <div class="sticky-wrapper">
             <div id="timer-display-sticky" class="sticky-display">
                 <div class="timer-container">
@@ -549,9 +685,26 @@
                 <div class="control-panel">
                     <div id="timer-options-wrapper" class="options-wrapper">
                         <div id="settings-container">
-                            <div id="pomodoro-settings" class="settings-panel">
-                                <div class="control-group"><div class="setting-item label" data-start-mode="work">WORK <span>(MIN)</span></div><div class="setting-item"><input type="number" id="work-time" value="25" min="1"></div></div>
-                                <div class="control-group"><div class="setting-item label" data-start-mode="break">BREAK <span>(MIN)</span></div><div class="setting-item"><input type="number" id="break-time" value="5" min="1"></div></div>
+                             <div id="pomodoro-settings" class="settings-panel">
+                                <div class="control-group">
+                                    <div class="setting-item label">WORK <span>(MIN)</span></div>
+                                    <div class="setting-item"><input type="number" id="work-time" value="25" min="1"></div>
+                                </div>
+                                <div class="control-group">
+                                    <div class="setting-item label">BREAK <span>(MIN)</span></div>
+                                    <div class="setting-item"><input type="number" id="break-time" value="5" min="1"></div>
+                                </div>
+                                <div class="control-group">
+                                    <label for="auto-break-time" class="setting-item label">AUTO BREAK</label>
+                                    <div class="setting-item">
+                                        <select id="auto-break-time" class="settings-select">
+                                            <option value="10">10 SEC</option>
+                                            <option value="15">15 SEC</option>
+                                            <option value="30">30 SEC</option>
+                                            <option value="manual">MANUAL</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -576,6 +729,7 @@
                     <ul id="todo-list"></ul>
                     <div class="control-group">
                         <button class="control-btn" id="add-task-btn">Add Task</button>
+                        <button class="control-btn" id="preset-tasks-btn">Presets</button>
                     </div>
                 </div>
             </div>
@@ -618,6 +772,7 @@
             modeDisplay: document.getElementById('mode-display'),
             workTimeInput: document.getElementById('work-time'),
             breakTimeInput: document.getElementById('break-time'),
+            autoBreakTimeSelect: document.getElementById('auto-break-time'),
             timerOptionsWrapper: document.getElementById('timer-options-wrapper'), 
             notepadPanel: document.getElementById('notepad-panel'),
             notepadTextarea: document.getElementById('notepad-textarea'),
@@ -654,6 +809,16 @@
             inlineControls: document.getElementById('inline-controls'),
             extendTimeBtn: document.getElementById('extend-time-btn'),
             startBreakBtn: document.getElementById('start-break-btn'),
+            // Preset Elements
+            presetTasksBtn: document.getElementById('preset-tasks-btn'),
+            presetModalOverlay: document.getElementById('preset-modal-overlay'),
+            presetSelect: document.getElementById('preset-select'),
+            presetTaskList: document.getElementById('preset-task-list'),
+            applyPresetBtn: document.getElementById('apply-preset-btn'),
+            deletePresetBtn: document.getElementById('delete-preset-btn'),
+            customPresetNameInput: document.getElementById('custom-preset-name-input'),
+            customPresetTasksInput: document.getElementById('custom-preset-tasks-input'),
+            saveCustomPresetBtn: document.getElementById('save-custom-preset-btn'),
         };
 
         // --- App State ---
@@ -668,6 +833,7 @@
             audioContext: null, isSoundEnabled: true,
             isSoftTrackingActive: false,
             initialMode: 'work',
+            autoBreakDelay: 10, // Default auto-break time
             bellEnabledSrc: "https://www.dropbox.com/scl/fi/1m4jb4opjgtxoy6yz2yf0/bell-svgrepo-com.svg?rlkey=8po6w24uqopz056gd5vwk42o2&raw=1",
             bellDisabledSrc: "https://www.dropbox.com/scl/fi/syg6jjwvngtxl1mwk0hdv/bell-disabled-svgrepo-com.svg?rlkey=lrawxg597knm9h8jifkw21ngj&raw=1",
             typewriterTimeout: null,
@@ -675,6 +841,7 @@
             activeSessionId: null,
             currentTask: null,
             newlyCompletedTasks: new Set(),
+            presets: {}, // Simplified: only custom presets
             specialPause: {
                 mode: null,
                 timerId: null,
@@ -796,25 +963,56 @@
                  } else { UIElements.logoContainer.classList.remove('hidden'); }
             },
             renderActiveSessionData: function() {
+                if (AppState.isSoftTrackingActive && (!AppState.activeSessionId || !AppState.sessions[AppState.activeSessionId])) {
+                    UIElements.todoList.innerHTML = '';
+                    UIElements.sessionLogList.innerHTML = '';
+                    UIElements.activeSessionDisplay.textContent = 'Choose a Session';
+                    UIElements.activeSessionDisplay.classList.remove('hidden');
+                    return;
+                }
+                
                 if (!AppState.activeSessionId || !AppState.sessions[AppState.activeSessionId]) {
                     UIElements.todoList.innerHTML = '';
                     UIElements.sessionLogList.innerHTML = '';
                     UIElements.activeSessionDisplay.classList.add('hidden');
                     return;
                 }
+
                 const activeSession = AppState.sessions[AppState.activeSessionId];
                 UIElements.todoList.innerHTML = '';
-                activeSession.todoTasks.forEach((task, index) => {
-                    const li = document.createElement('li');
-                    li.className = 'task-list-item';
-                    li.innerHTML = `
-                        <div class="task-content">
-                            <input type="checkbox" id="task-${index}" ${task.completed ? 'checked' : ''} data-index="${index}">
-                            <label for="task-${index}" class="${task.completed ? 'completed' : ''}">${task.text}</label>
-                        </div>
-                        <button class="delete-task-btn" data-index="${index}">&times;</button>
-                    `;
-                    UIElements.todoList.appendChild(li);
+                
+                // Group tasks by category
+                const groupedTasks = activeSession.todoTasks.reduce((acc, task, index) => {
+                    const category = task.category || 'General';
+                    if (!acc[category]) {
+                        acc[category] = [];
+                    }
+                    // Store original index to ensure delete works correctly
+                    acc[category].push({ ...task, originalIndex: index }); 
+                    return acc;
+                }, {});
+
+                // Render grouped tasks
+                const categories = Object.keys(groupedTasks).sort();
+                categories.forEach(category => {
+                    const header = document.createElement('li');
+                    header.className = 'todo-category-header';
+                    header.textContent = category;
+                    UIElements.todoList.appendChild(header);
+
+                    groupedTasks[category].forEach(task => {
+                        const li = document.createElement('li');
+                        li.className = 'task-list-item';
+                        // Use originalIndex for data attributes
+                        li.innerHTML = `
+                            <div class="task-content">
+                                <input type="checkbox" id="task-${task.originalIndex}" ${task.completed ? 'checked' : ''} data-index="${task.originalIndex}">
+                                <label for="task-${task.originalIndex}" class="${task.completed ? 'completed' : ''}">${task.text}</label>
+                            </div>
+                            <button class="delete-task-btn" data-index="${task.originalIndex}">&times;</button>
+                        `;
+                        UIElements.todoList.appendChild(li);
+                    });
                 });
 
                 UIElements.sessionLogList.innerHTML = '';
@@ -873,14 +1071,13 @@
         const SessionManager = {
              initialize: function() {
                 AppState.sessions = Storage.get('sessions', {});
-                AppState.activeSessionId = Storage.get('activeSessionId', null);
+                let storedActiveId = Storage.get('activeSessionId', null);
 
-                if (Object.keys(AppState.sessions).length === 0) {
-                    this.createSession('Default Session', false);
-                } else if (!AppState.sessions[AppState.activeSessionId]) {
-                    AppState.activeSessionId = Object.keys(AppState.sessions)[0];
-                    Storage.save('activeSessionId', AppState.activeSessionId);
+                if (storedActiveId && !AppState.sessions[storedActiveId]) {
+                    storedActiveId = null;
+                    Storage.save('activeSessionId', null);
                 }
+                AppState.activeSessionId = storedActiveId;
                 
                 UI.renderActiveSessionData();
             },
@@ -897,20 +1094,28 @@
                     totalBreakDuration: 0,
                     createdAt: Date.now()
                 };
+                Storage.save('sessions', AppState.sessions);
+
                 if (shouldSwitch) {
                    this.switchSession(newSessionId);
                 }
                 UIElements.sessionNameInput.value = '';
-                Storage.save('sessions', AppState.sessions);
             },
             switchSession: function(sessionId) {
-                if (!sessionId || !AppState.sessions[sessionId]) return;
+                // Allow switching to a null session (clearing the active session)
+                if (sessionId && !AppState.sessions[sessionId]) {
+                    console.error("Attempted to switch to a non-existent session:", sessionId);
+                    return;
+                }
+
                 Timer.resetAll();
                 AppState.activeSessionId = sessionId;
                 Storage.save('activeSessionId', AppState.activeSessionId);
                 UI.renderActiveSessionData();
                 UI.renderSessionList();
-                UIElements.sessionManagementOverlay.classList.remove('visible');
+                if (UIElements.sessionManagementOverlay.classList.contains('visible')) {
+                    UIElements.sessionManagementOverlay.classList.remove('visible');
+                }
             },
             endSession: function() {
                 if (!AppState.activeSessionId) return;
@@ -937,13 +1142,11 @@
                 delete AppState.sessions[AppState.activeSessionId];
                 
                 const remainingIds = Object.keys(AppState.sessions);
-                if (remainingIds.length > 0) {
-                    this.switchSession(remainingIds[0]);
-                } else {
-                    this.createSession('Default Session');
-                }
+                const newActiveId = remainingIds.length > 0 ? remainingIds[0] : null;
                 
                 Storage.save('sessions', AppState.sessions);
+                this.switchSession(newActiveId); // This will handle setting the session to null and re-rendering
+
                 UIElements.exportSessionOverlay.classList.remove('visible');
             },
             getSessionLogAsString: function() {
@@ -984,6 +1187,122 @@
                  return logString;
             }
         };
+        
+        const PresetManager = {
+            initialize: function() {
+                AppState.presets = Storage.get('customPresets', {});
+                this.populatePresetDropdown();
+                this.displaySelectedPreset();
+            },
+            populatePresetDropdown: function() {
+                UIElements.presetSelect.innerHTML = '<option value="">Select a Preset...</option>';
+                
+                if (Object.keys(AppState.presets).length > 0) {
+                    for (const id in AppState.presets) {
+                        const preset = AppState.presets[id];
+                        const option = document.createElement('option');
+                        option.value = id;
+                        option.textContent = preset.name;
+                        UIElements.presetSelect.appendChild(option);
+                    }
+                }
+            },
+            displaySelectedPreset: function() {
+                UIElements.presetTaskList.innerHTML = '';
+                const selectedId = UIElements.presetSelect.value;
+                if (!selectedId) {
+                    UIElements.deletePresetBtn.classList.add('hidden');
+                    UIElements.applyPresetBtn.disabled = true;
+                    UIElements.applyPresetBtn.textContent = "Apply to To-Do";
+                    return;
+                }
+
+                const preset = AppState.presets[selectedId];
+                if (!preset || !Array.isArray(preset.tasks)) {
+                    UIElements.deletePresetBtn.classList.add('hidden');
+                    UIElements.applyPresetBtn.disabled = true;
+                    return;
+                }
+
+                const activeSession = AppState.activeSessionId ? AppState.sessions[AppState.activeSessionId] : null;
+                let tasksInSessionCount = 0;
+                
+                preset.tasks.forEach(taskText => {
+                    const li = document.createElement('li');
+                    li.textContent = taskText;
+                    UIElements.presetTaskList.appendChild(li);
+
+                    if (activeSession && activeSession.todoTasks.some(t => t.text === taskText)) {
+                        tasksInSessionCount++;
+                    }
+                });
+                
+                const allTasksExist = activeSession ? tasksInSessionCount === preset.tasks.length : false;
+                UIElements.applyPresetBtn.disabled = allTasksExist;
+                UIElements.applyPresetBtn.textContent = allTasksExist ? "Already Added" : "Apply to To-Do";
+                
+                UIElements.deletePresetBtn.classList.remove('hidden');
+            },
+            applyPreset: function() {
+                if (!AppState.activeSessionId) {
+                    UIElements.presetModalOverlay.classList.remove('visible');
+                    UI.renderSessionList();
+                    UIElements.sessionManagementOverlay.classList.add('visible');
+                    return;
+                }
+
+                const selectedId = UIElements.presetSelect.value;
+                if (!selectedId) return;
+
+                const preset = AppState.presets[selectedId];
+                const activeSession = AppState.sessions[AppState.activeSessionId];
+
+                if (preset && activeSession) {
+                    preset.tasks.forEach(taskText => {
+                        // Use the preset's name as the category
+                        const category = preset.name; 
+
+                        if (!activeSession.todoTasks.some(t => t.text === taskText)) {
+                            activeSession.todoTasks.push({ text: taskText, completed: false, category: category });
+                        }
+                    });
+                    
+                    Storage.save('sessions', AppState.sessions);
+                    UI.renderActiveSessionData();
+                    UIElements.presetModalOverlay.classList.remove('visible');
+                }
+            },
+            saveCustomPreset: function() {
+                const name = UIElements.customPresetNameInput.value.trim();
+                const tasksText = UIElements.customPresetTasksInput.value.trim();
+
+                if (!name || !tasksText) {
+                    console.error("Preset name and tasks cannot be empty.");
+                    return;
+                }
+
+                const tasks = tasksText.split('\n').map(t => t.trim()).filter(t => t);
+                const id = `preset_${Date.now()}`;
+
+                AppState.presets[id] = { name, tasks };
+                Storage.save('customPresets', AppState.presets);
+
+                UIElements.customPresetNameInput.value = '';
+                UIElements.customPresetTasksInput.value = '';
+                this.populatePresetDropdown();
+                UIElements.presetSelect.value = id;
+                this.displaySelectedPreset();
+            },
+            deleteSelectedPreset: function() {
+                const selectedId = UIElements.presetSelect.value;
+                if (!selectedId) return;
+                
+                delete AppState.presets[selectedId];
+                Storage.save('customPresets', AppState.presets);
+                this.populatePresetDropdown();
+                this.displaySelectedPreset();
+            }
+        };
 
         const Tracker = {
             togglePanel: function(isActive) {
@@ -994,7 +1313,12 @@
                 UIElements.resetBtn.classList.toggle('hidden', isActive);
             },
             showTaskModal: function(view) {
-                if (!AppState.activeSessionId) return;
+                if (!AppState.activeSessionId && AppState.isSoftTrackingActive) {
+                     UI.renderSessionList();
+                     UIElements.sessionManagementOverlay.classList.add('visible');
+                     return;
+                }
+                
                 UIElements.taskModalOverlay.classList.add('visible');
 
                 if (view === 'new') {
@@ -1026,11 +1350,25 @@
                          item.innerHTML = `<span>No tasks to log for this session.</span>`;
                          UIElements.taskModalEndSessionList.appendChild(item);
                     } else {
-                        tasksForReview.forEach(task => {
+                        tasksForReview.forEach((task) => {
                             const item = document.createElement('div');
                             item.className = 'end-session-item';
-                            const isChecked = (task.text === AppState.currentTask) || AppState.newlyCompletedTasks.has(task.text);
-                            item.innerHTML = `<input type="checkbox" id="end-session-${task.text.replace(/\s+/g, '-')}" data-task-text="${task.text}" ${isChecked ? 'checked' : ''}><label for="end-session-${task.text.replace(/\s+/g, '-')}">${task.text}</label>`;
+                            
+                            let defaultStatus = 'later'; // Default to "Save For Later"
+                            if (task.text === AppState.currentTask) {
+                                defaultStatus = 'ongoing'; // "Worked On"
+                            } else if (task.completed) {
+                                defaultStatus = 'completed'; // "Completed"
+                            }
+                            
+                            item.innerHTML = `
+                                <div class="task-name" title="${task.text}">${task.text}</div>
+                                <select class="status-select" data-task-text="${task.text}">
+                                    <option value="ongoing" ${defaultStatus === 'ongoing' ? 'selected' : ''}>Worked On</option>
+                                    <option value="completed" ${defaultStatus === 'completed' ? 'selected' : ''}>Completed</option>
+                                    <option value="later" ${defaultStatus === 'later' ? 'selected' : ''}>Save For Later</option>
+                                </select>
+                            `;
                             UIElements.taskModalEndSessionList.appendChild(item);
                         });
                     }
@@ -1043,7 +1381,7 @@
                 
                 const activeSession = AppState.sessions[AppState.activeSessionId];
                 if (activeSession && !activeSession.todoTasks.some(t => t.text === taskText)) {
-                    activeSession.todoTasks.push({ text: taskText, completed: false });
+                    activeSession.todoTasks.push({ text: taskText, completed: false, category: 'General' });
                     Storage.save('sessions', AppState.sessions);
                     UI.renderActiveSessionData();
                 }
@@ -1072,15 +1410,25 @@
                     }
                 }
 
-                const tasksInModal = UIElements.taskModalEndSessionList.querySelectorAll('.end-session-item input');
-                const loggedTasks = Array.from(tasksInModal).map(cb => ({
-                    text: cb.dataset.taskText,
-                    completed: cb.checked
-                }));
+                const tasksToLog = [];
+                const tasksToComplete = [];
+                const selectElements = UIElements.taskModalEndSessionList.querySelectorAll('.status-select');
+                
+                selectElements.forEach(select => {
+                    const taskText = select.dataset.taskText;
+                    const status = select.value;
+                    
+                    if (status === 'ongoing') {
+                        tasksToLog.push({ text: taskText, completed: false });
+                    } else if (status === 'completed') {
+                        tasksToLog.push({ text: taskText, completed: true });
+                        tasksToComplete.push(taskText);
+                    }
+                });
 
-                // Log the main work session
-                if (AppState.completedWorkDuration > 0) {
-                    const tasksToLog = loggedTasks.length > 0 ? loggedTasks.filter(t => t.completed) : (AppState.currentTask ? [{text: AppState.currentTask, completed: false}] : []);
+
+                // Log the main work session if there are tasks to log
+                if (AppState.completedWorkDuration > 0 && tasksToLog.length > 0) {
                     activeSession.sessionLog.push({
                         type: 'work',
                         duration: AppState.completedWorkDuration,
@@ -1103,9 +1451,8 @@
                 }
 
                 // Remove completed tasks from the main to-do list
-                const completedTaskTexts = loggedTasks.filter(task => task.completed).map(task => task.text);
-                if (completedTaskTexts.length > 0) {
-                    activeSession.todoTasks = activeSession.todoTasks.filter(task => !completedTaskTexts.includes(task.text));
+                if (tasksToComplete.length > 0) {
+                    activeSession.todoTasks = activeSession.todoTasks.filter(task => !tasksToComplete.includes(task.text));
                 }
 
                 UI.renderActiveSessionData();
@@ -1114,7 +1461,15 @@
                 this.hideTaskModal();
                 Timer.resetAll();
             },
-            showAddTaskPrompt: function() { UIElements.addTaskPromptOverlay.classList.add('visible'); UIElements.addTaskPromptInput.focus(); },
+            showAddTaskPrompt: function() { 
+                if (!AppState.activeSessionId && AppState.isSoftTrackingActive) {
+                    UI.renderSessionList();
+                    UIElements.sessionManagementOverlay.classList.add('visible');
+                    return;
+                }
+                UIElements.addTaskPromptOverlay.classList.add('visible'); 
+                UIElements.addTaskPromptInput.focus(); 
+            },
             hideAddTaskPrompt: function() { UIElements.addTaskPromptOverlay.classList.remove('visible'); UIElements.addTaskPromptInput.value = ''; },
             confirmAddTask: function() {
                 if (!AppState.activeSessionId) return;
@@ -1122,7 +1477,7 @@
                 if(text) {
                     const activeSession = AppState.sessions[AppState.activeSessionId];
                     if (!activeSession.todoTasks.some(task => task.text === text)) {
-                        activeSession.todoTasks.push({text: text, completed: false});
+                        activeSession.todoTasks.push({text: text, completed: false, category: 'General'});
                     }
                     if (AppState.timerPhase !== 'IDLE') {
                         AppState.newlyCompletedTasks.add(text);
@@ -1149,9 +1504,14 @@
                 AppState.mainTimerId = null;
                 AppState.workFinishedTimeoutId = null;
                 AppState.timerPhase = 'IDLE';
-                const workTime = (parseInt(UIElements.workTimeInput.value, 10) || 25) * 60;
-                AppState.timeLeft = workTime;
-                AppState.totalDuration = workTime;
+                
+                const initialTime = (AppState.initialMode === 'break' 
+                    ? parseInt(UIElements.breakTimeInput.value, 10) 
+                    : parseInt(UIElements.workTimeInput.value, 10)) || 25;
+                
+                AppState.timeLeft = initialTime * 60;
+                AppState.totalDuration = initialTime * 60;
+                
                 AppState.overtimeDuration = 0;
                 AppState.completedWorkDuration = 0;
                 AppState.currentTask = null;
@@ -1159,16 +1519,15 @@
 
                 this.stopSpecialPause(false, false); 
                 UIElements.startStopBtn.textContent = 'Start';
-                UIElements.modeDisplay.textContent = 'Work';
+                UIElements.modeDisplay.textContent = AppState.initialMode === 'break' ? 'Break' : 'Work';
                 UIElements.inlineControls.classList.add('hidden');
+                
                 UI.updateTimerDisplay(AppState.timeLeft, AppState.totalDuration);
             },
             
             tick: function() {
                 if (AppState.timerPhase.includes('PAUSED')) return;
-                
                 AppState.timeLeft -= 1;
-
                 if (AppState.timeLeft <= 0) {
                     this.handlePhaseEnd();
                 } else {
@@ -1179,40 +1538,42 @@
             handlePhaseEnd: function() {
                  clearInterval(AppState.mainTimerId);
                  AppState.mainTimerId = null;
-                 Audio.playSound(AppState.timerPhase.includes('WORK') || AppState.timerPhase.includes('OVERTIME') ? 523.25 : 783.99);
+                 Audio.playSound(AppState.timerPhase.includes('WORK') ? 523.25 : 783.99);
 
-                 switch(AppState.timerPhase) {
-                    case 'WORK_RUNNING':
-                        AppState.timerPhase = 'WORK_FINISHED';
+                 const previousPhase = AppState.timerPhase;
+
+                 if (previousPhase === 'WORK_RUNNING' || previousPhase === 'WORK_OVERTIME') {
+                    if (previousPhase === 'WORK_RUNNING') {
                         AppState.completedWorkDuration = AppState.totalDuration;
-                        UIElements.modeDisplay.textContent = 'Finished';
-                        UIElements.startStopBtn.textContent = 'Log';
-                        UIElements.inlineControls.classList.remove('hidden');
-                        UIElements.extendTimeBtn.classList.remove('hidden');
-                        UIElements.startBreakBtn.classList.remove('hidden');
-                        AppState.workFinishedTimeoutId = setTimeout(() => this.startBreak(), 10000);
-                        break;
-                    case 'WORK_OVERTIME':
+                    } else {
                         AppState.overtimeDuration += AppState.totalDuration;
-                        AppState.timerPhase = 'WORK_FINISHED';
-                        UIElements.modeDisplay.textContent = 'Finished';
-                        UIElements.startStopBtn.textContent = 'Log';
-                        UIElements.inlineControls.classList.remove('hidden');
-                        UIElements.extendTimeBtn.classList.remove('hidden');
-                        UIElements.startBreakBtn.classList.remove('hidden');
-                        AppState.workFinishedTimeoutId = setTimeout(() => this.startBreak(), 10000);
-                        break;
-                    case 'BREAK_RUNNING':
-                        AppState.timerPhase = 'BREAK_FINISHED';
-                        UIElements.modeDisplay.textContent = 'Break Over';
-                        UIElements.startStopBtn.textContent = 'Log';
-                        if (AppState.isSoftTrackingActive) {
-                            Tracker.showTaskModal('end');
-                        } else {
-                            this.resetAll();
-                        }
-                        break;
+                    }
+                    
+                    AppState.timerPhase = 'WORK_FINISHED';
+                    UIElements.modeDisplay.textContent = 'Finished';
+                    UIElements.startStopBtn.textContent = 'Log';
+                    
+                    UIElements.inlineControls.classList.remove('hidden');
+                    UIElements.extendTimeBtn.classList.remove('hidden');
+                    UIElements.startBreakBtn.classList.remove('hidden');
+                    
+                    if (AppState.autoBreakDelay !== 'manual') {
+                        const delay = parseInt(AppState.autoBreakDelay, 10) * 1000;
+                        AppState.workFinishedTimeoutId = setTimeout(() => this.startBreak(), delay);
+                    }
+                 } 
+                 else if (previousPhase === 'BREAK_RUNNING') {
+                    AppState.timerPhase = 'BREAK_FINISHED';
+                    UIElements.modeDisplay.textContent = 'Break Over';
+                    UIElements.startStopBtn.textContent = 'Log';
+                    
+                    if (AppState.isSoftTrackingActive) {
+                        Tracker.showTaskModal('end');
+                    } else {
+                        this.resetAll();
+                    }
                  }
+                 
                  UI.updateTimerDisplay(0, AppState.totalDuration);
             },
             
@@ -1255,6 +1616,7 @@
                 AppState.mainTimerId = setInterval(() => this.tick(), 1000);
                 UIElements.modeDisplay.textContent = 'Overtime';
                 UIElements.startStopBtn.textContent = 'Stop';
+                
                 UIElements.inlineControls.classList.remove('hidden');
                 UIElements.extendTimeBtn.classList.add('hidden');
                 UIElements.startBreakBtn.classList.remove('hidden');
@@ -1273,7 +1635,6 @@
             
             startSpecialPause: function(mode) {
                 if (!AppState.isSoftTrackingActive) return;
-                // Cannot start special pause if timer isn't running
                 if (!AppState.timerPhase.includes('RUNNING') && AppState.timerPhase !== 'WORK_OVERTIME') return;
                 
                 const now = Date.now();
@@ -1284,7 +1645,6 @@
                     return; 
                 }
                 
-                // Pause the main timer
                 clearInterval(AppState.mainTimerId);
                 clearTimeout(AppState.workFinishedTimeoutId);
                 AppState.mainTimerId = null;
@@ -1323,7 +1683,6 @@
                 AppState.specialPause.mode = null;
                 AppState.specialPause.currentModeStartTime = null;
                 
-                // Resume the main timer
                 UIElements.startStopBtn.textContent = 'Stop';
                 UIElements.modeDisplay.textContent = AppState.timerPhase.replace('_PAUSED', '').replace('_RUNNING', '').replace('_', ' ');
                 AppState.mainTimerId = setInterval(() => this.tick(), 1000);
@@ -1370,10 +1729,10 @@
 
             UIElements.gpsIcon.addEventListener('click', () => {
                 AppState.isSoftTrackingActive = !AppState.isSoftTrackingActive;
+                UI.renderActiveSessionData(); 
                 Timer.resetAll(); 
                 const isTrackingVisible = AppState.isSoftTrackingActive;
                 Tracker.togglePanel(isTrackingVisible);
-                UIElements.activeSessionDisplay.classList.toggle('hidden', !isTrackingVisible);
                 const isNotepadVisible = UIElements.notepadPanel.classList.contains('visible');
                 UIElements.appWrapper.classList.toggle('is-panel-open', isNotepadVisible || isTrackingVisible);
                 UIElements.timerOptionsWrapper.classList.toggle('hidden', isNotepadVisible);
@@ -1388,6 +1747,13 @@
                     UIElements.modeDisplay.classList.remove('tracking-activated-animation', 'tracking-deactivated-animation');
                     UIElements.modeDisplay.textContent = originalText;
                 }, 2500);
+            });
+
+            UIElements.activeSessionDisplay.addEventListener('click', () => {
+                if (AppState.isSoftTrackingActive) {
+                    UI.renderSessionList();
+                    UIElements.sessionManagementOverlay.classList.add('visible');
+                }
             });
 
             UIElements.startStopBtn.addEventListener('click', () => {
@@ -1434,6 +1800,11 @@
                 });
             });
             
+            UIElements.autoBreakTimeSelect.addEventListener('change', (e) => {
+                AppState.autoBreakDelay = e.target.value;
+                Storage.save('autoBreakDelay', AppState.autoBreakDelay);
+            });
+            
             UIElements.notepadTextarea.addEventListener('input', () => Notepad.saveNote());
             UIElements.logoContainer.addEventListener('click', () => UI.toggleDonateOverlay(true));
             document.getElementById('exit-labs-btn').addEventListener('click', () => { window.location.href = 'index.html'; });
@@ -1445,7 +1816,6 @@
                      
                      if (modal.id === 'task-modal-overlay') {
                         if (AppState.timerPhase === 'LOGGING_EARLY') {
-                            // User cancelled logging, so resume the previous session
                             AppState.timerPhase = AppState.preLogPhase;
                             AppState.preLogPhase = null;
                             AppState.mainTimerId = setInterval(() => Timer.tick(), 1000);
@@ -1474,11 +1844,6 @@
                     const task = AppState.sessions[AppState.activeSessionId].todoTasks[index];
                     if (task) {
                         task.completed = target.checked;
-                        if (task.completed && AppState.isSoftTrackingActive) {
-                           AppState.newlyCompletedTasks.add(task.text);
-                        } else {
-                           AppState.newlyCompletedTasks.delete(task.text);
-                        }
                         UI.renderActiveSessionData(); 
                         Storage.save('sessions', AppState.sessions);
                     }
@@ -1489,12 +1854,22 @@
                 Tracker.logSessionAndFinish();
             });
             
-            // Session Management Listeners
             UIElements.createSessionBtn.addEventListener('click', () => SessionManager.createSession(UIElements.sessionNameInput.value));
             UIElements.endSessionBtn.addEventListener('click', () => SessionManager.endSession());
             UIElements.saveSessionTxtBtn.addEventListener('click', () => SessionManager.confirmEndSession('txt'));
             UIElements.copySessionToNotepadBtn.addEventListener('click', () => SessionManager.confirmEndSession('notepad'));
             UIElements.endSessionAnywayBtn.addEventListener('click', () => SessionManager.confirmEndSession(null));
+
+            // Preset Listeners
+            UIElements.presetTasksBtn.addEventListener('click', () => {
+                PresetManager.displaySelectedPreset(); // Refresh view when opening
+                UIElements.presetModalOverlay.classList.add('visible');
+            });
+            UIElements.presetSelect.addEventListener('change', () => PresetManager.displaySelectedPreset());
+            UIElements.applyPresetBtn.addEventListener('click', () => PresetManager.applyPreset());
+            UIElements.saveCustomPresetBtn.addEventListener('click', () => PresetManager.saveCustomPreset());
+            UIElements.deletePresetBtn.addEventListener('click', () => PresetManager.deleteSelectedPreset());
+
         }
 
         function initializeApp() {
@@ -1503,7 +1878,11 @@
             AppState.isSoundEnabled = Storage.get('soundEnabled', true);
             UIElements.bellIcon.src = AppState.isSoundEnabled ? AppState.bellEnabledSrc : AppState.bellDisabledSrc;
             
+            AppState.autoBreakDelay = Storage.get('autoBreakDelay', 10);
+            UIElements.autoBreakTimeSelect.value = AppState.autoBreakDelay;
+
             SessionManager.initialize();
+            PresetManager.initialize();
             Notepad.init();
             setupEventListeners();
             Timer.resetAll();
